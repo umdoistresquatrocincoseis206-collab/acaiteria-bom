@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Açaí do Sol — Peça seu açaí do seu jeito</title>
+<meta name="description" content="Monte seu açaí, escolha seus complementos e peça de forma rápida e fácil. Açaí do Sol — açaí fresquinho, promoções e clube de fidelidade.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍇</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* =====================================================
+   AÇAÍ DO SOL — design tokens
+   ===================================================== */
+:root{
+  --purple-950:#2A0A33;
+  --purple-800:#4A1259;
+  --purple-600:#7B2D8E;
+  --purple-500:#9B4DB8;
+  --purple-100:#F3E4F7;
+  --green-600:#1F9D6B;
+  --green-400:#4ECB8C;
+  --yellow-400:#FFC94D;
+  --cream:#FFFBF6;
+  --white:#FFFFFF;
+  --ink:#26102B;
+  --ink-soft:#5C4763;
+  --line:#E9DCEE;
+  --shadow-sm:0 2px 10px rgba(42,10,51,.08);
+  --shadow-md:0 10px 30px rgba(42,10,51,.14);
+  --radius-lg:26px;
+  --radius-md:18px;
+  --radius-sm:12px;
+  --font-display:'Baloo 2',system-ui,sans-serif;
+  --font-body:'Nunito Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--cream);
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;line-height:1.08;color:var(--purple-950)}
+p{margin:0}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+.section{padding:76px 0}
+.section-head{max-width:620px;margin-bottom:36px}
+.eyebrow-free{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--purple-600);font-size:.95rem;margin-bottom:6px}
+.section-head h2{font-size:clamp(1.7rem,3.6vw,2.5rem)}
+.section-head p{color:var(--ink-soft);font-size:1.05rem;margin-top:10px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:15px 28px;border-radius:100px;font-weight:800;font-size:1rem;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--purple-600);color:var(--white);box-shadow:var(--shadow-sm)}
+.btn-primary:hover{background:var(--purple-800);box-shadow:var(--shadow-md)}
+.btn-ghost{background:var(--white);color:var(--purple-600);border:2px solid var(--purple-100)}
+.btn-ghost:hover{border-color:var(--purple-500)}
+.btn-green{background:var(--green-600);color:var(--white)}
+.btn-green:hover{background:#187f57}
+.btn-yellow{background:var(--yellow-400);color:var(--purple-950)}
+.btn-block{width:100%}
+.btn-sm{padding:9px 16px;font-size:.85rem;border-radius:100px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;font-weight:800;font-size:.75rem;letter-spacing:.02em}
+.pill-hot{background:#FFE3D6;color:#C74B1D}
+.pill-new{background:#DDF4E8;color:var(--green-600)}
+.pill-limited{background:#FDEAC8;color:#9C6B0A}
+.card{background:var(--white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);transition:transform .18s ease, box-shadow .18s ease}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+::selection{background:var(--purple-100)}
+
+/* ---------- header ---------- */
+header.site-header{
+  position:sticky;top:0;z-index:80;background:rgba(255,251,246,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--purple-950)}
+.logo-mark{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--purple-500),var(--purple-950));display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.nav-links{display:flex;gap:28px;font-weight:700;color:var(--ink-soft)}
+.nav-links a:hover{color:var(--purple-600)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.cart-btn{position:relative;background:var(--purple-950);color:var(--white);width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--yellow-400);color:var(--purple-950);font-size:.7rem;font-weight:800;min-width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.nav-toggle{display:none;background:none;font-size:1.5rem;color:var(--purple-950)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--purple-950) 0%,var(--purple-800) 55%,var(--purple-600) 100%);color:var(--white)}
+.hero .container{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:64px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);padding:8px 16px;border-radius:100px;font-weight:700;font-size:.85rem;margin-bottom:18px}
+.hero h1{font-size:clamp(2.4rem,5.2vw,3.7rem);color:var(--white);letter-spacing:-.01em}
+.hero h1 span{color:var(--yellow-400)}
+.hero p{margin-top:18px;font-size:1.15rem;color:rgba(255,255,255,.85);max-width:480px}
+.hero-actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.hero-visual{position:relative;display:flex;justify-content:center}
+.hero-bowl{
+  width:min(380px,80vw);aspect-ratio:1/1;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#8A3FA8,#3B0F49 75%);
+  box-shadow:0 30px 60px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
+  font-size:7rem;position:relative;animation:float 5s ease-in-out infinite;
+}
+.hero-bowl::after{content:'';position:absolute;inset:14px;border-radius:50%;border:2px dashed rgba(255,255,255,.18)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.hero-stat-chip{position:absolute;background:var(--white);color:var(--purple-950);padding:10px 16px;border-radius:100px;font-weight:800;font-size:.85rem;box-shadow:var(--shadow-md);display:flex;gap:6px;align-items:center}
+.chip-a{top:6%;left:-6%}
+.chip-b{bottom:8%;right:-4%}
+
+/* ---------- destaque do dia ---------- */
+.destaque{background:var(--purple-100)}
+.destaque-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:0;border-radius:var(--radius-lg);overflow:hidden;background:var(--white);box-shadow:var(--shadow-md)}
+.destaque-media{background:linear-gradient(135deg,var(--purple-500),var(--purple-950));display:flex;align-items:center;justify-content:center;font-size:5.5rem;color:var(--white);min-height:260px}
+.destaque-body{padding:34px 38px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+.destaque-price{font-family:var(--font-display);font-size:2rem;color:var(--purple-600)}
+.destaque-price s{color:var(--ink-soft);font-size:1.1rem;margin-right:8px;font-weight:600}
+
+/* ---------- promoções ---------- */
+.promo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px}
+.promo-card{padding:24px;position:relative;overflow:hidden}
+.promo-card .pill{margin-bottom:12px}
+.promo-card h3{font-size:1.3rem;margin-bottom:6px}
+.promo-card p.desc{color:var(--ink-soft);font-size:.95rem;margin-bottom:16px;min-height:40px}
+.promo-price{font-family:var(--font-display);font-size:1.7rem;color:var(--green-600);margin-bottom:16px}
+
+/* ---------- cardápio ---------- */
+.menu-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.menu-tab{padding:10px 20px;border-radius:100px;background:var(--white);border:2px solid var(--line);font-weight:800;color:var(--ink-soft)}
+.menu-tab.active{background:var(--purple-950);color:var(--white);border-color:var(--purple-950)}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+.product-card{overflow:hidden;display:flex;flex-direction:column}
+.product-media{aspect-ratio:4/3;background:linear-gradient(135deg,var(--purple-100),#fff);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.product-media .pill{position:absolute;top:10px;left:10px}
+.product-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.product-body h4{font-size:1.05rem}
+.product-body .desc{font-size:.85rem;color:var(--ink-soft);min-height:32px}
+.product-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.product-price{font-family:var(--font-display);font-weight:700;font-size:1.2rem;color:var(--purple-600)}
+.add-round{width:40px;height:40px;border-radius:50%;background:var(--purple-950);color:var(--white);font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.add-round:hover{background:var(--purple-600)}
+.empty-note{color:var(--ink-soft);font-style:italic;padding:20px 0}
+
+/* ---------- monte seu açaí ---------- */
+.builder{background:linear-gradient(180deg,var(--white),var(--purple-100))}
+.builder-panel{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:36px;display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.builder-block h3{font-size:1.15rem;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.option-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.option-chip{padding:12px 18px;border-radius:14px;border:2px solid var(--line);background:var(--cream);font-weight:700;font-size:.9rem;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:90px}
+.option-chip small{color:var(--ink-soft);font-weight:600}
+.option-chip.selected{border-color:var(--purple-600);background:var(--purple-100);color:var(--purple-800)}
+.check-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;border:2px solid var(--line);margin-bottom:10px;cursor:pointer}
+.check-row.selected{border-color:var(--green-600);background:#F1FBF5}
+.check-row .left{display:flex;align-items:center;gap:10px;font-weight:700}
+.check-row .price{font-weight:800;color:var(--green-600)}
+.builder-total{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:18px;border-top:2px dashed var(--line)}
+.builder-total .amount{font-family:var(--font-display);font-size:1.7rem;color:var(--purple-600)}
+.qty-control{display:flex;align-items:center;gap:12px;background:var(--cream);border-radius:100px;padding:6px}
+.qty-control button{width:32px;height:32px;border-radius:50%;background:var(--white);font-weight:800;box-shadow:var(--shadow-sm)}
+
+/* ---------- depoimentos ---------- */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.testi-card{padding:26px}
+.testi-stars{color:var(--yellow-400);font-size:1rem;margin-bottom:10px}
+.testi-quote{font-size:.98rem;color:var(--ink);margin-bottom:14px}
+.testi-name{font-weight:800;color:var(--purple-600);font-size:.9rem}
+
+/* ---------- clube do açaí ---------- */
+.club{background:var(--purple-950);color:var(--white)}
+.club-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-lg);padding:34px;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.club-points{font-family:var(--font-display);font-size:2.4rem;color:var(--yellow-400)}
+.progress-track{width:100%;height:14px;background:rgba(255,255,255,.14);border-radius:100px;overflow:hidden;margin-top:14px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--green-400),var(--yellow-400));border-radius:100px;transition:width .4s ease}
+.club-form input{width:100%;padding:12px 16px;border-radius:100px;border:none;margin-bottom:10px;font-family:inherit}
+
+/* ---------- localização ---------- */
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.loc-card{padding:30px}
+.loc-row{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.loc-row .ic{font-size:1.3rem}
+.map-embed{border-radius:var(--radius-md);overflow:hidden;min-height:280px;background:var(--purple-100);display:flex;align-items:center;justify-content:center;color:var(--purple-600);font-weight:700;text-align:center;padding:20px}
+
+/* ---------- footer ---------- */
+footer{background:var(--purple-950);color:rgba(255,255,255,.75);padding:56px 0 26px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px;margin-bottom:36px}
+.footer-grid h5{color:var(--white);font-family:var(--font-display);margin-bottom:14px;font-size:1rem}
+.footer-grid a,.footer-grid p{display:block;color:rgba(255,255,255,.7);margin-bottom:8px;font-size:.92rem}
+.footer-grid a:hover{color:var(--yellow-400)}
+.social-row{display:flex;gap:12px;margin-top:6px}
+.social-row a{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.14);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:.82rem}
+.footer-bottom a{text-decoration:underline}
+
+/* ---------- floating whatsapp + cart ---------- */
+.fab-whatsapp{position:fixed;right:22px;bottom:22px;background:#25D366;color:#fff;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:var(--shadow-md);z-index:70}
+.fab-cart-mobile{display:none;position:fixed;left:16px;right:16px;bottom:16px;background:var(--purple-950);color:#fff;padding:14px 20px;border-radius:100px;align-items:center;justify-content:space-between;font-weight:800;z-index:70;box-shadow:var(--shadow-md)}
+
+/* ---------- modals / drawers (generic) ---------- */
+.overlay{position:fixed;inset:0;background:rgba(38,16,43,.55);z-index:100;display:none;align-items:flex-end;justify-content:flex-end}
+.overlay.open{display:flex}
+.overlay.center{align-items:center;justify-content:center;padding:20px}
+.drawer{background:var(--cream);width:min(440px,100%);height:100%;overflow-y:auto;display:flex;flex-direction:column;animation:slideIn .25s ease}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.modal-box{background:var(--white);border-radius:var(--radius-lg);width:min(560px,100%);max-height:90vh;overflow-y:auto;padding:32px;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line);background:var(--white)}
+.drawer-head h3{font-size:1.2rem}
+.close-x{width:36px;height:36px;border-radius:50%;background:var(--purple-100);color:var(--purple-800);font-size:1.1rem}
+.drawer-body{padding:20px 22px;flex:1}
+.drawer-foot{padding:18px 22px;border-top:1px solid var(--line);background:var(--white)}
+
+/* cart items */
+.cart-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.cart-item .thumb{width:56px;height:56px;border-radius:12px;background:var(--purple-100);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.cart-item .info{flex:1}
+.cart-item .info h5{font-size:.98rem;margin-bottom:2px}
+.cart-item .info .meta{font-size:.78rem;color:var(--ink-soft)}
+.cart-item .row-actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.cart-item .remove-link{font-size:.78rem;color:#C0392B;font-weight:700}
+.cart-summary-line{display:flex;justify-content:space-between;padding:6px 0;font-size:.94rem;color:var(--ink-soft)}
+.cart-summary-line.total{font-weight:800;color:var(--ink);font-size:1.15rem;padding-top:12px;border-top:2px dashed var(--line);margin-top:6px}
+.coupon-row{display:flex;gap:8px;margin:14px 0}
+.coupon-row input{flex:1;padding:11px 14px;border-radius:12px;border:2px solid var(--line);font-family:inherit}
+
+/* forms */
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:700;font-size:.88rem;margin-bottom:6px}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border-radius:12px;border:2px solid var(--line);font-family:inherit;font-size:.95rem;background:var(--white);
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--purple-500)}
+.seg{display:flex;gap:10px;margin-bottom:14px}
+.seg button{flex:1;padding:13px;border-radius:12px;border:2px solid var(--line);font-weight:800;background:var(--white);color:var(--ink-soft)}
+.seg button.active{border-color:var(--purple-600);background:var(--purple-100);color:var(--purple-800)}
+
+/* status tracker */
+.status-track{display:flex;justify-content:space-between;margin:22px 0;position:relative}
+.status-track::before{content:'';position:absolute;top:15px;left:6%;right:6%;height:3px;background:var(--line);z-index:0}
+.status-step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;text-align:center}
+.status-dot{width:32px;height:32px;border-radius:50%;background:var(--white);border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.status-step.done .status-dot{background:var(--green-600);border-color:var(--green-600);color:#fff}
+.status-step.current .status-dot{background:var(--purple-600);border-color:var(--purple-600);color:#fff;box-shadow:0 0 0 5px var(--purple-100)}
+.status-step span{font-size:.72rem;font-weight:700;color:var(--ink-soft);max-width:70px}
+.status-step.done span, .status-step.current span{color:var(--ink)}
+
+/* toast */
+#toast-host{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:var(--purple-950);color:#fff;padding:12px 20px;border-radius:100px;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-md);animation:toastIn .2s ease}
+@keyframes toastIn{from{transform:translateY(-14px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* admin */
+.admin-shell{display:none;min-height:100vh;background:var(--cream)}
+.admin-shell.open{display:block}
+.admin-bar{background:var(--purple-950);color:#fff;padding:14px 0}
+.admin-bar .container{display:flex;justify-content:space-between;align-items:center}
+.admin-tabs{display:flex;gap:8px;padding:18px 0;flex-wrap:wrap}
+.admin-tab{padding:9px 16px;border-radius:100px;background:var(--white);border:2px solid var(--line);font-weight:800;font-size:.85rem}
+.admin-tab.active{background:var(--purple-950);color:#fff;border-color:var(--purple-950)}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+table.admin-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)}
+table.admin-table th,table.admin-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.88rem}
+table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-weight:800}
+.admin-form-card{background:var(--white);border-radius:var(--radius-md);padding:22px;box-shadow:var(--shadow-sm);margin-bottom:22px}
+.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.status-select{padding:7px 10px;border-radius:10px;border:2px solid var(--line);font-family:inherit;font-weight:700}
+.login-box{max-width:380px;margin:80px auto;background:var(--white);border-radius:var(--radius-lg);padding:34px;box-shadow:var(--shadow-md)}
+.setup-banner{background:#FDEAC8;color:#7A4E00;padding:12px 0;font-size:.85rem;text-align:center;font-weight:700}
+.setup-banner a{text-decoration:underline}
+
+/* responsive */
+@media (max-width:900px){
+  .hero .container{grid-template-columns:1fr;text-align:center}
+  .hero-actions{justify-content:center}
+  .hero-visual{order:-1}
+  .destaque-card{grid-template-columns:1fr}
+  .builder-panel{grid-template-columns:1fr}
+  .club-card{grid-template-columns:1fr}
+  .loc-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .admin-form-grid{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .nav-links{display:none}
+  .nav-toggle{display:block}
+  .section{padding:52px 0}
+  .fab-cart-mobile{display:flex}
+  .fab-whatsapp{bottom:86px}
+}
+</style>
+</head>
+<body>
+
+<div id="toast-host"></div>
+<div id="setup-banner-host"></div>
+
+<!-- ===================== SITE (CLIENTE) ===================== -->
+<div id="site-root">
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="#home" class="logo"><span class="logo-mark">🍇</span> Açaí do Sol</a>
+    <nav class="nav-links">
+      <a href="#cardapio">Cardápio</a>
+      <a href="#montar">Monte o seu</a>
+      <a href="#promocoes">Promoções</a>
+      <a href="#clube">Clube do Açaí</a>
+      <a href="#local">Onde estamos</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="cart-btn" id="btn-open-cart" aria-label="Abrir carrinho">🛒<span class="cart-badge" id="cart-count">0</span></button>
+      <button class="nav-toggle" id="btn-nav-toggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="container">
+    <div>
+      <span class="hero-eyebrow">🍇 Fresquinho, todos os dias</span>
+      <h1>Seu açaí <span>do seu jeito.</span></h1>
+      <p>Monte seu açaí, escolha seus complementos e peça de forma rápida e fácil — pronto em minutos, na retirada ou na sua porta.</p>
+      <div class="hero-actions">
+        <a href="#montar" class="btn btn-primary">Pedir agora</a>
+        <a href="#cardapio" class="btn btn-ghost">Ver cardápio</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-bowl">🍨</div>
+      <div class="hero-stat-chip chip-a">⭐ 4.9 de avaliação</div>
+      <div class="hero-stat-chip chip-b">🚴 Entrega em ~30 min</div>
+    </div>
+  </div>
+</section>
+
+<!-- AÇAÍ DO DIA -->
+<section class="section destaque" id="destaque-dia">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">🍇 Açaí do dia</span>
+      <h2>O destaque de hoje</h2>
+    </div>
+    <div id="destaque-container"></div>
+  </div>
+</section>
+
+<!-- PROMOÇÕES -->
+<section class="section" id="promocoes">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">🔥 Promoções</span>
+      <h2>Ofertas que valem a pena</h2>
+      <p>Combos e descontos especiais, direto do nosso balcão pra sua tela.</p>
+    </div>
+    <div class="promo-grid" id="promo-grid"></div>
+  </div>
+</section>
+
+<!-- CARDÁPIO -->
+<section class="section" id="cardapio" style="background:var(--white)">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">🍧 Cardápio</span>
+      <h2>Nosso Cardápio</h2>
+      <p>Escolha entre açaís prontos, combos, bebidas e complementos avulsos.</p>
+    </div>
+    <div class="menu-tabs" id="menu-tabs"></div>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+</section>
+
+<!-- MONTE SEU AÇAÍ -->
+<section class="section builder" id="montar">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">🥣 Personalize</span>
+      <h2>Monte seu açaí</h2>
+      <p>Escolha o tamanho, os complementos e os adicionais. O total é calculado na hora.</p>
+    </div>
+    <div class="builder-panel">
+      <div>
+        <div class="builder-block">
+          <h3>1. Escolha o tamanho</h3>
+          <div class="option-row" id="size-options"></div>
+        </div>
+        <div class="builder-block">
+          <h3>2. Complementos (grátis ou com valor)</h3>
+          <div id="complemento-options"></div>
+        </div>
+      </div>
+      <div>
+        <div class="builder-block">
+          <h3>3. Adicionais especiais</h3>
+          <div id="adicional-options"></div>
+        </div>
+        <div class="qty-control" style="margin-top:6px">
+          <button id="build-qty-minus">−</button>
+          <span id="build-qty" style="font-weight:800;min-width:20px;text-align:center">1</span>
+          <button id="build-qty-plus">+</button>
+          <span style="color:var(--ink-soft);font-size:.85rem;margin-left:6px">unidade(s)</span>
+        </div>
+        <div class="builder-total">
+          <span style="font-weight:700;color:var(--ink-soft)">Total</span>
+          <span class="amount" id="build-total">R$ 0,00</span>
+        </div>
+        <button class="btn btn-primary btn-block" style="margin-top:16px" id="btn-add-build">Adicionar ao carrinho</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section" style="background:var(--white)">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">💬 Depoimentos</span>
+      <h2>Quem prova, aprova!</h2>
+    </div>
+    <div class="testi-grid" id="testi-grid"></div>
+  </div>
+</section>
+
+<!-- CLUBE DO AÇAÍ -->
+<section class="section club" id="clube">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free" style="color:var(--yellow-400)">🍇 Clube do Açaí</span>
+      <h2 style="color:#fff">Acumule pontos a cada pedido</h2>
+      <p style="color:rgba(255,255,255,.75)">A cada R$1 gasto você ganha 1 ponto. 100 pontos = R$10 de desconto no próximo pedido.</p>
+    </div>
+    <div class="club-card">
+      <div class="club-form">
+        <p style="font-weight:700;margin-bottom:10px">Consultar meus pontos</p>
+        <input type="tel" id="club-phone-input" placeholder="Seu telefone/WhatsApp">
+        <button class="btn btn-yellow btn-block" id="btn-check-points">Consultar pontos</button>
+      </div>
+      <div>
+        <p style="color:rgba(255,255,255,.7);font-weight:700">Você possui</p>
+        <div class="club-points" id="club-points-display">— pontos 🍇</div>
+        <div class="progress-track"><div class="progress-fill" id="club-progress" style="width:0%"></div></div>
+        <p style="margin-top:10px;font-size:.85rem;color:rgba(255,255,255,.65)" id="club-progress-label">Faça um pedido para começar a pontuar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCALIZAÇÃO -->
+<section class="section" id="local" style="background:var(--white)">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-free">📍 Onde estamos</span>
+      <h2>Venha nos visitar</h2>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-card card">
+        <div class="loc-row"><span class="ic">🏙️</span><div><strong>Cidade</strong><p id="loc-city" style="color:var(--ink-soft)">—</p></div></div>
+        <div class="loc-row"><span class="ic">📌</span><div><strong>Endereço</strong><p id="loc-address" style="color:var(--ink-soft)">—</p></div></div>
+        <div class="loc-row"><span class="ic">🕒</span><div><strong>Horário de funcionamento</strong><p id="loc-hours" style="color:var(--ink-soft)">—</p></div></div>
+        <a class="btn btn-ghost" id="btn-view-map" target="_blank" style="margin-top:10px">Ver no mapa</a>
+      </div>
+      <div class="map-embed" id="map-embed">🗺️ Mapa em breve</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color:#fff;margin-bottom:10px"><span class="logo-mark">🍇</span> <span id="footer-store-name">Açaí do Sol</span></div>
+        <p>Açaí fresquinho, feito na hora, com o carinho de sempre.</p>
+        <div class="social-row">
+          <a href="#" id="social-insta" target="_blank">📷</a>
+          <a href="#" id="social-tiktok" target="_blank">🎵</a>
+          <a href="#" id="social-face" target="_blank">📘</a>
+        </div>
+      </div>
+      <div>
+        <h5>Navegação</h5>
+        <a href="#cardapio">Cardápio</a>
+        <a href="#montar">Monte o seu</a>
+        <a href="#promocoes">Promoções</a>
+        <a href="#clube">Clube do Açaí</a>
+      </div>
+      <div>
+        <h5>Contato</h5>
+        <a id="footer-whatsapp" href="#" target="_blank">📱 Pedir pelo WhatsApp</a>
+        <p id="footer-address">—</p>
+      </div>
+      <div>
+        <h5>Loja</h5>
+        <a href="#" id="link-admin">Área Administrativa</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="footer-year"></span> Açaí do Sol — todos os direitos reservados</span>
+      <span>Dados de demonstração, 100% fictícios.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="#" class="fab-whatsapp" id="fab-whatsapp" target="_blank" aria-label="Pedir pelo WhatsApp">💬</a>
+<button class="fab-cart-mobile" id="fab-cart-mobile"><span>🛒 Ver carrinho</span><span id="fab-cart-count">0 itens</span></button>
+
+</div><!-- /site-root -->
+
+<!-- ===================== CARRINHO (drawer) ===================== -->
+<div class="overlay" id="cart-overlay">
+  <div class="drawer">
+    <div class="drawer-head">
+      <h3>Seu carrinho</h3>
+      <button class="close-x" id="close-cart">✕</button>
+    </div>
+    <div class="drawer-body" id="cart-body">
+      <p class="empty-note" id="cart-empty-note">Seu carrinho está vazio. Que tal montar um açaí?</p>
+      <div id="cart-items"></div>
+    </div>
+    <div class="drawer-foot" id="cart-foot" style="display:none">
+      <div class="coupon-row">
+        <input type="text" id="coupon-input" placeholder="Tem um cupom? Digite aqui">
+        <button class="btn btn-ghost btn-sm" id="btn-apply-coupon">Aplicar</button>
+      </div>
+      <div id="coupon-feedback" style="font-size:.82rem;font-weight:700;margin-bottom:6px"></div>
+      <div class="cart-summary-line"><span>Subtotal</span><span id="sum-subtotal">R$ 0,00</span></div>
+      <div class="cart-summary-line" id="sum-discount-row" style="display:none"><span>Desconto</span><span id="sum-discount">- R$ 0,00</span></div>
+      <div class="cart-summary-line total"><span>Total</span><span id="sum-total">R$ 0,00</span></div>
+      <button class="btn btn-primary btn-block" style="margin-top:14px" id="btn-checkout">Finalizar pedido</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btn-clear-cart">Limpar carrinho</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHECKOUT (modal) ===================== -->
+<div class="overlay center" id="checkout-overlay">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <h3>Finalizar pedido</h3>
+      <button class="close-x" id="close-checkout">✕</button>
+    </div>
+    <form id="checkout-form">
+      <div class="field"><label>Nome</label><input required id="ck-name" type="text" placeholder="Seu nome"></div>
+      <div class="field"><label>Telefone / WhatsApp</label><input required id="ck-phone" type="tel" placeholder="(00) 00000-0000"></div>
+      <div class="field">
+        <label>Forma de recebimento</label>
+        <div class="seg">
+          <button type="button" class="active" id="seg-retirar" data-type="retirada">Retirar no local</button>
+          <button type="button" id="seg-entrega" data-type="entrega">Entrega</button>
+        </div>
+      </div>
+      <div id="address-field" style="display:none">
+        <div class="field"><label>Endereço completo</label><textarea id="ck-address" rows="2" placeholder="Rua, número, bairro, complemento"></textarea></div>
+      </div>
+      <div class="field">
+        <label>Forma de pagamento</label>
+        <select id="ck-payment">
+          <option value="pix">Pix</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="cartao">Cartão (na entrega/retirada)</option>
+        </select>
+      </div>
+      <div id="pix-info" style="display:none;background:var(--purple-100);border-radius:12px;padding:12px 14px;font-size:.85rem;margin-bottom:14px"></div>
+      <div class="field"><label>Observações (opcional)</label><textarea id="ck-notes" rows="2" placeholder="Ex: sem leite condensado, capricha na granola :)"></textarea></div>
+      <div class="cart-summary-line total" style="margin-bottom:14px"><span>Total do pedido</span><span id="ck-total">R$ 0,00</span></div>
+      <button class="btn btn-primary btn-block" type="submit" id="btn-confirm-order">Confirmar pedido</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== CONFIRMAÇÃO / ACOMPANHAMENTO ===================== -->
+<div class="overlay center" id="confirm-overlay">
+  <div class="modal-box">
+    <div style="text-align:center;margin-bottom:10px">
+      <div style="font-size:2.6rem">🍇</div>
+      <h3>Pedido realizado!</h3>
+      <p style="color:var(--ink-soft);font-weight:700" id="confirm-order-number">Pedido #—</p>
+    </div>
+    <div class="status-track" id="status-track"></div>
+    <div id="confirm-items" style="margin:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0"></div>
+    <div class="cart-summary-line"><span>Forma de recebimento</span><span id="confirm-type">—</span></div>
+    <div class="cart-summary-line"><span>Pagamento</span><span id="confirm-payment">—</span></div>
+    <div class="cart-summary-line total"><span>Total</span><span id="confirm-total">R$ 0,00</span></div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button class="btn btn-green btn-block" id="btn-order-whatsapp">Enviar no WhatsApp</button>
+      <button class="btn btn-ghost btn-block" id="btn-close-confirm">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADMIN ===================== -->
+<div class="admin-shell" id="admin-shell">
+  <div id="admin-login-view">
+    <div class="admin-bar"><div class="container"><strong>🍇 Açaí do Sol — Painel Administrativo</strong></div></div>
+    <div class="login-box">
+      <h3 style="margin-bottom:6px">Entrar</h3>
+      <p style="color:var(--ink-soft);font-size:.9rem;margin-bottom:18px">Acesso restrito à administração da loja.</p>
+      <form id="admin-login-form">
+        <div class="field"><label>E-mail</label><input required type="email" id="admin-email"></div>
+        <div class="field"><label>Senha</label><input required type="password" id="admin-password"></div>
+        <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+        <p id="admin-login-error" style="color:#C0392B;font-size:.85rem;margin-top:10px"></p>
+      </form>
+      <p style="font-size:.78rem;color:var(--ink-soft);margin-top:16px">O usuário administrador é criado no painel do Supabase (Authentication → Users). Veja SETUP.md.</p>
+      <a href="#home" class="btn btn-ghost btn-block" style="margin-top:14px" id="back-to-site">← Voltar ao site</a>
+    </div>
+  </div>
+
+  <div id="admin-dashboard-view" style="display:none">
+    <div class="admin-bar">
+      <div class="container">
+        <strong>🍇 Painel Administrativo</strong>
+        <div style="display:flex;gap:10px;align-items:center">
+          <a href="#home" class="btn btn-ghost btn-sm" id="admin-view-site">Ver site</a>
+          <button class="btn btn-ghost btn-sm" id="admin-logout">Sair</button>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="pedidos">Pedidos</button>
+        <button class="admin-tab" data-tab="produtos">Produtos</button>
+        <button class="admin-tab" data-tab="promocoes">Promoções</button>
+        <button class="admin-tab" data-tab="cupons">Cupons</button>
+        <button class="admin-tab" data-tab="config">Configurações</button>
+      </div>
+
+      <div class="admin-panel active" id="panel-pedidos">
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Tipo</th><th>Pagamento</th><th>Status</th><th>Data</th></tr></thead>
+            <tbody id="admin-orders-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="panel-produtos">
+        <div class="admin-form-card">
+          <h4 style="margin-bottom:14px">Novo produto</h4>
+          <form id="product-form">
+            <div class="admin-form-grid">
+              <div class="field"><label>Nome</label><input required id="p-name"></div>
+              <div class="field"><label>Categoria</label>
+                <select id="p-category">
+                  <option value="acai">Açaí</option>
+                  <option value="combos">Combos</option>
+                  <option value="bebidas">Bebidas</option>
+                  <option value="complementos">Complementos</option>
+                </select>
+              </div>
+              <div class="field"><label>Preço (R$)</label><input required type="number" step="0.01" id="p-price"></div>
+              <div class="field"><label>Emoji/ícone</label><input id="p-emoji" placeholder="🍨" value="🍨"></div>
+              <div class="field"><label>Selo</label>
+                <select id="p-badge">
+                  <option value="">Nenhum</option>
+                  <option value="hot">🔥 Queridinho</option>
+                  <option value="new">✨ Novidade</option>
+                  <option value="limited">⏰ Por tempo limitado</option>
+                </select>
+              </div>
+              <div class="field"><label>Ativo</label>
+                <select id="p-active"><option value="true">Sim</option><option value="false">Não</option></select>
+              </div>
+            </div>
+            <div class="field"><label>Descrição curta</label><input id="p-desc"></div>
+            <input type="hidden" id="p-id">
+            <button class="btn btn-primary" type="submit" id="p-submit-btn">Adicionar produto</button>
+            <button class="btn btn-ghost" type="button" id="p-cancel-edit" style="display:none">Cancelar edição</button>
+          </form>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Selo</th><th>Ativo</th><th>Ações</th></tr></thead>
+            <tbody id="admin-products-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="panel-promocoes">
+        <div class="admin-form-card">
+          <h4 style="margin-bottom:14px">Nova promoção</h4>
+          <form id="promo-form">
+            <div class="admin-form-grid">
+              <div class="field"><label>Título</label><input required id="pr-title"></div>
+              <div class="field"><label>Preço promocional (R$)</label><input required type="number" step="0.01" id="pr-price"></div>
+              <div class="field"><label>Selo</label>
+                <select id="pr-badge"><option value="hot">🔥 Promoção</option><option value="limited">⏰ Tempo limitado</option></select>
+              </div>
+              <div class="field"><label>Ativo</label><select id="pr-active"><option value="true">Sim</option><option value="false">Não</option></select></div>
+            </div>
+            <div class="field"><label>Descrição</label><input id="pr-desc"></div>
+            <input type="hidden" id="pr-id">
+            <button class="btn btn-primary" type="submit" id="pr-submit-btn">Adicionar promoção</button>
+            <button class="btn btn-ghost" type="button" id="pr-cancel-edit" style="display:none">Cancelar edição</button>
+          </form>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>Título</th><th>Preço</th><th>Ativo</th><th>Ações</th></tr></thead>
+            <tbody id="admin-promos-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="panel-cupons">
+        <div class="admin-form-card">
+          <h4 style="margin-bottom:14px">Novo cupom</h4>
+          <form id="coupon-form">
+            <div class="admin-form-grid">
+              <div class="field"><label>Código</label><input required id="c-code" placeholder="ACAI10" style="text-transform:uppercase"></div>
+              <div class="field"><label>Desconto (%)</label><input required type="number" step="1" id="c-percent"></div>
+              <div class="field"><label>Ativo</label><select id="c-active"><option value="true">Sim</option><option value="false">Não</option></select></div>
+            </div>
+            <input type="hidden" id="c-id">
+            <button class="btn btn-primary" type="submit" id="c-submit-btn">Adicionar cupom</button>
+            <button class="btn btn-ghost" type="button" id="c-cancel-edit" style="display:none">Cancelar edição</button>
+          </form>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>Código</th><th>Desconto</th><th>Ativo</th><th>Ações</th></tr></thead>
+            <tbody id="admin-coupons-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="panel-config">
+        <div class="admin-form-card">
+          <h4 style="margin-bottom:14px">Configurações da loja</h4>
+          <form id="settings-form">
+            <div class="admin-form-grid">
+              <div class="field"><label>Nome da açaiteria</label><input id="s-name"></div>
+              <div class="field"><label>WhatsApp (com DDI/DDD, só números)</label><input id="s-whatsapp" placeholder="5569900000000"></div>
+              <div class="field"><label>Cidade</label><input id="s-city"></div>
+              <div class="field"><label>Taxa de entrega (R$)</label><input type="number" step="0.01" id="s-delivery"></div>
+              <div class="field"><label>Chave Pix</label><input id="s-pix-key"></div>
+              <div class="field"><label>Nome do recebedor (Pix)</label><input id="s-pix-name"></div>
+              <div class="field"><label>Instagram (link)</label><input id="s-insta"></div>
+              <div class="field"><label>TikTok (link)</label><input id="s-tiktok"></div>
+              <div class="field"><label>Facebook (link)</label><input id="s-face"></div>
+            </div>
+            <div class="field"><label>Endereço completo</label><input id="s-address"></div>
+            <div class="field"><label>Horário de funcionamento</label><input id="s-hours" placeholder="Todos os dias, 12h às 22h"></div>
+            <button class="btn btn-primary" type="submit">Salvar configurações</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AÇAÍ DO SOL — app.js (inline)
+   =====================================================================
+   Este arquivo contém: configuração, camada de dados (Supabase com
+   fallback local para demonstração), estado do carrinho/builder,
+   renderização das seções e o painel administrativo.
+   ===================================================================== */
+
+/* ---------------------- 1. CONFIGURAÇÃO ---------------------- */
+// Preencha com as credenciais do SEU projeto Supabase (veja SETUP.md).
+// Enquanto estiver com os valores de exemplo abaixo, o site roda em
+// "modo demonstração" usando localStorage apenas no seu navegador —
+// ótimo para testar, mas os pedidos NÃO ficam disponíveis para outros
+// clientes/admin até você configurar o Supabase de verdade.
+const CONFIG = {
+  SUPABASE_URL: "https://ghuhbxrqiljbccqvslth.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_OJ1YNC6iYiM743_neyvLDA_TeU-bMxf",
+  WHATSAPP_FALLBACK: "5511999999999" // usado só se as configurações da loja não carregarem
+};
+
+const HAS_SUPABASE = CONFIG.SUPABASE_URL.startsWith("http") && CONFIG.SUPABASE_ANON_KEY.length > 20;
+const sb = HAS_SUPABASE ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : null;
+
+if (!HAS_SUPABASE) {
+  document.getElementById('setup-banner-host').innerHTML =
+    '<div class="setup-banner">⚠️ Modo demonstração: configure o Supabase em CONFIG (topo do &lt;script&gt;) para dados reais e compartilhados. Veja o arquivo SETUP.md.</div>';
+}
+
+/* ---------------------- 2. UTILITÁRIOS ---------------------- */
+function brl(n){ return (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function uid(){ return 'id-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function toast(msg){
+  const host = document.getElementById('toast-host');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  host.appendChild(el);
+  setTimeout(()=>el.remove(),3200);
+}
+function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function badgeHtml(badge){
+  if(badge==='hot') return '<span class="pill pill-hot">🔥 Queridinho</span>';
+  if(badge==='new') return '<span class="pill pill-new">✨ Novidade</span>';
+  if(badge==='limited') return '<span class="pill pill-limited">⏰ Tempo limitado</span>';
+  return '';
+}
+const STATUS_STEPS_RETIRADA = [
+  {key:'recebido', label:'Recebido', icon:'📥'},
+  {key:'preparo', label:'Em preparação', icon:'🧑‍🍳'},
+  {key:'pronto', label:'Pronto p/ retirada', icon:'✅'},
+];
+const STATUS_STEPS_ENTREGA = [
+  {key:'recebido', label:'Recebido', icon:'📥'},
+  {key:'preparo', label:'Em preparação', icon:'🧑‍🍳'},
+  {key:'pronto', label:'Pronto', icon:'✅'},
+  {key:'saiu', label:'Saiu p/ entrega', icon:'🚴'},
+  {key:'entregue', label:'Entregue', icon:'🏠'},
+];
+const STATUS_LABELS = {recebido:'Pedido recebido',preparo:'Em preparação',pronto:'Pronto',saiu:'Saiu para entrega',entregue:'Entregue',cancelado:'Cancelado'};
+
+/* ---------------------- 3. CAMADA DE DADOS (DB) ---------------------- */
+/* Abstrai Supabase (produção) x localStorage (demonstração), para que
+   o resto do app nunca precise saber qual dos dois está em uso. */
+const LS_KEYS = {products:'acai_products',promos:'acai_promos',coupons:'acai_coupons',orders:'acai_orders',settings:'acai_settings',loyalty:'acai_loyalty'};
+
+function seedDemoData(){
+  if(localStorage.getItem(LS_KEYS.products)) return;
+  const products = [
+    {id:uid(),category:'acai',name:'Açaí 300ml',description:'Açaí puro batido na hora',price:14.9,emoji:'🍨',badge:'',active:true,sort_order:1},
+    {id:uid(),category:'acai',name:'Açaí 500ml',description:'Nosso tamanho mais pedido',price:19.9,emoji:'🍨',badge:'hot',active:true,sort_order:2},
+    {id:uid(),category:'acai',name:'Açaí 700ml',description:'Pra dividir (ou não)',price:24.9,emoji:'🍨',badge:'',active:true,sort_order:3},
+    {id:uid(),category:'acai',name:'Açaí 1L',description:'O tamanho família',price:32.9,emoji:'🍨',badge:'',active:true,sort_order:4},
+    {id:uid(),category:'combos',name:'Combo Açaí + Bebida',description:'Açaí 500ml + bebida gelada',price:24.9,emoji:'🥤',badge:'new',active:true,sort_order:1},
+    {id:uid(),category:'combos',name:'Combo Açaí + Complementos',description:'Açaí 500ml + 3 complementos',price:26.9,emoji:'🍓',badge:'',active:true,sort_order:2},
+    {id:uid(),category:'combos',name:'Combo Família',description:'Açaí 1L + 5 complementos + 2 bebidas',price:44.9,emoji:'👨‍👩‍👧‍👦',badge:'limited',active:true,sort_order:3},
+    {id:uid(),category:'bebidas',name:'Água mineral',description:'500ml',price:4.0,emoji:'💧',badge:'',active:true,sort_order:1},
+    {id:uid(),category:'bebidas',name:'Suco natural',description:'300ml, sabores variados',price:7.5,emoji:'🧃',badge:'',active:true,sort_order:2},
+    {id:uid(),category:'bebidas',name:'Refrigerante lata',description:'350ml',price:6.0,emoji:'🥤',badge:'',active:true,sort_order:3},
+    {id:uid(),category:'complementos',name:'Banana',description:'',price:2.0,emoji:'🍌',badge:'',active:true,sort_order:1},
+    {id:uid(),category:'complementos',name:'Morango',description:'',price:3.0,emoji:'🍓',badge:'',active:true,sort_order:2},
+    {id:uid(),category:'complementos',name:'Granola',description:'',price:2.0,emoji:'🌾',badge:'',active:true,sort_order:3},
+    {id:uid(),category:'complementos',name:'Leite em pó',description:'',price:2.0,emoji:'🥛',badge:'',active:true,sort_order:4},
+    {id:uid(),category:'complementos',name:'Paçoca',description:'',price:2.5,emoji:'🥜',badge:'',active:true,sort_order:5},
+    {id:uid(),category:'complementos',name:'Confetes',description:'',price:2.5,emoji:'🍬',badge:'',active:true,sort_order:6},
+    {id:uid(),category:'complementos',name:'Leite condensado',description:'',price:2.0,emoji:'🍯',badge:'',active:true,sort_order:7},
+  ];
+  const promos = [
+    {id:uid(),title:'Combo da Semana',description:'Açaí 500ml + 3 complementos',price:29.9,badge:'hot',active:true,sort_order:1},
+    {id:uid(),title:'Happy Açaí',description:'Desconto especial das 14h às 16h',price:0,badge:'limited',active:true,sort_order:2,discount_label:'20% OFF'},
+  ];
+  const coupons = [ {id:uid(),code:'ACAI10',discount_percent:10,active:true} ];
+  const settings = {
+    store_name:'Açaí do Sol', whatsapp_number:'5511999999999', city:'Porto Velho - RO',
+    address:'Av. das Palmeiras, 123 - Centro', opening_hours:'Todos os dias, das 12h às 22h',
+    delivery_fee:6.0, pix_key:'contato@acaidosol.com.br', pix_name:'Açaí do Sol Ltda',
+    instagram_url:'https://instagram.com', tiktok_url:'https://tiktok.com', facebook_url:'https://facebook.com'
+  };
+  localStorage.setItem(LS_KEYS.products, JSON.stringify(products));
+  localStorage.setItem(LS_KEYS.promos, JSON.stringify(promos));
+  localStorage.setItem(LS_KEYS.coupons, JSON.stringify(coupons));
+  localStorage.setItem(LS_KEYS.settings, JSON.stringify(settings));
+  localStorage.setItem(LS_KEYS.orders, JSON.stringify([]));
+  localStorage.setItem(LS_KEYS.loyalty, JSON.stringify({}));
+}
+function lsGet(key){ return JSON.parse(localStorage.getItem(key) || 'null'); }
+function lsSet(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+const DB = {
+  async getProducts(){
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('products').select('*').eq('active',true).order('sort_order');
+      if(error){ console.error(error); toast('Erro ao carregar produtos'); return []; }
+      return data;
+    }
+    return lsGet(LS_KEYS.products).filter(p=>p.active);
+  },
+  async getAllProductsAdmin(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('products').select('*').order('sort_order'); if(error){console.error(error);return [];} return data; }
+    return lsGet(LS_KEYS.products);
+  },
+  async saveProduct(p){
+    if(HAS_SUPABASE){
+      if(p.id){ const {error} = await sb.from('products').update(p).eq('id',p.id); if(error) throw error; }
+      else{ const {error} = await sb.from('products').insert(p); if(error) throw error; }
+      return;
+    }
+    let list = lsGet(LS_KEYS.products);
+    if(p.id){ list = list.map(x=>x.id===p.id?{...x,...p}:x); }
+    else{ p.id = uid(); p.sort_order = list.length+1; list.push(p); }
+    lsSet(LS_KEYS.products,list);
+  },
+  async deleteProduct(id){
+    if(HAS_SUPABASE){ const {error} = await sb.from('products').delete().eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.products, lsGet(LS_KEYS.products).filter(p=>p.id!==id));
+  },
+
+  async getPromotions(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('promotions').select('*').eq('active',true).order('sort_order'); if(error){console.error(error);return [];} return data; }
+    return lsGet(LS_KEYS.promos).filter(p=>p.active);
+  },
+  async getAllPromosAdmin(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('promotions').select('*').order('sort_order'); if(error){console.error(error);return [];} return data; }
+    return lsGet(LS_KEYS.promos);
+  },
+  async savePromo(p){
+    if(HAS_SUPABASE){
+      if(p.id){ const {error} = await sb.from('promotions').update(p).eq('id',p.id); if(error) throw error; }
+      else{ const {error} = await sb.from('promotions').insert(p); if(error) throw error; }
+      return;
+    }
+    let list = lsGet(LS_KEYS.promos);
+    if(p.id){ list = list.map(x=>x.id===p.id?{...x,...p}:x); }
+    else{ p.id = uid(); p.sort_order = list.length+1; list.push(p); }
+    lsSet(LS_KEYS.promos,list);
+  },
+  async deletePromo(id){
+    if(HAS_SUPABASE){ const {error} = await sb.from('promotions').delete().eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.promos, lsGet(LS_KEYS.promos).filter(p=>p.id!==id));
+  },
+
+  async getCouponByCode(code){
+    code = (code||'').trim().toUpperCase();
+    if(!code) return null;
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('coupons').select('*').eq('code',code).eq('active',true).maybeSingle();
+      if(error){ console.error(error); return null; }
+      return data;
+    }
+    return lsGet(LS_KEYS.coupons).find(c=>c.code===code && c.active) || null;
+  },
+  async getAllCouponsAdmin(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('coupons').select('*').order('code'); if(error){console.error(error);return [];} return data; }
+    return lsGet(LS_KEYS.coupons);
+  },
+  async saveCoupon(c){
+    c.code = (c.code||'').trim().toUpperCase();
+    if(HAS_SUPABASE){
+      if(c.id){ const {error} = await sb.from('coupons').update(c).eq('id',c.id); if(error) throw error; }
+      else{ const {error} = await sb.from('coupons').insert(c); if(error) throw error; }
+      return;
+    }
+    let list = lsGet(LS_KEYS.coupons);
+    if(c.id){ list = list.map(x=>x.id===c.id?{...x,...c}:x); }
+    else{ c.id = uid(); list.push(c); }
+    lsSet(LS_KEYS.coupons,list);
+  },
+  async deleteCoupon(id){
+    if(HAS_SUPABASE){ const {error} = await sb.from('coupons').delete().eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.coupons, lsGet(LS_KEYS.coupons).filter(c=>c.id!==id));
+  },
+
+  async getSettings(){
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('settings').select('*').eq('id',1).maybeSingle();
+      if(error){ console.error(error); return null; }
+      return data;
+    }
+    return lsGet(LS_KEYS.settings);
+  },
+  async saveSettings(s){
+    if(HAS_SUPABASE){ const {error} = await sb.from('settings').update(s).eq('id',1); if(error) throw error; return; }
+    lsSet(LS_KEYS.settings, {...lsGet(LS_KEYS.settings), ...s});
+  },
+
+  async createOrder(order){
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('orders').insert(order).select().single();
+      if(error) throw error;
+      return data;
+    }
+    let list = lsGet(LS_KEYS.orders);
+    order.id = uid();
+    order.order_number = 1000 + list.length + 1;
+    order.created_at = new Date().toISOString();
+    order.status = 'recebido';
+    list.push(order);
+    lsSet(LS_KEYS.orders,list);
+    return order;
+  },
+  async getAllOrdersAdmin(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('orders').select('*').order('created_at',{ascending:false}); if(error){console.error(error);return [];} return data; }
+    return lsGet(LS_KEYS.orders).slice().reverse();
+  },
+  async getOrderById(id){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('orders').select('*').eq('id',id).maybeSingle(); if(error){console.error(error);return null;} return data; }
+    return lsGet(LS_KEYS.orders).find(o=>o.id===id) || null;
+  },
+  async updateOrderStatus(id,status){
+    if(HAS_SUPABASE){ const {error} = await sb.from('orders').update({status}).eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).map(o=>o.id===id?{...o,status}:o));
+  },
+
+  async getLoyaltyPoints(phone){
+    phone = (phone||'').replace(/\D/g,'');
+    if(!phone) return 0;
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('loyalty').select('points').eq('phone',phone).maybeSingle();
+      if(error){ console.error(error); return 0; }
+      return data ? data.points : 0;
+    }
+    const map = lsGet(LS_KEYS.loyalty) || {};
+    return map[phone] || 0;
+  },
+  async addLoyaltyPoints(phone,pts){
+    phone = (phone||'').replace(/\D/g,'');
+    if(!phone) return;
+    if(HAS_SUPABASE){
+      const {error} = await sb.rpc('add_loyalty_points',{p_phone:phone,p_points:pts});
+      if(error) console.error(error);
+      return;
+    }
+    const map = lsGet(LS_KEYS.loyalty) || {};
+    map[phone] = (map[phone]||0) + pts;
+    lsSet(LS_KEYS.loyalty,map);
+  },
+
+  async adminLogin(email,password){
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      return data;
+    }
+    // modo demo: qualquer credencial "admin@acai.com" / "admin123" funciona
+    if(email==='admin@acai.com' && password==='admin123') return {demo:true};
+    throw new Error('Credenciais inválidas. No modo demo use admin@acai.com / admin123');
+  },
+  async adminLogout(){
+    if(HAS_SUPABASE){ await sb.auth.signOut(); return; }
+    sessionStorage.removeItem('demo_admin');
+  },
+  async getAdminSession(){
+    if(HAS_SUPABASE){ const {data} = await sb.auth.getSession(); return data.session; }
+    return sessionStorage.getItem('demo_admin') ? {demo:true} : null;
+  }
+};
+
+if(!HAS_SUPABASE) seedDemoData();
+
+/* ---------------------- 4. ESTADO ---------------------- */
+let PRODUCTS = [], PROMOS = [], SETTINGS = {}, ALL_PRODUCTS_ADMIN = [];
+let CART = lsGet('acai_cart') || [];
+let ACTIVE_COUPON = null;
+let BUILD_STATE = { size:null, complementos:[], adicionais:[], qty:1 };
+let CURRENT_MENU_TAB = 'acai';
+let LAST_ORDER = null;
+
+function persistCart(){ lsSet('acai_cart', CART); renderCartBadge(); }
+function renderCartBadge(){
+  const count = CART.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('fab-cart-count').textContent = count + (count===1?' item':' itens');
+}
+
+/* ---------------------- 5. CARREGAMENTO INICIAL ---------------------- */
+async function boot(){
+  [PRODUCTS, PROMOS, SETTINGS] = await Promise.all([DB.getProducts(), DB.getPromotions(), DB.getSettings()]);
+  applySettingsToUI();
+  renderDestaque();
+  renderPromos();
+  renderMenu();
+  renderBuilderOptions();
+  renderTestimonials();
+  renderCartBadge();
+  await refreshAdminSessionUI();
+}
+function applySettingsToUI(){
+  const s = SETTINGS || {};
+  const storeName = s.store_name || 'Açaí do Sol';
+  document.title = storeName + ' — Peça seu açaí do seu jeito';
+  document.getElementById('footer-store-name').textContent = storeName;
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+  document.getElementById('loc-city').textContent = s.city || '—';
+  document.getElementById('loc-address').textContent = s.address || '—';
+  document.getElementById('loc-hours').textContent = s.opening_hours || '—';
+  document.getElementById('footer-address').textContent = s.address || '';
+  const wa = (s.whatsapp_number || CONFIG.WHATSAPP_FALLBACK).replace(/\D/g,'');
+  const waLink = 'https://wa.me/' + wa;
+  document.getElementById('fab-whatsapp').href = waLink;
+  document.getElementById('footer-whatsapp').href = waLink + '?text=' + encodeURIComponent('Olá! Vim pelo site e quero fazer um pedido 🍇');
+  document.getElementById('btn-view-map').href = 'https://www.google.com/maps/search/' + encodeURIComponent(s.address || s.city || '');
+  document.getElementById('map-embed').textContent = '📍 ' + (s.address ? s.address + ' — ' + (s.city||'') : 'Configure o endereço no painel administrativo.');
+  if(s.instagram_url) document.getElementById('social-insta').href = s.instagram_url;
+  if(s.tiktok_url) document.getElementById('social-tiktok').href = s.tiktok_url;
+  if(s.facebook_url) document.getElementById('social-face').href = s.facebook_url;
+}
+
+/* ---------------------- 6. AÇAÍ DO DIA ---------------------- */
+function renderDestaque(){
+  const host = document.getElementById('destaque-container');
+  const hero = PROMOS[0] || PRODUCTS.find(p=>p.category==='acai');
+  if(!hero){ host.innerHTML = '<p class="empty-note">Configure um destaque no painel administrativo.</p>'; return; }
+  const title = hero.title || hero.name;
+  const price = hero.price;
+  host.innerHTML = `
+    <div class="destaque-card">
+      <div class="destaque-media">${hero.emoji || '🍇'}</div>
+      <div class="destaque-body">
+        <span class="pill pill-hot">🍇 Açaí do dia</span>
+        <h3 style="font-size:1.6rem">${escapeHtml(title)}</h3>
+        <p style="color:var(--ink-soft)">${escapeHtml(hero.description||'Peça agora e aproveite.')}</p>
+        <div class="destaque-price">${brl(price)}</div>
+        <button class="btn btn-primary" style="width:fit-content" data-quickadd='${JSON.stringify({id:hero.id,name:title,price:price,emoji:hero.emoji||'🍇'}).replace(/'/g,"&apos;")}'>Aproveitar agora</button>
+      </div>
+    </div>`;
+  host.querySelector('[data-quickadd]').addEventListener('click', e=>{
+    const d = JSON.parse(e.currentTarget.dataset.quickadd);
+    addSimpleToCart(d);
+  });
+}
+
+/* ---------------------- 7. PROMOÇÕES ---------------------- */
+function renderPromos(){
+  const host = document.getElementById('promo-grid');
+  if(!PROMOS.length){ host.innerHTML = '<p class="empty-note">Nenhuma promoção ativa no momento.</p>'; return; }
+  host.innerHTML = PROMOS.map(p=>`
+    <div class="card promo-card">
+      ${badgeHtml(p.badge)}
+      <h3>${escapeHtml(p.title)}</h3>
+      <p class="desc">${escapeHtml(p.description||'')}</p>
+      <div class="promo-price">${p.price ? brl(p.price) : (p.discount_label||'')}</div>
+      <button class="btn btn-primary btn-sm" data-quickadd='${JSON.stringify({id:p.id,name:p.title,price:p.price||0,emoji:'🍇'}).replace(/'/g,"&apos;")}'>Aproveitar promoção</button>
+    </div>`).join('');
+  host.querySelectorAll('[data-quickadd]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const d = JSON.parse(e.currentTarget.dataset.quickadd);
+      addSimpleToCart(d);
+    });
+  });
+}
+
+/* ---------------------- 8. CARDÁPIO ---------------------- */
+const CATEGORY_LABELS = {acai:'Açaí',combos:'Combos',bebidas:'Bebidas',complementos:'Complementos'};
+function renderMenu(){
+  const cats = Object.keys(CATEGORY_LABELS).filter(c=>PRODUCTS.some(p=>p.category===c));
+  document.getElementById('menu-tabs').innerHTML = cats.map(c=>`<button class="menu-tab ${c===CURRENT_MENU_TAB?'active':''}" data-cat="${c}">${CATEGORY_LABELS[c]}</button>`).join('');
+  document.querySelectorAll('.menu-tab').forEach(btn=>btn.addEventListener('click', ()=>{ CURRENT_MENU_TAB = btn.dataset.cat; renderMenu(); }));
+  const items = PRODUCTS.filter(p=>p.category===(cats.includes(CURRENT_MENU_TAB)?CURRENT_MENU_TAB:cats[0]));
+  const grid = document.getElementById('menu-grid');
+  if(!items.length){ grid.innerHTML = '<p class="empty-note">Nenhum item nessa categoria ainda.</p>'; return; }
+  grid.innerHTML = items.map(p=>`
+    <div class="card product-card">
+      <div class="product-media">${p.emoji||'🍨'} ${badgeHtml(p.badge)}</div>
+      <div class="product-body">
+        <h4>${escapeHtml(p.name)}</h4>
+        <p class="desc">${escapeHtml(p.description||'')}</p>
+        <div class="product-foot">
+          <span class="product-price">${brl(p.price)}</span>
+          <button class="add-round" aria-label="Adicionar" data-quickadd='${JSON.stringify({id:p.id,name:p.name,price:p.price,emoji:p.emoji||'🍨'}).replace(/'/g,"&apos;")}'>+</button>
+        </div>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('[data-quickadd]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const d = JSON.parse(e.currentTarget.dataset.quickadd);
+      addSimpleToCart(d);
+    });
+  });
+}
+
+/* ---------------------- 9. MONTE SEU AÇAÍ ---------------------- */
+const SIZE_OPTIONS = [
+  {key:'300ml',label:'300ml',price:14.9},
+  {key:'500ml',label:'500ml',price:19.9},
+  {key:'700ml',label:'700ml',price:24.9},
+];
+const ADICIONAIS_OPTIONS = [
+  {key:'nutella',label:'Nutella',price:5},
+  {key:'kitkat',label:'KitKat picado',price:5},
+  {key:'ovomaltine',label:'Ovomaltine',price:4},
+];
+function renderBuilderOptions(){
+  document.getElementById('size-options').innerHTML = SIZE_OPTIONS.map(o=>`
+    <div class="option-chip" data-size="${o.key}"><span>${o.label}</span><small>${brl(o.price)}</small></div>`).join('');
+  document.querySelectorAll('[data-size]').forEach(el=>el.addEventListener('click', ()=>{
+    BUILD_STATE.size = el.dataset.size;
+    document.querySelectorAll('[data-size]').forEach(x=>x.classList.toggle('selected', x===el));
+    updateBuildTotal();
+  }));
+
+  const complementos = PRODUCTS.filter(p=>p.category==='complementos');
+  document.getElementById('complemento-options').innerHTML = complementos.map(c=>`
+    <div class="check-row" data-comp="${c.id}" data-price="${c.price}">
+      <span class="left">${c.emoji||'🍓'} ${escapeHtml(c.name)}</span>
+      <span class="price">+ ${brl(c.price)}</span>
+    </div>`).join('') || '<p class="empty-note">Cadastre complementos no painel.</p>';
+  document.querySelectorAll('[data-comp]').forEach(el=>el.addEventListener('click', ()=>{
+    el.classList.toggle('selected');
+    const id = el.dataset.comp;
+    if(el.classList.contains('selected')) BUILD_STATE.complementos.push(id);
+    else BUILD_STATE.complementos = BUILD_STATE.complementos.filter(x=>x!==id);
+    updateBuildTotal();
+  }));
+
+  document.getElementById('adicional-options').innerHTML = ADICIONAIS_OPTIONS.map(a=>`
+    <div class="check-row" data-adic="${a.key}" data-price="${a.price}">
+      <span class="left">✨ ${a.label}</span><span class="price">+ ${brl(a.price)}</span>
+    </div>`).join('');
+  document.querySelectorAll('[data-adic]').forEach(el=>el.addEventListener('click', ()=>{
+    el.classList.toggle('selected');
+    const key = el.dataset.adic;
+    if(el.classList.contains('selected')) BUILD_STATE.adicionais.push(key);
+    else BUILD_STATE.adicionais = BUILD_STATE.adicionais.filter(x=>x!==key);
+    updateBuildTotal();
+  }));
+  updateBuildTotal();
+}
+function computeBuildUnitPrice(){
+  let total = 0;
+  const size = SIZE_OPTIONS.find(s=>s.key===BUILD_STATE.size);
+  if(size) total += size.price;
+  BUILD_STATE.complementos.forEach(id=>{
+    const c = PRODUCTS.find(p=>p.id===id);
+    if(c) total += Number(c.price);
+  });
+  BUILD_STATE.adicionais.forEach(key=>{
+    const a = ADICIONAIS_OPTIONS.find(x=>x.key===key);
+    if(a) total += a.price;
+  });
+  return total;
+}
+function updateBuildTotal(){
+  const unit = computeBuildUnitPrice();
+  document.getElementById('build-total').textContent = brl(unit * BUILD_STATE.qty);
+}
+document.getElementById('build-qty-plus').addEventListener('click', ()=>{ BUILD_STATE.qty++; document.getElementById('build-qty').textContent = BUILD_STATE.qty; updateBuildTotal(); });
+document.getElementById('build-qty-minus').addEventListener('click', ()=>{ if(BUILD_STATE.qty>1) BUILD_STATE.qty--; document.getElementById('build-qty').textContent = BUILD_STATE.qty; updateBuildTotal(); });
+document.getElementById('btn-add-build').addEventListener('click', ()=>{
+  if(!BUILD_STATE.size){ toast('Escolha o tamanho do seu açaí'); return; }
+  const compNames = BUILD_STATE.complementos.map(id=>PRODUCTS.find(p=>p.id===id)?.name).filter(Boolean);
+  const adicNames = BUILD_STATE.adicionais.map(key=>ADICIONAIS_OPTIONS.find(a=>a.key===key)?.label).filter(Boolean);
+  const unit = computeBuildUnitPrice();
+  CART.push({
+    cartId: uid(), kind:'custom', name:'Monte seu Açaí ' + BUILD_STATE.size,
+    size:BUILD_STATE.size, complementos:compNames, adicionais:adicNames,
+    unitPrice: unit, qty: BUILD_STATE.qty, emoji:'🍨'
+  });
+  persistCart();
+  toast('Açaí adicionado ao carrinho! 🍇');
+  BUILD_STATE = {size:null, complementos:[], adicionais:[], qty:1};
+  document.getElementById('build-qty').textContent = '1';
+  renderBuilderOptions();
+});
+function addSimpleToCart(item){
+  const existing = CART.find(c=>c.kind==='simple' && c.refId===item.id);
+  if(existing) existing.qty += 1;
+  else CART.push({cartId:uid(), kind:'simple', refId:item.id, name:item.name, unitPrice:Number(item.price), qty:1, emoji:item.emoji||'🍨'});
+  persistCart();
+  toast(item.name + ' adicionado ao carrinho');
+}
+
+/* ---------------------- 10. DEPOIMENTOS ---------------------- */
+function renderTestimonials(){
+  const testimonials = [
+    {name:'Marina S.', text:'Meu açaí chegou perfeito e os complementos estavam incríveis!'},
+    {name:'Lucas P.', text:'Peço toda semana, o combo família vale muito a pena.'},
+    {name:'Ana Beatriz', text:'App super fácil de usar, montei meu açaí em menos de 1 minuto.'},
+  ];
+  document.getElementById('testi-grid').innerHTML = testimonials.map(t=>`
+    <div class="card testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"${escapeHtml(t.text)}"</p>
+      <p class="testi-name">— ${escapeHtml(t.name)} (cliente fictício)</p>
+    </div>`).join('');
+}
+
+/* ---------------------- 11. CLUBE DO AÇAÍ ---------------------- */
+document.getElementById('btn-check-points').addEventListener('click', async ()=>{
+  const phone = document.getElementById('club-phone-input').value;
+  if(!phone.replace(/\D/g,'')){ toast('Digite um telefone válido'); return; }
+  const pts = await DB.getLoyaltyPoints(phone);
+  document.getElementById('club-points-display').textContent = pts + ' pontos 🍇';
+  const pct = Math.min(100, (pts/100)*100);
+  document.getElementById('club-progress').style.width = pct + '%';
+  document.getElementById('club-progress-label').textContent = pts>=100
+    ? 'Você já pode resgatar R$10 de desconto! Fale com a loja.'
+    : `Faltam ${100-pts} pontos para R$10 de desconto.`;
+});
+
+/* ---------------------- 12. CARRINHO ---------------------- */
+function itemMeta(item){
+  if(item.kind==='custom'){
+    const parts = [item.size];
+    if(item.complementos?.length) parts.push(item.complementos.join(', '));
+    if(item.adicionais?.length) parts.push(item.adicionais.join(', '));
+    return parts.join(' • ');
+  }
+  return 'Item avulso';
+}
+function renderCart(){
+  const empty = CART.length===0;
+  document.getElementById('cart-empty-note').style.display = empty ? 'block':'none';
+  document.getElementById('cart-foot').style.display = empty ? 'none':'block';
+  document.getElementById('cart-items').innerHTML = CART.map(item=>`
+    <div class="cart-item">
+      <div class="thumb">${item.emoji||'🍇'}</div>
+      <div class="info">
+        <h5>${escapeHtml(item.name)}</h5>
+        <div class="meta">${escapeHtml(itemMeta(item))}</div>
+        <div class="row-actions">
+          <div class="qty-control">
+            <button data-dec="${item.cartId}">−</button>
+            <span>${item.qty}</span>
+            <button data-inc="${item.cartId}">+</button>
+          </div>
+          <div>
+            <strong>${brl(item.unitPrice*item.qty)}</strong>
+            <span class="remove-link" data-remove="${item.cartId}" style="margin-left:10px;cursor:pointer">remover</span>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+  document.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click', ()=>{ changeQty(b.dataset.inc,1); }));
+  document.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click', ()=>{ changeQty(b.dataset.dec,-1); }));
+  document.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click', ()=>{ CART = CART.filter(c=>c.cartId!==b.dataset.remove); persistCart(); renderCart(); updateCartSummary(); }));
+  updateCartSummary();
+}
+function changeQty(cartId,delta){
+  const item = CART.find(c=>c.cartId===cartId);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty<=0) CART = CART.filter(c=>c.cartId!==cartId);
+  persistCart(); renderCart();
+}
+function cartSubtotal(){ return CART.reduce((s,i)=>s+i.unitPrice*i.qty,0); }
+function updateCartSummary(){
+  const subtotal = cartSubtotal();
+  let discount = 0;
+  if(ACTIVE_COUPON) discount = subtotal * (ACTIVE_COUPON.discount_percent/100);
+  const total = Math.max(0, subtotal - discount);
+  document.getElementById('sum-subtotal').textContent = brl(subtotal);
+  document.getElementById('sum-discount-row').style.display = discount>0 ? 'flex':'none';
+  document.getElementById('sum-discount').textContent = '- ' + brl(discount);
+  document.getElementById('sum-total').textContent = brl(total);
+}
+document.getElementById('btn-apply-coupon').addEventListener('click', async ()=>{
+  const code = document.getElementById('coupon-input').value;
+  const coupon = await DB.getCouponByCode(code);
+  const fb = document.getElementById('coupon-feedback');
+  if(!coupon){ fb.style.color = '#C0392B'; fb.textContent = 'Cupom inválido ou expirado.'; ACTIVE_COUPON = null; }
+  else{ ACTIVE_COUPON = coupon; fb.style.color = 'var(--green-600)'; fb.textContent = `Cupom ${coupon.code} aplicado: ${coupon.discount_percent}% OFF`; }
+  updateCartSummary();
+});
+document.getElementById('btn-clear-cart').addEventListener('click', ()=>{ CART=[]; ACTIVE_COUPON=null; persistCart(); renderCart(); toast('Carrinho limpo'); });
+
+/* open/close cart drawer */
+function openCart(){ renderCart(); document.getElementById('cart-overlay').classList.add('open'); }
+function closeCart(){ document.getElementById('cart-overlay').classList.remove('open'); }
+document.getElementById('btn-open-cart').addEventListener('click', openCart);
+document.getElementById('fab-cart-mobile').addEventListener('click', openCart);
+document.getElementById('close-cart').addEventListener('click', closeCart);
+document.getElementById('cart-overlay').addEventListener('click', e=>{ if(e.target.id==='cart-overlay') closeCart(); });
+
+/* ---------------------- 13. CHECKOUT ---------------------- */
+let CHECKOUT_TYPE = 'retirada';
+document.getElementById('seg-retirar').addEventListener('click', ()=>setCheckoutType('retirada'));
+document.getElementById('seg-entrega').addEventListener('click', ()=>setCheckoutType('entrega'));
+function setCheckoutType(type){
+  CHECKOUT_TYPE = type;
+  document.getElementById('seg-retirar').classList.toggle('active', type==='retirada');
+  document.getElementById('seg-entrega').classList.toggle('active', type==='entrega');
+  document.getElementById('address-field').style.display = type==='entrega' ? 'block':'none';
+  updateCheckoutTotal();
+}
+document.getElementById('ck-payment').addEventListener('change', e=>{
+  const pixBox = document.getElementById('pix-info');
+  if(e.target.value==='pix'){
+    pixBox.style.display='block';
+    pixBox.innerHTML = `<strong>Chave Pix:</strong> ${escapeHtml(SETTINGS.pix_key||'a definir')}<br><strong>Recebedor:</strong> ${escapeHtml(SETTINGS.pix_name||'a definir')}`;
+  } else pixBox.style.display='none';
+});
+function checkoutTotal(){
+  const subtotal = cartSubtotal();
+  const discount = ACTIVE_COUPON ? subtotal*(ACTIVE_COUPON.discount_percent/100) : 0;
+  const deliveryFee = CHECKOUT_TYPE==='entrega' ? Number(SETTINGS.delivery_fee||0) : 0;
+  return Math.max(0, subtotal - discount) + deliveryFee;
+}
+function updateCheckoutTotal(){ document.getElementById('ck-total').textContent = brl(checkoutTotal()); }
+document.getElementById('btn-checkout').addEventListener('click', ()=>{
+  if(CART.length===0){ toast('Seu carrinho está vazio'); return; }
+  closeCart();
+  updateCheckoutTotal();
+  document.getElementById('checkout-overlay').classList.add('open');
+});
+document.getElementById('close-checkout').addEventListener('click', ()=>document.getElementById('checkout-overlay').classList.remove('open'));
+
+document.getElementById('checkout-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('ck-name').value.trim();
+  const phone = document.getElementById('ck-phone').value.trim();
+  const address = document.getElementById('ck-address').value.trim();
+  const payment = document.getElementById('ck-payment').value;
+  const notes = document.getElementById('ck-notes').value.trim();
+  if(CHECKOUT_TYPE==='entrega' && !address){ toast('Informe o endereço de entrega'); return; }
+
+  const subtotal = cartSubtotal();
+  const discount = ACTIVE_COUPON ? subtotal*(ACTIVE_COUPON.discount_percent/100) : 0;
+  const deliveryFee = CHECKOUT_TYPE==='entrega' ? Number(SETTINGS.delivery_fee||0) : 0;
+  const total = Math.max(0, subtotal-discount) + deliveryFee;
+
+  const order = {
+    customer_name: name,
+    customer_phone: phone,
+    items: CART.map(i=>({name:i.name, meta:itemMeta(i), qty:i.qty, unit_price:i.unitPrice})),
+    subtotal, discount, delivery_fee: deliveryFee, total,
+    payment_method: payment,
+    fulfillment_type: CHECKOUT_TYPE,
+    address: CHECKOUT_TYPE==='entrega' ? {full: address} : null,
+    notes,
+    coupon_code: ACTIVE_COUPON ? ACTIVE_COUPON.code : null,
+    status: 'recebido'
+  };
+  const btn = document.getElementById('btn-confirm-order');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try{
+    const saved = await DB.createOrder(order);
+    await DB.addLoyaltyPoints(phone, Math.floor(total));
+    LAST_ORDER = saved;
+    CART = []; ACTIVE_COUPON = null; persistCart();
+    localStorage.setItem('acai_last_order_id', saved.id);
+    document.getElementById('checkout-overlay').classList.remove('open');
+    showConfirmation(saved);
+  }catch(err){
+    console.error(err);
+    toast('Não foi possível enviar o pedido. Tente novamente.');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Confirmar pedido';
+  }
+});
+
+/* ---------------------- 14. CONFIRMAÇÃO / ACOMPANHAMENTO ---------------------- */
+function showConfirmation(order){
+  document.getElementById('confirm-order-number').textContent = 'Pedido #' + (order.order_number ?? '—');
+  document.getElementById('confirm-items').innerHTML = (order.items||[]).map(i=>`
+    <div class="cart-summary-line"><span>${i.qty}x ${escapeHtml(i.name)}</span><span>${brl(i.unit_price*i.qty)}</span></div>`).join('');
+  document.getElementById('confirm-type').textContent = order.fulfillment_type==='entrega' ? 'Entrega' : 'Retirar no local';
+  document.getElementById('confirm-payment').textContent = {pix:'Pix',dinheiro:'Dinheiro',cartao:'Cartão'}[order.payment_method] || order.payment_method;
+  document.getElementById('confirm-total').textContent = brl(order.total);
+  renderStatusTrack(order);
+  document.getElementById('btn-order-whatsapp').onclick = ()=>sendOrderToWhatsapp(order);
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function renderStatusTrack(order){
+  const steps = order.fulfillment_type==='entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
+  const currentIdx = steps.findIndex(s=>s.key===order.status);
+  document.getElementById('status-track').innerHTML = steps.map((s,idx)=>{
+    let cls = '';
+    if(order.status==='cancelado') cls='';
+    else if(idx<currentIdx) cls='done';
+    else if(idx===currentIdx) cls='current';
+    return `<div class="status-step ${cls}"><div class="status-dot">${s.icon}</div><span>${s.label}</span></div>`;
+  }).join('');
+}
+function sendOrderToWhatsapp(order){
+  const wa = (SETTINGS.whatsapp_number || CONFIG.WHATSAPP_FALLBACK).replace(/\D/g,'');
+  const lines = [
+    `*Pedido #${order.order_number}*`,
+    `Nome: ${order.customer_name}`,
+    ``,
+    `*Itens:*`,
+    ...(order.items||[]).map(i=>`• ${i.qty}x ${i.name} — ${brl(i.unit_price*i.qty)}`),
+    ``,
+    `Total: ${brl(order.total)}`,
+    `Recebimento: ${order.fulfillment_type==='entrega'?'Entrega':'Retirar no local'}`,
+    order.fulfillment_type==='entrega' && order.address ? `Endereço: ${order.address.full}` : null,
+    `Pagamento: ${order.payment_method}`,
+  ].filter(Boolean).join('\n');
+  window.open('https://wa.me/'+wa+'?text='+encodeURIComponent(lines), '_blank');
+}
+document.getElementById('btn-close-confirm').addEventListener('click', ()=>document.getElementById('confirm-overlay').classList.remove('open'));
+
+/* Reabrir acompanhamento se o cliente tiver um pedido recente salvo */
+async function restoreLastOrderTracking(){
+  const id = localStorage.getItem('acai_last_order_id');
+  if(!id) return;
+  const order = await DB.getOrderById(id);
+  if(order && order.status && order.status!=='entregue' && order.status!=='pronto'){
+    // apenas atualiza a "trilha" se o usuário reabrir a confirmação manualmente; não é intrusivo.
+  }
+}
+
+/* ---------------------- 15. NAV MOBILE ---------------------- */
+document.getElementById('btn-nav-toggle').addEventListener('click', ()=>{
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display==='flex' ? 'none':'flex';
+  links.style.cssText += 'position:absolute;top:64px;left:0;right:0;background:var(--white);flex-direction:column;padding:16px 24px;gap:16px;box-shadow:var(--shadow-sm);';
+});
+
+/* =====================================================================
+   16. PAINEL ADMINISTRATIVO
+   ===================================================================== */
+document.getElementById('link-admin').addEventListener('click', (e)=>{ e.preventDefault(); openAdmin(); });
+document.getElementById('back-to-site').addEventListener('click', (e)=>{ e.preventDefault(); closeAdmin(); });
+document.getElementById('admin-view-site').addEventListener('click', (e)=>{ e.preventDefault(); closeAdmin(); });
+
+function openAdmin(){
+  document.getElementById('site-root').style.display='none';
+  document.getElementById('admin-shell').classList.add('open');
+  refreshAdminSessionUI();
+}
+function closeAdmin(){
+  document.getElementById('admin-shell').classList.remove('open');
+  document.getElementById('site-root').style.display='block';
+  window.location.hash = '#home';
+}
+async function refreshAdminSessionUI(){
+  const session = await DB.getAdminSession();
+  const isOpen = document.getElementById('admin-shell').classList.contains('open');
+  if(!isOpen) return;
+  if(session){
+    document.getElementById('admin-login-view').style.display='none';
+    document.getElementById('admin-dashboard-view').style.display='block';
+    await loadAdminData();
+  } else {
+    document.getElementById('admin-login-view').style.display='block';
+    document.getElementById('admin-dashboard-view').style.display='none';
+  }
+}
+document.getElementById('admin-login-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('admin-email').value;
+  const password = document.getElementById('admin-password').value;
+  const errEl = document.getElementById('admin-login-error');
+  errEl.textContent = '';
+  try{
+    await DB.adminLogin(email,password);
+    if(!HAS_SUPABASE) sessionStorage.setItem('demo_admin','1');
+    await refreshAdminSessionUI();
+  }catch(err){ errEl.textContent = err.message || 'Erro ao entrar.'; }
+});
+document.getElementById('admin-logout').addEventListener('click', async ()=>{ await DB.adminLogout(); await refreshAdminSessionUI(); });
+
+/* tabs */
+document.querySelectorAll('.admin-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+async function loadAdminData(){
+  await Promise.all([renderAdminOrders(), renderAdminProducts(), renderAdminPromos(), renderAdminCoupons(), fillSettingsForm()]);
+}
+
+/* ---- pedidos ---- */
+let ORDER_FILTER = 'todos';
+const STATUS_OPTIONS = ['recebido','preparo','pronto','saiu','entregue','cancelado'];
+async function renderAdminOrders(){
+  const orders = await DB.getAllOrdersAdmin();
+  const filters = ['todos',...STATUS_OPTIONS];
+  document.getElementById('order-status-filters').innerHTML = filters.map(f=>`<button class="admin-tab ${f===ORDER_FILTER?'active':''}" data-filter="${f}">${f==='todos'?'Todos':STATUS_LABELS[f]}</button>`).join('');
+  document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click', ()=>{ ORDER_FILTER=b.dataset.filter; renderAdminOrders(); }));
+  const filtered = ORDER_FILTER==='todos' ? orders : orders.filter(o=>o.status===ORDER_FILTER);
+  document.getElementById('admin-orders-body').innerHTML = filtered.map(o=>`
+    <tr>
+      <td>#${o.order_number}</td>
+      <td>${escapeHtml(o.customer_name)}<br><small style="color:var(--ink-soft)">${escapeHtml(o.customer_phone||'')}</small></td>
+      <td>${(o.items||[]).map(i=>`${i.qty}x ${escapeHtml(i.name)}`).join('<br>')}</td>
+      <td>${brl(o.total)}</td>
+      <td>${o.fulfillment_type==='entrega'?'Entrega':'Retirada'}</td>
+      <td>${o.payment_method}</td>
+      <td>
+        <select class="status-select" data-order-id="${o.id}">
+          ${STATUS_OPTIONS.map(s=>`<option value="${s}" ${s===o.status?'selected':''}>${STATUS_LABELS[s]}</option>`).join('')}
+        </select>
+      </td>
+      <td>${o.created_at ? new Date(o.created_at).toLocaleString('pt-BR') : ''}</td>
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+  document.querySelectorAll('[data-order-id]').forEach(sel=>{
+    sel.addEventListener('change', async ()=>{
+      try{ await DB.updateOrderStatus(sel.dataset.orderId, sel.value); toast('Status atualizado'); }
+      catch(err){ console.error(err); toast('Erro ao atualizar status'); }
+    });
+  });
+}
+
+/* ---- produtos ---- */
+async function renderAdminProducts(){
+  ALL_PRODUCTS_ADMIN = await DB.getAllProductsAdmin();
+  document.getElementById('admin-products-body').innerHTML = ALL_PRODUCTS_ADMIN.map(p=>`
+    <tr>
+      <td>${p.emoji||''} ${escapeHtml(p.name)}</td>
+      <td>${CATEGORY_LABELS[p.category]||p.category}</td>
+      <td>${brl(p.price)}</td>
+      <td>${badgeHtml(p.badge)||'—'}</td>
+      <td>${p.active?'Sim':'Não'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" data-edit-product="${p.id}">Editar</button>
+        <button class="btn btn-ghost btn-sm" data-del-product="${p.id}">Excluir</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft)">Nenhum produto cadastrado.</td></tr>';
+  document.querySelectorAll('[data-edit-product]').forEach(b=>b.addEventListener('click', ()=>editProduct(b.dataset.editProduct)));
+  document.querySelectorAll('[data-del-product]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('Excluir este produto?')) return;
+    await DB.deleteProduct(b.dataset.delProduct);
+    toast('Produto excluído');
+    await renderAdminProducts();
+  }));
+}
+function editProduct(id){
+  const p = ALL_PRODUCTS_ADMIN.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('p-id').value = p.id;
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-category').value = p.category;
+  document.getElementById('p-price').value = p.price;
+  document.getElementById('p-emoji').value = p.emoji||'🍨';
+  document.getElementById('p-badge').value = p.badge||'';
+  document.getElementById('p-active').value = String(!!p.active);
+  document.getElementById('p-desc').value = p.description||'';
+  document.getElementById('p-submit-btn').textContent = 'Salvar alterações';
+  document.getElementById('p-cancel-edit').style.display='inline-flex';
+}
+document.getElementById('p-cancel-edit').addEventListener('click', ()=>resetProductForm());
+function resetProductForm(){
+  document.getElementById('product-form').reset();
+  document.getElementById('p-id').value='';
+  document.getElementById('p-submit-btn').textContent = 'Adicionar produto';
+  document.getElementById('p-cancel-edit').style.display='none';
+}
+document.getElementById('product-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const payload = {
+    id: document.getElementById('p-id').value || undefined,
+    name: document.getElementById('p-name').value.trim(),
+    category: document.getElementById('p-category').value,
+    price: parseFloat(document.getElementById('p-price').value),
+    emoji: document.getElementById('p-emoji').value.trim() || '🍨',
+    badge: document.getElementById('p-badge').value,
+    active: document.getElementById('p-active').value === 'true',
+    description: document.getElementById('p-desc').value.trim(),
+  };
+  try{ await DB.saveProduct(payload); toast('Produto salvo'); resetProductForm(); await renderAdminProducts(); PRODUCTS = await DB.getProducts(); renderMenu(); renderBuilderOptions(); }
+  catch(err){ console.error(err); toast('Erro ao salvar produto'); }
+});
+
+/* ---- promoções ---- */
+async function renderAdminPromos(){
+  const promos = await DB.getAllPromosAdmin();
+  document.getElementById('admin-promos-body').innerHTML = promos.map(p=>`
+    <tr>
+      <td>${escapeHtml(p.title)}</td>
+      <td>${brl(p.price)}</td>
+      <td>${p.active?'Sim':'Não'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" data-edit-promo="${p.id}">Editar</button>
+        <button class="btn btn-ghost btn-sm" data-del-promo="${p.id}">Excluir</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--ink-soft)">Nenhuma promoção cadastrada.</td></tr>';
+  document.querySelectorAll('[data-edit-promo]').forEach(b=>b.addEventListener('click', ()=>editPromo(b.dataset.editPromo, promos)));
+  document.querySelectorAll('[data-del-promo]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('Excluir esta promoção?')) return;
+    await DB.deletePromo(b.dataset.delPromo);
+    toast('Promoção excluída');
+    await renderAdminPromos();
+  }));
+}
+function editPromo(id, promos){
+  const p = promos.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('pr-id').value = p.id;
+  document.getElementById('pr-title').value = p.title;
+  document.getElementById('pr-price').value = p.price;
+  document.getElementById('pr-badge').value = p.badge||'hot';
+  document.getElementById('pr-active').value = String(!!p.active);
+  document.getElementById('pr-desc').value = p.description||'';
+  document.getElementById('pr-submit-btn').textContent = 'Salvar alterações';
+  document.getElementById('pr-cancel-edit').style.display='inline-flex';
+}
+document.getElementById('pr-cancel-edit').addEventListener('click', ()=>resetPromoForm());
+function resetPromoForm(){
+  document.getElementById('promo-form').reset();
+  document.getElementById('pr-id').value='';
+  document.getElementById('pr-submit-btn').textContent = 'Adicionar promoção';
+  document.getElementById('pr-cancel-edit').style.display='none';
+}
+document.getElementById('promo-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const payload = {
+    id: document.getElementById('pr-id').value || undefined,
+    title: document.getElementById('pr-title').value.trim(),
+    price: parseFloat(document.getElementById('pr-price').value),
+    badge: document.getElementById('pr-badge').value,
+    active: document.getElementById('pr-active').value === 'true',
+    description: document.getElementById('pr-desc').value.trim(),
+  };
+  try{ await DB.savePromo(payload); toast('Promoção salva'); resetPromoForm(); await renderAdminPromos(); PROMOS = await DB.getPromotions(); renderPromos(); renderDestaque(); }
+  catch(err){ console.error(err); toast('Erro ao salvar promoção'); }
+});
+
+/* ---- cupons ---- */
+async function renderAdminCoupons(){
+  const coupons = await DB.getAllCouponsAdmin();
+  document.getElementById('admin-coupons-body').innerHTML = coupons.map(c=>`
+    <tr>
+      <td>${escapeHtml(c.code)}</td>
+      <td>${c.discount_percent}%</td>
+      <td>${c.active?'Sim':'Não'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" data-edit-coupon="${c.id}">Editar</button>
+        <button class="btn btn-ghost btn-sm" data-del-coupon="${c.id}">Excluir</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--ink-soft)">Nenhum cupom cadastrado.</td></tr>';
+  document.querySelectorAll('[data-edit-coupon]').forEach(b=>b.addEventListener('click', ()=>editCoupon(b.dataset.editCoupon, coupons)));
+  document.querySelectorAll('[data-del-coupon]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('Excluir este cupom?')) return;
+    await DB.deleteCoupon(b.dataset.delCoupon);
+    toast('Cupom excluído');
+    await renderAdminCoupons();
+  }));
+}
+function editCoupon(id, coupons){
+  const c = coupons.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('c-id').value = c.id;
+  document.getElementById('c-code').value = c.code;
+  document.getElementById('c-percent').value = c.discount_percent;
+  document.getElementById('c-active').value = String(!!c.active);
+  document.getElementById('c-submit-btn').textContent = 'Salvar alterações';
+  document.getElementById('c-cancel-edit').style.display='inline-flex';
+}
+document.getElementById('c-cancel-edit').addEventListener('click', ()=>resetCouponForm());
+function resetCouponForm(){
+  document.getElementById('coupon-form').reset();
+  document.getElementById('c-id').value='';
+  document.getElementById('c-submit-btn').textContent = 'Adicionar cupom';
+  document.getElementById('c-cancel-edit').style.display='none';
+}
+document.getElementById('coupon-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const payload = {
+    id: document.getElementById('c-id').value || undefined,
+    code: document.getElementById('c-code').value.trim(),
+    discount_percent: parseFloat(document.getElementById('c-percent').value),
+    active: document.getElementById('c-active').value === 'true',
+  };
+  try{ await DB.saveCoupon(payload); toast('Cupom salvo'); resetCouponForm(); await renderAdminCoupons(); }
+  catch(err){ console.error(err); toast('Erro ao salvar cupom (o código já pode existir)'); }
+});
+
+/* ---- configurações ---- */
+async function fillSettingsForm(){
+  const s = await DB.getSettings() || {};
+  document.getElementById('s-name').value = s.store_name||'';
+  document.getElementById('s-whatsapp').value = s.whatsapp_number||'';
+  document.getElementById('s-city').value = s.city||'';
+  document.getElementById('s-delivery').value = s.delivery_fee||0;
+  document.getElementById('s-pix-key').value = s.pix_key||'';
+  document.getElementById('s-pix-name').value = s.pix_name||'';
+  document.getElementById('s-insta').value = s.instagram_url||'';
+  document.getElementById('s-tiktok').value = s.tiktok_url||'';
+  document.getElementById('s-face').value = s.facebook_url||'';
+  document.getElementById('s-address').value = s.address||'';
+  document.getElementById('s-hours').value = s.opening_hours||'';
+}
+document.getElementById('settings-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const payload = {
+    store_name: document.getElementById('s-name').value.trim(),
+    whatsapp_number: document.getElementById('s-whatsapp').value.replace(/\D/g,''),
+    city: document.getElementById('s-city').value.trim(),
+    delivery_fee: parseFloat(document.getElementById('s-delivery').value)||0,
+    pix_key: document.getElementById('s-pix-key').value.trim(),
+    pix_name: document.getElementById('s-pix-name').value.trim(),
+    instagram_url: document.getElementById('s-insta').value.trim(),
+    tiktok_url: document.getElementById('s-tiktok').value.trim(),
+    facebook_url: document.getElementById('s-face').value.trim(),
+    address: document.getElementById('s-address').value.trim(),
+    opening_hours: document.getElementById('s-hours').value.trim(),
+  };
+  try{ await DB.saveSettings(payload); toast('Configurações salvas'); SETTINGS = await DB.getSettings(); applySettingsToUI(); }
+  catch(err){ console.error(err); toast('Erro ao salvar configurações'); }
+});
+
+/* ---------------------- 17. START ---------------------- */
+if(window.location.hash === '#admin') openAdmin();
+boot();
+</script>
+</body>
+</html>
