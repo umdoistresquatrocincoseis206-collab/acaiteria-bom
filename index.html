@@ -109,18 +109,20 @@ header.site-header{
   width:min(380px,80vw);aspect-ratio:1/1;border-radius:50%;
   background:radial-gradient(circle at 35% 30%,#8A3FA8,#3B0F49 75%);
   box-shadow:0 30px 60px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;
-  font-size:7rem;position:relative;animation:float 5s ease-in-out infinite;
+  font-size:7rem;position:relative;animation:float 5s ease-in-out infinite;overflow:hidden;
 }
-.hero-bowl::after{content:'';position:absolute;inset:14px;border-radius:50%;border:2px dashed rgba(255,255,255,.18)}
+.hero-bowl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.hero-bowl::after{content:'';position:absolute;inset:14px;border-radius:50%;border:2px dashed rgba(255,255,255,.18);z-index:2;pointer-events:none}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-.hero-stat-chip{position:absolute;background:var(--white);color:var(--purple-950);padding:10px 16px;border-radius:100px;font-weight:800;font-size:.85rem;box-shadow:var(--shadow-md);display:flex;gap:6px;align-items:center}
+.hero-stat-chip{position:absolute;background:var(--white);color:var(--purple-950);padding:10px 16px;border-radius:100px;font-weight:800;font-size:.85rem;box-shadow:var(--shadow-md);display:flex;gap:6px;align-items:center;z-index:3}
 .chip-a{top:6%;left:-6%}
 .chip-b{bottom:8%;right:-4%}
 
 /* ---------- destaque do dia ---------- */
 .destaque{background:var(--purple-100)}
 .destaque-card{display:grid;grid-template-columns:.9fr 1.1fr;gap:0;border-radius:var(--radius-lg);overflow:hidden;background:var(--white);box-shadow:var(--shadow-md)}
-.destaque-media{background:linear-gradient(135deg,var(--purple-500),var(--purple-950));display:flex;align-items:center;justify-content:center;font-size:5.5rem;color:var(--white);min-height:260px}
+.destaque-media{background:linear-gradient(135deg,var(--purple-500),var(--purple-950));display:flex;align-items:center;justify-content:center;font-size:5.5rem;color:var(--white);min-height:260px;position:relative;overflow:hidden}
+.destaque-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .destaque-body{padding:34px 38px;display:flex;flex-direction:column;justify-content:center;gap:14px}
 .destaque-price{font-family:var(--font-display);font-size:2rem;color:var(--purple-600)}
 .destaque-price s{color:var(--ink-soft);font-size:1.1rem;margin-right:8px;font-weight:600}
@@ -139,8 +141,10 @@ header.site-header{
 .menu-tab.active{background:var(--purple-950);color:var(--white);border-color:var(--purple-950)}
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
 .product-card{overflow:hidden;display:flex;flex-direction:column}
-.product-media{aspect-ratio:4/3;background:linear-gradient(135deg,var(--purple-100),#fff);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
-.product-media .pill{position:absolute;top:10px;left:10px}
+.product-media{aspect-ratio:4/3;background:linear-gradient(135deg,var(--purple-100),#fff);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+.product-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.product-media .emoji-fallback{position:relative;z-index:0}
+.product-media .pill{position:absolute;top:10px;left:10px;z-index:2}
 .product-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
 .product-body h4{font-size:1.05rem}
 .product-body .desc{font-size:.85rem;color:var(--ink-soft);min-height:32px}
@@ -169,6 +173,15 @@ header.site-header{
 
 /* ---------- depoimentos ---------- */
 .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.review-summary{display:flex;gap:36px;align-items:center;background:var(--purple-100);border-radius:var(--radius-lg);padding:26px 30px;margin-bottom:28px;flex-wrap:wrap}
+.review-score{text-align:center}
+.score-num{font-family:var(--font-display);font-size:3rem;color:var(--purple-600);line-height:1}
+.score-count{font-size:.78rem;color:var(--ink-soft);margin-top:6px;line-height:1.3}
+.review-bars{flex:1;min-width:220px;display:flex;flex-direction:column;gap:7px}
+.review-bar-row{display:flex;align-items:center;gap:10px;font-size:.78rem;font-weight:700;color:var(--ink-soft)}
+.review-bar-row .bar{flex:1;height:8px;background:var(--white);border-radius:100px;overflow:hidden}
+.review-bar-row .fill{height:100%;background:var(--yellow-400);border-radius:100px}
+.review-bar-row span:last-child{min-width:32px;text-align:right}
 .testi-card{padding:26px}
 .testi-stars{color:var(--yellow-400);font-size:1rem;margin-bottom:10px}
 .testi-quote{font-size:.98rem;color:var(--ink);margin-bottom:14px}
@@ -260,13 +273,40 @@ footer{background:var(--purple-950);color:rgba(255,255,255,.75);padding:56px 0 2
 /* admin */
 .admin-shell{display:none;min-height:100vh;background:var(--cream)}
 .admin-shell.open{display:block}
-.admin-bar{background:var(--purple-950);color:#fff;padding:14px 0}
-.admin-bar .container{display:flex;justify-content:space-between;align-items:center}
-.admin-tabs{display:flex;gap:8px;padding:18px 0;flex-wrap:wrap}
-.admin-tab{padding:9px 16px;border-radius:100px;background:var(--white);border:2px solid var(--line);font-weight:800;font-size:.85rem}
-.admin-tab.active{background:var(--purple-950);color:#fff;border-color:var(--purple-950)}
+.admin-bar{
+  background:var(--purple-950);color:#fff;padding:16px 0;
+  position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(0,0,0,.18);
+}
+.admin-bar-inner{display:flex;justify-content:space-between;align-items:center;padding:0 28px}
+.admin-bar-inner strong{
+  font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:.01em;
+}
+.admin-layout{display:flex;align-items:flex-start}
+.admin-sidebar{
+  width:240px;flex-shrink:0;min-height:100vh;
+  background:var(--purple-950);
+  padding:24px 16px;position:sticky;top:64px;
+  align-self:flex-start;
+}
+.admin-tabs{display:flex;flex-direction:column;gap:8px}
+.admin-tab{
+  padding:12px 16px;border-radius:14px;background:var(--purple-800);color:rgba(255,255,255,.85);
+  border:2px solid transparent;font-weight:800;font-size:.9rem;text-align:left;width:100%;
+  transition:background .15s ease, color .15s ease;
+}
+.admin-tab:hover{background:var(--purple-600);color:#fff}
+.admin-tab.active{background:var(--yellow-400);color:var(--purple-950);border-color:var(--yellow-400)}
+.admin-main{flex:1;min-width:0;padding:28px 24px}
 .admin-panel{display:none}
 .admin-panel.active{display:block}
+@media (max-width:800px){
+  .admin-layout{flex-direction:column}
+  .admin-sidebar{width:100%;position:static;min-height:auto}
+  .admin-tabs{flex-direction:row;flex-wrap:wrap}
+  .admin-tab{width:auto}
+}
+.filter-chip{padding:9px 16px;border-radius:100px;background:var(--white);border:2px solid var(--line);font-weight:800;font-size:.85rem;color:var(--ink-soft)}
+.filter-chip.active{background:var(--purple-950);color:#fff;border-color:var(--purple-950)}
 table.admin-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)}
 table.admin-table th,table.admin-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.88rem}
 table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-weight:800}
@@ -296,6 +336,68 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
   .fab-cart-mobile{display:flex}
   .fab-whatsapp{bottom:86px}
 }
+
+/* =====================================================
+   VISUAL 2.0 — animações minimalistas + reforço visual
+   ===================================================== */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1);will-change:opacity,transform}
+.reveal.in-view{opacity:1;transform:translateY(0)}
+.reveal-stagger.in-view > *{animation:staggerIn .6s cubic-bezier(.16,.8,.24,1) both}
+.reveal-stagger.in-view > *:nth-child(1){animation-delay:.02s}
+.reveal-stagger.in-view > *:nth-child(2){animation-delay:.08s}
+.reveal-stagger.in-view > *:nth-child(3){animation-delay:.14s}
+.reveal-stagger.in-view > *:nth-child(4){animation-delay:.2s}
+.reveal-stagger.in-view > *:nth-child(5){animation-delay:.26s}
+.reveal-stagger.in-view > *:nth-child(6){animation-delay:.32s}
+@keyframes staggerIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){
+  .reveal, .reveal-stagger > *{opacity:1!important;transform:none!important;transition:none!important;animation:none!important}
+  .hero-bowl, .hero::before, .hero::after{animation:none!important}
+}
+
+/* hero — orbes suaves + entrada em cascata */
+.hero{position:relative;isolation:isolate}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;z-index:0;pointer-events:none}
+.hero::before{width:440px;height:440px;background:var(--purple-500);top:-140px;left:-120px;animation:orbFloat 13s ease-in-out infinite}
+.hero::after{width:380px;height:380px;background:var(--green-400);bottom:-150px;right:-90px;opacity:.35;animation:orbFloat 16s ease-in-out infinite reverse}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(26px,-18px) scale(1.08)}}
+.hero .container{position:relative;z-index:1}
+.hero-eyebrow,.hero h1,.hero p,.hero-actions{opacity:0;animation:heroUp .7s cubic-bezier(.16,.8,.24,1) forwards}
+.hero-eyebrow{animation-delay:.05s}
+.hero h1{animation-delay:.15s}
+.hero p{animation-delay:.28s}
+.hero-actions{animation-delay:.4s}
+.hero-visual{opacity:0;animation:heroFade .9s ease .3s forwards}
+@keyframes heroUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroFade{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){
+  .hero-eyebrow,.hero h1,.hero p,.hero-actions,.hero-visual{opacity:1!important;animation:none!important;transform:none!important}
+}
+
+/* avaliações — resumo com anel de nota + seletor de estrelas */
+.review-score-ring{width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--yellow-400) calc(var(--pct,0)*1%), var(--white) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 1s ease}
+.review-score-ring-inner{width:82px;height:82px;border-radius:50%;background:var(--purple-100);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.review-score-ring-inner .score-num{font-size:1.7rem}
+.star-input{display:inline-flex;gap:6px;font-size:1.9rem;line-height:1;cursor:pointer;margin-bottom:4px}
+.star-input span{color:var(--line);transition:color .15s ease, transform .15s ease}
+.star-input span.active{color:var(--yellow-400)}
+.star-input span:hover{transform:scale(1.18)}
+.review-form-card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:30px;margin-top:28px}
+.review-form-card h3{font-size:1.2rem;margin-bottom:4px}
+.review-form-card > p{color:var(--ink-soft);font-size:.92rem;margin-bottom:18px}
+
+/* admin — painel com mais vida */
+.admin-sidebar{background:linear-gradient(185deg,var(--purple-950),var(--purple-800))}
+.admin-tab{position:relative;overflow:hidden}
+.admin-tab.active{box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.admin-panel.active{animation:panelIn .35s cubic-bezier(.16,.8,.24,1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--white);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-sm);border-left:4px solid var(--purple-600);display:flex;flex-direction:column;gap:4px;transition:transform .2s ease, box-shadow .2s ease}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.stat-card .label{font-size:.78rem;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
+.stat-card .num{font-family:var(--font-display);font-size:1.7rem;color:var(--purple-950)}
+@media (prefers-reduced-motion: reduce){ .admin-panel.active{animation:none} }
 </style>
 </head>
 <body>
@@ -336,15 +438,15 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-bowl">🍨</div>
-      <div class="hero-stat-chip chip-a">⭐ 4.9 de avaliação</div>
-      <div class="hero-stat-chip chip-b">🚴 Entrega em ~30 min</div>
+      <div class="hero-bowl"><img src="https://loremflickr.com/900/900/acai,bowl?lock=101" alt="Tigela de açaí com frutas" onerror="this.remove()">🍨</div>
+      <div class="hero-stat-chip chip-a" id="hero-rating-chip">🍇 Feito na hora</div>
+      <div class="hero-stat-chip chip-b">🚴 Entrega rápida</div>
     </div>
   </div>
 </section>
 
 <!-- AÇAÍ DO DIA -->
-<section class="section destaque" id="destaque-dia">
+<section class="section destaque reveal" id="destaque-dia">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">🍇 Açaí do dia</span>
@@ -355,7 +457,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 </section>
 
 <!-- PROMOÇÕES -->
-<section class="section" id="promocoes">
+<section class="section reveal" id="promocoes">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">🔥 Promoções</span>
@@ -367,7 +469,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 </section>
 
 <!-- CARDÁPIO -->
-<section class="section" id="cardapio" style="background:var(--white)">
+<section class="section reveal" id="cardapio" style="background:var(--white)">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">🍧 Cardápio</span>
@@ -380,7 +482,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 </section>
 
 <!-- MONTE SEU AÇAÍ -->
-<section class="section builder" id="montar">
+<section class="section builder reveal" id="montar">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">🥣 Personalize</span>
@@ -419,19 +521,43 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
   </div>
 </section>
 
-<!-- DEPOIMENTOS -->
-<section class="section" style="background:var(--white)">
+<!-- DEPOIMENTOS / AVALIAÇÕES DE CLIENTES -->
+<section class="section reveal" id="avaliacoes" style="background:var(--white)">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">💬 Depoimentos</span>
       <h2>Quem prova, aprova!</h2>
+      <p>Avaliações reais de quem já pediu — e se você já provou, deixe a sua abaixo.</p>
+    </div>
+    <div class="review-summary">
+      <div class="review-score">
+        <div class="review-score-ring" id="review-score-ring" style="--pct:0">
+          <div class="review-score-ring-inner">
+            <div class="score-num" id="review-score-num">—</div>
+          </div>
+        </div>
+        <div class="testi-stars" id="review-score-stars">☆☆☆☆☆</div>
+        <div class="score-count" id="review-score-count">Ainda sem avaliações</div>
+      </div>
+      <div class="review-bars" id="review-bars"></div>
     </div>
     <div class="testi-grid" id="testi-grid"></div>
+
+    <div class="review-form-card">
+      <h3>⭐ Deixe sua avaliação</h3>
+      <p>Já pediu com a gente? Conte como foi a sua experiência.</p>
+      <form id="review-form">
+        <div class="field"><label>Sua nota</label><div class="star-input" id="review-stars"></div></div>
+        <div class="field"><label>Seu nome</label><input required id="review-name" type="text" placeholder="Como podemos te chamar?"></div>
+        <div class="field"><label>Comentário</label><textarea required id="review-comment" rows="3" placeholder="Conte como foi seu pedido..."></textarea></div>
+        <button class="btn btn-primary" type="submit">Enviar avaliação</button>
+      </form>
+    </div>
   </div>
 </section>
 
 <!-- CLUBE DO AÇAÍ -->
-<section class="section club" id="clube">
+<section class="section club reveal" id="clube">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free" style="color:var(--yellow-400)">🍇 Clube do Açaí</span>
@@ -455,7 +581,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 </section>
 
 <!-- LOCALIZAÇÃO -->
-<section class="section" id="local" style="background:var(--white)">
+<section class="section reveal" id="local" style="background:var(--white)">
   <div class="container">
     <div class="section-head">
       <span class="eyebrow-free">📍 Onde estamos</span>
@@ -503,8 +629,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span id="footer-year"></span> Açaí do Sol — todos os direitos reservados</span>
-      <span>Dados de demonstração, 100% fictícios.</span>
+      <span>© <span id="footer-year"></span> <span id="footer-store-name-bottom">Açaí do Sol</span> — todos os direitos reservados</span>
     </div>
   </div>
 </footer>
@@ -599,7 +724,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 <!-- ===================== ADMIN ===================== -->
 <div class="admin-shell" id="admin-shell">
   <div id="admin-login-view">
-    <div class="admin-bar"><div class="container"><strong>🍇 Açaí do Sol — Painel Administrativo</strong></div></div>
+    <div class="admin-bar"><div class="admin-bar-inner"><strong>🍇 Açaí do Sol — Painel Administrativo</strong></div></div>
     <div class="login-box">
       <h3 style="margin-bottom:6px">Entrar</h3>
       <p style="color:var(--ink-soft);font-size:.9rem;margin-bottom:18px">Acesso restrito à administração da loja.</p>
@@ -616,7 +741,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 
   <div id="admin-dashboard-view" style="display:none">
     <div class="admin-bar">
-      <div class="container">
+      <div class="admin-bar-inner">
         <strong>🍇 Painel Administrativo</strong>
         <div style="display:flex;gap:10px;align-items:center">
           <a href="#home" class="btn btn-ghost btn-sm" id="admin-view-site">Ver site</a>
@@ -624,16 +749,21 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
         </div>
       </div>
     </div>
-    <div class="container">
-      <div class="admin-tabs">
-        <button class="admin-tab active" data-tab="pedidos">Pedidos</button>
-        <button class="admin-tab" data-tab="produtos">Produtos</button>
-        <button class="admin-tab" data-tab="promocoes">Promoções</button>
-        <button class="admin-tab" data-tab="cupons">Cupons</button>
-        <button class="admin-tab" data-tab="config">Configurações</button>
-      </div>
+    <div class="admin-layout">
+      <nav class="admin-sidebar">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="pedidos">📥 Pedidos</button>
+          <button class="admin-tab" data-tab="produtos">🍨 Produtos</button>
+          <button class="admin-tab" data-tab="promocoes">🔥 Promoções</button>
+          <button class="admin-tab" data-tab="cupons">🎟️ Cupons</button>
+          <button class="admin-tab" data-tab="avaliacoes">⭐ Avaliações</button>
+          <button class="admin-tab" data-tab="config">⚙️ Configurações</button>
+        </div>
+      </nav>
+      <div class="admin-main">
 
       <div class="admin-panel active" id="panel-pedidos">
+        <div class="admin-stats" id="admin-stats"></div>
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
         <div style="overflow-x:auto">
           <table class="admin-table">
@@ -672,6 +802,19 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
               </div>
             </div>
             <div class="field"><label>Descrição curta</label><input id="p-desc"></div>
+            <div class="admin-form-grid">
+              <div class="field">
+                <label>Imagem do produto (URL)</label>
+                <input id="p-image-url" type="url" placeholder="https://...">
+              </div>
+              <div class="field">
+                <label>...ou envie um arquivo da imagem</label>
+                <input id="p-image-file" type="file" accept="image/*">
+              </div>
+            </div>
+            <div id="p-image-preview-wrap" style="display:none;margin-bottom:14px">
+              <img id="p-image-preview" src="" alt="Pré-visualização" style="width:120px;height:90px;object-fit:cover;border-radius:12px;box-shadow:var(--shadow-sm)">
+            </div>
             <input type="hidden" id="p-id">
             <button class="btn btn-primary" type="submit" id="p-submit-btn">Adicionar produto</button>
             <button class="btn btn-ghost" type="button" id="p-cancel-edit" style="display:none">Cancelar edição</button>
@@ -733,6 +876,16 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
         </div>
       </div>
 
+      <div class="admin-panel" id="panel-avaliacoes">
+        <p style="color:var(--ink-soft);font-size:.9rem;margin-bottom:16px">As avaliações são enviadas pelos próprios clientes no site. Aqui você só pode visualizar e remover avaliações inadequadas — não é possível criar avaliações por aqui.</p>
+        <div style="overflow-x:auto">
+          <table class="admin-table">
+            <thead><tr><th>Cliente</th><th>Nota</th><th>Comentário</th><th>Data</th><th>Ações</th></tr></thead>
+            <tbody id="admin-reviews-body"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="admin-panel" id="panel-config">
         <div class="admin-form-card">
           <h4 style="margin-bottom:14px">Configurações da loja</h4>
@@ -754,7 +907,9 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
           </form>
         </div>
       </div>
-    </div>
+
+      </div><!-- /admin-main -->
+    </div><!-- /admin-layout -->
   </div>
 </div>
 
@@ -805,6 +960,22 @@ function badgeHtml(badge){
   if(badge==='limited') return '<span class="pill pill-limited">⏰ Tempo limitado</span>';
   return '';
 }
+/* ---------------------- 2b. ANIMAÇÕES (scroll reveal) ---------------------- */
+const revealObserver = ('IntersectionObserver' in window) ? new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold:0.12, rootMargin:'0px 0px -40px 0px'}) : null;
+function initReveal(){
+  const els = document.querySelectorAll('.reveal:not(.in-view)');
+  if(!revealObserver){ els.forEach(el=>el.classList.add('in-view')); return; }
+  els.forEach(el=>revealObserver.observe(el));
+}
+function starString(n){ n = Math.max(0,Math.min(5,Math.round(Number(n)||0))); return '★★★★★'.slice(0,n) + '☆☆☆☆☆'.slice(0,5-n); }
+
 const STATUS_STEPS_RETIRADA = [
   {key:'recebido', label:'Recebido', icon:'📥'},
   {key:'preparo', label:'Em preparação', icon:'🧑‍🍳'},
@@ -822,49 +993,36 @@ const STATUS_LABELS = {recebido:'Pedido recebido',preparo:'Em preparação',pron
 /* ---------------------- 3. CAMADA DE DADOS (DB) ---------------------- */
 /* Abstrai Supabase (produção) x localStorage (demonstração), para que
    o resto do app nunca precise saber qual dos dois está em uso. */
-const LS_KEYS = {products:'acai_products',promos:'acai_promos',coupons:'acai_coupons',orders:'acai_orders',settings:'acai_settings',loyalty:'acai_loyalty'};
+const LS_KEYS = {products:'acai_products_v2',promos:'acai_promos_v2',coupons:'acai_coupons_v2',orders:'acai_orders_v2',settings:'acai_settings_v2',loyalty:'acai_loyalty_v2',reviews:'acai_reviews_v2'};
 
+/* Inicializa o armazenamento local vazio (modo demonstração/offline).
+   Nenhum produto, pedido, promoção ou avaliação de exemplo é criado —
+   a loja começa em branco e tudo é cadastrado pelo próprio lojista
+   (produtos/promoções/cupons) ou pelos clientes (avaliações). */
 function seedDemoData(){
   if(localStorage.getItem(LS_KEYS.products)) return;
-  const products = [
-    {id:uid(),category:'acai',name:'Açaí 300ml',description:'Açaí puro batido na hora',price:14.9,emoji:'🍨',badge:'',active:true,sort_order:1},
-    {id:uid(),category:'acai',name:'Açaí 500ml',description:'Nosso tamanho mais pedido',price:19.9,emoji:'🍨',badge:'hot',active:true,sort_order:2},
-    {id:uid(),category:'acai',name:'Açaí 700ml',description:'Pra dividir (ou não)',price:24.9,emoji:'🍨',badge:'',active:true,sort_order:3},
-    {id:uid(),category:'acai',name:'Açaí 1L',description:'O tamanho família',price:32.9,emoji:'🍨',badge:'',active:true,sort_order:4},
-    {id:uid(),category:'combos',name:'Combo Açaí + Bebida',description:'Açaí 500ml + bebida gelada',price:24.9,emoji:'🥤',badge:'new',active:true,sort_order:1},
-    {id:uid(),category:'combos',name:'Combo Açaí + Complementos',description:'Açaí 500ml + 3 complementos',price:26.9,emoji:'🍓',badge:'',active:true,sort_order:2},
-    {id:uid(),category:'combos',name:'Combo Família',description:'Açaí 1L + 5 complementos + 2 bebidas',price:44.9,emoji:'👨‍👩‍👧‍👦',badge:'limited',active:true,sort_order:3},
-    {id:uid(),category:'bebidas',name:'Água mineral',description:'500ml',price:4.0,emoji:'💧',badge:'',active:true,sort_order:1},
-    {id:uid(),category:'bebidas',name:'Suco natural',description:'300ml, sabores variados',price:7.5,emoji:'🧃',badge:'',active:true,sort_order:2},
-    {id:uid(),category:'bebidas',name:'Refrigerante lata',description:'350ml',price:6.0,emoji:'🥤',badge:'',active:true,sort_order:3},
-    {id:uid(),category:'complementos',name:'Banana',description:'',price:2.0,emoji:'🍌',badge:'',active:true,sort_order:1},
-    {id:uid(),category:'complementos',name:'Morango',description:'',price:3.0,emoji:'🍓',badge:'',active:true,sort_order:2},
-    {id:uid(),category:'complementos',name:'Granola',description:'',price:2.0,emoji:'🌾',badge:'',active:true,sort_order:3},
-    {id:uid(),category:'complementos',name:'Leite em pó',description:'',price:2.0,emoji:'🥛',badge:'',active:true,sort_order:4},
-    {id:uid(),category:'complementos',name:'Paçoca',description:'',price:2.5,emoji:'🥜',badge:'',active:true,sort_order:5},
-    {id:uid(),category:'complementos',name:'Confetes',description:'',price:2.5,emoji:'🍬',badge:'',active:true,sort_order:6},
-    {id:uid(),category:'complementos',name:'Leite condensado',description:'',price:2.0,emoji:'🍯',badge:'',active:true,sort_order:7},
-  ];
-  const promos = [
-    {id:uid(),title:'Combo da Semana',description:'Açaí 500ml + 3 complementos',price:29.9,badge:'hot',active:true,sort_order:1},
-    {id:uid(),title:'Happy Açaí',description:'Desconto especial das 14h às 16h',price:0,badge:'limited',active:true,sort_order:2,discount_label:'20% OFF'},
-  ];
-  const coupons = [ {id:uid(),code:'ACAI10',discount_percent:10,active:true} ];
   const settings = {
-    store_name:'Açaí do Sol', whatsapp_number:'5569992283610', city:'Porto Velho - RO',
-    address:'Av. das Palmeiras, 123 - Centro', opening_hours:'Todos os dias, das 12h às 22h',
-    delivery_fee:6.0, pix_key:'contato@acaidosol.com.br', pix_name:'Açaí do Sol Ltda',
-    instagram_url:'https://instagram.com', tiktok_url:'https://tiktok.com', facebook_url:'https://facebook.com'
+    store_name:'', whatsapp_number:'', city:'', address:'', opening_hours:'',
+    delivery_fee:0, pix_key:'', pix_name:'',
+    instagram_url:'', tiktok_url:'', facebook_url:''
   };
-  localStorage.setItem(LS_KEYS.products, JSON.stringify(products));
-  localStorage.setItem(LS_KEYS.promos, JSON.stringify(promos));
-  localStorage.setItem(LS_KEYS.coupons, JSON.stringify(coupons));
+  localStorage.setItem(LS_KEYS.products, JSON.stringify([]));
+  localStorage.setItem(LS_KEYS.promos, JSON.stringify([]));
+  localStorage.setItem(LS_KEYS.coupons, JSON.stringify([]));
   localStorage.setItem(LS_KEYS.settings, JSON.stringify(settings));
   localStorage.setItem(LS_KEYS.orders, JSON.stringify([]));
   localStorage.setItem(LS_KEYS.loyalty, JSON.stringify({}));
+  localStorage.setItem(LS_KEYS.reviews, JSON.stringify([]));
 }
 function lsGet(key){ return JSON.parse(localStorage.getItem(key) || 'null'); }
-function lsSet(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
+function lsSet(key,val){
+  try{
+    localStorage.setItem(key, JSON.stringify(val));
+  }catch(err){
+    console.error('Erro ao salvar no localStorage', err);
+    throw new Error('Não foi possível salvar: o armazenamento local do navegador atingiu o limite (geralmente por imagens muito grandes). Tente uma imagem menor ou configure o Supabase para produção.');
+  }
+}
 
 const DB = {
   async getProducts(){
@@ -1015,6 +1173,41 @@ const DB = {
     lsSet(LS_KEYS.loyalty,map);
   },
 
+  async getReviews(){
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(30);
+      if(error){ console.error(error); return []; }
+      return data;
+    }
+    return (lsGet(LS_KEYS.reviews)||[]).slice().reverse();
+  },
+  async getAllReviewsAdmin(){
+    if(HAS_SUPABASE){ const {data,error} = await sb.from('reviews').select('*').order('created_at',{ascending:false}); if(error){console.error(error);return [];} return data; }
+    return (lsGet(LS_KEYS.reviews)||[]).slice().reverse();
+  },
+  async submitReview(r){
+    const payload = {
+      name: (r.name||'').trim(),
+      comment: (r.comment||'').trim(),
+      rating: Math.max(1, Math.min(5, Number(r.rating)||5)),
+    };
+    if(!payload.name || !payload.comment) throw new Error('Preencha seu nome e o comentário.');
+    if(HAS_SUPABASE){
+      const {error} = await sb.from('reviews').insert(payload);
+      if(error) throw error;
+      return;
+    }
+    const list = lsGet(LS_KEYS.reviews) || [];
+    payload.id = uid();
+    payload.created_at = new Date().toISOString();
+    list.push(payload);
+    lsSet(LS_KEYS.reviews, list);
+  },
+  async deleteReview(id){
+    if(HAS_SUPABASE){ const {error} = await sb.from('reviews').delete().eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.reviews, (lsGet(LS_KEYS.reviews)||[]).filter(r=>r.id!==id));
+  },
+
   async adminLogin(email,password){
     if(HAS_SUPABASE){
       const {data,error} = await sb.auth.signInWithPassword({email,password});
@@ -1060,8 +1253,9 @@ async function boot(){
   renderPromos();
   renderMenu();
   renderBuilderOptions();
-  renderTestimonials();
+  await renderReviews();
   renderCartBadge();
+  initReveal();
   await refreshAdminSessionUI();
 }
 function applySettingsToUI(){
@@ -1069,6 +1263,7 @@ function applySettingsToUI(){
   const storeName = s.store_name || 'Açaí do Sol';
   document.title = storeName + ' — Peça seu açaí do seu jeito';
   document.getElementById('footer-store-name').textContent = storeName;
+  document.getElementById('footer-store-name-bottom').textContent = storeName;
   document.getElementById('footer-year').textContent = new Date().getFullYear();
   document.getElementById('loc-city').textContent = s.city || '—';
   document.getElementById('loc-address').textContent = s.address || '—';
@@ -1086,6 +1281,13 @@ function applySettingsToUI(){
 }
 
 /* ---------------------- 6. AÇAÍ DO DIA ---------------------- */
+function mediaHtml(item, fallbackEmoji){
+  const emoji = item.emoji || fallbackEmoji || '🍇';
+  if(item.image_url){
+    return `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.name||item.title||'Produto')}" loading="lazy" onerror="this.remove()"><span class="emoji-fallback">${emoji}</span>`;
+  }
+  return `<span class="emoji-fallback">${emoji}</span>`;
+}
 function renderDestaque(){
   const host = document.getElementById('destaque-container');
   const hero = PROMOS[0] || PRODUCTS.find(p=>p.category==='acai');
@@ -1094,7 +1296,7 @@ function renderDestaque(){
   const price = hero.price;
   host.innerHTML = `
     <div class="destaque-card">
-      <div class="destaque-media">${hero.emoji || '🍇'}</div>
+      <div class="destaque-media">${mediaHtml(hero,'🍇')}</div>
       <div class="destaque-body">
         <span class="pill pill-hot">🍇 Açaí do dia</span>
         <h3 style="font-size:1.6rem">${escapeHtml(title)}</h3>
@@ -1140,7 +1342,7 @@ function renderMenu(){
   if(!items.length){ grid.innerHTML = '<p class="empty-note">Nenhum item nessa categoria ainda.</p>'; return; }
   grid.innerHTML = items.map(p=>`
     <div class="card product-card">
-      <div class="product-media">${p.emoji||'🍨'} ${badgeHtml(p.badge)}</div>
+      <div class="product-media">${mediaHtml(p,'🍨')} ${badgeHtml(p.badge)}</div>
       <div class="product-body">
         <h4>${escapeHtml(p.name)}</h4>
         <p class="desc">${escapeHtml(p.description||'')}</p>
@@ -1249,20 +1451,69 @@ function addSimpleToCart(item){
   toast(item.name + ' adicionado ao carrinho');
 }
 
-/* ---------------------- 10. DEPOIMENTOS ---------------------- */
-function renderTestimonials(){
-  const testimonials = [
-    {name:'Marina S.', text:'Meu açaí chegou perfeito e os complementos estavam incríveis!'},
-    {name:'Lucas P.', text:'Peço toda semana, o combo família vale muito a pena.'},
-    {name:'Ana Beatriz', text:'App super fácil de usar, montei meu açaí em menos de 1 minuto.'},
-  ];
-  document.getElementById('testi-grid').innerHTML = testimonials.map(t=>`
-    <div class="card testi-card">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"${escapeHtml(t.text)}"</p>
-      <p class="testi-name">— ${escapeHtml(t.name)} (cliente fictício)</p>
-    </div>`).join('');
+/* ---------------------- 10. DEPOIMENTOS / AVALIAÇÕES REAIS ---------------------- */
+let REVIEWS = [];
+let SELECTED_REVIEW_RATING = 5;
+
+function renderStarInput(){
+  const host = document.getElementById('review-stars');
+  if(!host) return;
+  host.innerHTML = [1,2,3,4,5].map(n=>`<span data-star="${n}" class="${n<=SELECTED_REVIEW_RATING?'active':''}">★</span>`).join('');
+  host.querySelectorAll('[data-star]').forEach(s=>{
+    s.addEventListener('click', ()=>{ SELECTED_REVIEW_RATING = Number(s.dataset.star); renderStarInput(); });
+  });
 }
+renderStarInput();
+
+async function renderReviews(){
+  REVIEWS = await DB.getReviews();
+  const count = REVIEWS.length;
+  const avg = count ? REVIEWS.reduce((s,r)=>s+Number(r.rating||0),0) / count : 0;
+
+  document.getElementById('review-score-num').textContent = count ? avg.toFixed(1) : '—';
+  document.getElementById('review-score-stars').textContent = count ? starString(avg) : '☆☆☆☆☆';
+  document.getElementById('review-score-count').textContent = count
+    ? `${count} avaliaç${count===1?'ão':'ões'} de clientes`
+    : 'Ainda sem avaliações — seja o primeiro!';
+  document.getElementById('review-score-ring').style.setProperty('--pct', count ? Math.round((avg/5)*100) : 0);
+
+  document.getElementById('review-bars').innerHTML = [5,4,3,2,1].map(star=>{
+    const n = REVIEWS.filter(r=>Math.round(Number(r.rating||0))===star).length;
+    const pct = count ? Math.round((n/count)*100) : 0;
+    return `<div class="review-bar-row"><span>${star}★</span><div class="bar"><div class="fill" style="width:${pct}%"></div></div><span>${pct}%</span></div>`;
+  }).join('');
+
+  const grid = document.getElementById('testi-grid');
+  grid.innerHTML = count
+    ? REVIEWS.slice(0,9).map(r=>`
+      <div class="card testi-card reveal">
+        <div class="testi-stars">${starString(r.rating)}</div>
+        <p class="testi-quote">"${escapeHtml(r.comment)}"</p>
+        <p class="testi-name">— ${escapeHtml(r.name)}</p>
+      </div>`).join('')
+    : '<p class="empty-note">Ainda não há avaliações. Peça o seu açaí e conte pra gente como foi! 🍇</p>';
+
+  const chip = document.getElementById('hero-rating-chip');
+  if(chip) chip.textContent = count ? `⭐ ${avg.toFixed(1)} de avaliação` : '🍇 Feito na hora';
+
+  initReveal();
+}
+
+const reviewFormEl = document.getElementById('review-form');
+if(reviewFormEl) reviewFormEl.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('review-name').value.trim();
+  const comment = document.getElementById('review-comment').value.trim();
+  if(!name || !comment){ toast('Preencha seu nome e o comentário'); return; }
+  try{
+    await DB.submitReview({name, comment, rating:SELECTED_REVIEW_RATING});
+    toast('Obrigado pela sua avaliação! 🍇');
+    reviewFormEl.reset();
+    SELECTED_REVIEW_RATING = 5;
+    renderStarInput();
+    await renderReviews();
+  }catch(err){ console.error(err); toast(err.message || 'Erro ao enviar avaliação'); }
+});
 
 /* ---------------------- 11. CLUBE DO AÇAÍ ---------------------- */
 document.getElementById('btn-check-points').addEventListener('click', async ()=>{
@@ -1422,7 +1673,7 @@ document.getElementById('checkout-form').addEventListener('submit', async (e)=>{
     showConfirmation(saved);
   }catch(err){
     console.error(err);
-    toast('Não foi possível enviar o pedido. Tente novamente.');
+    toast(err.message || 'Não foi possível enviar o pedido. Tente novamente.');
   }finally{
     btn.disabled = false; btn.textContent = 'Confirmar pedido';
   }
@@ -1541,16 +1792,30 @@ document.querySelectorAll('.admin-tab').forEach(tab=>{
 });
 
 async function loadAdminData(){
-  await Promise.all([renderAdminOrders(), renderAdminProducts(), renderAdminPromos(), renderAdminCoupons(), fillSettingsForm()]);
+  await Promise.all([renderAdminOrders(), renderAdminProducts(), renderAdminPromos(), renderAdminCoupons(), renderAdminReviews(), fillSettingsForm()]);
 }
 
 /* ---- pedidos ---- */
 let ORDER_FILTER = 'todos';
 const STATUS_OPTIONS = ['recebido','preparo','pronto','saiu','entregue','cancelado'];
+function renderOrderStats(orders){
+  const host = document.getElementById('admin-stats');
+  if(!host) return;
+  const startOfToday = new Date(); startOfToday.setHours(0,0,0,0);
+  const todayOrders = orders.filter(o=>o.created_at && new Date(o.created_at) >= startOfToday);
+  const revenueToday = todayOrders.reduce((s,o)=>s+Number(o.total||0),0);
+  const emAndamento = orders.filter(o=>!['entregue','cancelado'].includes(o.status)).length;
+  host.innerHTML = `
+    <div class="stat-card"><span class="label">Pedidos hoje</span><span class="num">${todayOrders.length}</span></div>
+    <div class="stat-card"><span class="label">Faturamento hoje</span><span class="num">${brl(revenueToday)}</span></div>
+    <div class="stat-card"><span class="label">Em andamento</span><span class="num">${emAndamento}</span></div>
+    <div class="stat-card"><span class="label">Total de pedidos</span><span class="num">${orders.length}</span></div>`;
+}
 async function renderAdminOrders(){
   const orders = await DB.getAllOrdersAdmin();
+  renderOrderStats(orders);
   const filters = ['todos',...STATUS_OPTIONS];
-  document.getElementById('order-status-filters').innerHTML = filters.map(f=>`<button class="admin-tab ${f===ORDER_FILTER?'active':''}" data-filter="${f}">${f==='todos'?'Todos':STATUS_LABELS[f]}</button>`).join('');
+  document.getElementById('order-status-filters').innerHTML = filters.map(f=>`<button class="filter-chip ${f===ORDER_FILTER?'active':''}" data-filter="${f}">${f==='todos'?'Todos':STATUS_LABELS[f]}</button>`).join('');
   document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click', ()=>{ ORDER_FILTER=b.dataset.filter; renderAdminOrders(); }));
   const filtered = ORDER_FILTER==='todos' ? orders : orders.filter(o=>o.status===ORDER_FILTER);
   document.getElementById('admin-orders-body').innerHTML = filtered.map(o=>`
@@ -1571,9 +1836,29 @@ async function renderAdminOrders(){
   document.querySelectorAll('[data-order-id]').forEach(sel=>{
     sel.addEventListener('change', async ()=>{
       try{ await DB.updateOrderStatus(sel.dataset.orderId, sel.value); toast('Status atualizado'); }
-      catch(err){ console.error(err); toast('Erro ao atualizar status'); }
+      catch(err){ console.error(err); toast(err.message || 'Erro ao atualizar status'); }
     });
   });
+}
+
+/* ---- avaliações (moderação apenas — quem cria é o cliente, no site) ---- */
+async function renderAdminReviews(){
+  const reviews = await DB.getAllReviewsAdmin();
+  document.getElementById('admin-reviews-body').innerHTML = reviews.map(r=>`
+    <tr>
+      <td>${escapeHtml(r.name)}</td>
+      <td>${starString(r.rating)}</td>
+      <td>${escapeHtml(r.comment)}</td>
+      <td>${r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : ''}</td>
+      <td><button class="btn btn-ghost btn-sm" data-del-review="${r.id}">Excluir</button></td>
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft)">Nenhuma avaliação recebida ainda.</td></tr>';
+  document.querySelectorAll('[data-del-review]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('Excluir esta avaliação?')) return;
+    await DB.deleteReview(b.dataset.delReview);
+    toast('Avaliação excluída');
+    await renderAdminReviews();
+    await renderReviews();
+  }));
 }
 
 /* ---- produtos ---- */
@@ -1581,7 +1866,12 @@ async function renderAdminProducts(){
   ALL_PRODUCTS_ADMIN = await DB.getAllProductsAdmin();
   document.getElementById('admin-products-body').innerHTML = ALL_PRODUCTS_ADMIN.map(p=>`
     <tr>
-      <td>${p.emoji||''} ${escapeHtml(p.name)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" style="width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0" onerror="this.remove()">` : ''}
+          <span>${p.emoji||''} ${escapeHtml(p.name)}</span>
+        </div>
+      </td>
       <td>${CATEGORY_LABELS[p.category]||p.category}</td>
       <td>${brl(p.price)}</td>
       <td>${badgeHtml(p.badge)||'—'}</td>
@@ -1610,6 +1900,8 @@ function editProduct(id){
   document.getElementById('p-badge').value = p.badge||'';
   document.getElementById('p-active').value = String(!!p.active);
   document.getElementById('p-desc').value = p.description||'';
+  document.getElementById('p-image-url').value = p.image_url||'';
+  showImagePreview(p.image_url||'');
   document.getElementById('p-submit-btn').textContent = 'Salvar alterações';
   document.getElementById('p-cancel-edit').style.display='inline-flex';
 }
@@ -1619,7 +1911,60 @@ function resetProductForm(){
   document.getElementById('p-id').value='';
   document.getElementById('p-submit-btn').textContent = 'Adicionar produto';
   document.getElementById('p-cancel-edit').style.display='none';
+  showImagePreview('');
 }
+function showImagePreview(url){
+  const wrap = document.getElementById('p-image-preview-wrap');
+  const img = document.getElementById('p-image-preview');
+  if(url){ img.src = url; wrap.style.display='block'; }
+  else{ img.src=''; wrap.style.display='none'; }
+}
+document.getElementById('p-image-url').addEventListener('input', e=>showImagePreview(e.target.value.trim()));
+
+/* Redimensiona/comprime a imagem no navegador antes de salvar, para evitar
+   arquivos gigantes (fotos de celular) que estouram o limite de armazenamento
+   ou o tamanho aceito pelo banco de dados. */
+function compressImageFile(file, maxDim=900, quality=0.75){
+  return new Promise((resolve,reject)=>{
+    if(!file.type.startsWith('image/')){ reject(new Error('Selecione um arquivo de imagem válido.')); return; }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let {width,height} = img;
+        if(width>maxDim || height>maxDim){
+          if(width>height){ height = Math.round(height*(maxDim/width)); width = maxDim; }
+          else{ width = Math.round(width*(maxDim/height)); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,width,height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = ()=>reject(new Error('Não foi possível processar essa imagem. Tente outro arquivo.'));
+      img.src = reader.result;
+    };
+    reader.onerror = ()=>reject(new Error('Não foi possível ler o arquivo selecionado.'));
+    reader.readAsDataURL(file);
+  });
+}
+document.getElementById('p-image-file').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const dataUrl = await compressImageFile(file);
+    if(dataUrl.length > 900000){
+      toast('Imagem ainda muito grande — use uma foto mais simples ou uma URL externa.');
+    }
+    document.getElementById('p-image-url').value = dataUrl;
+    showImagePreview(dataUrl);
+  }catch(err){
+    console.error(err);
+    toast(err.message || 'Não foi possível processar a imagem selecionada');
+    e.target.value = '';
+  }
+});
 document.getElementById('product-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const payload = {
@@ -1631,9 +1976,10 @@ document.getElementById('product-form').addEventListener('submit', async (e)=>{
     badge: document.getElementById('p-badge').value,
     active: document.getElementById('p-active').value === 'true',
     description: document.getElementById('p-desc').value.trim(),
+    image_url: document.getElementById('p-image-url').value.trim() || null,
   };
-  try{ await DB.saveProduct(payload); toast('Produto salvo'); resetProductForm(); await renderAdminProducts(); PRODUCTS = await DB.getProducts(); renderMenu(); renderBuilderOptions(); }
-  catch(err){ console.error(err); toast('Erro ao salvar produto'); }
+  try{ await DB.saveProduct(payload); toast('Produto salvo'); resetProductForm(); await renderAdminProducts(); PRODUCTS = await DB.getProducts(); renderMenu(); renderBuilderOptions(); renderDestaque(); }
+  catch(err){ console.error(err); toast(err.message || 'Erro ao salvar produto'); }
 });
 
 /* ---- promoções ---- */
@@ -1687,7 +2033,7 @@ document.getElementById('promo-form').addEventListener('submit', async (e)=>{
     description: document.getElementById('pr-desc').value.trim(),
   };
   try{ await DB.savePromo(payload); toast('Promoção salva'); resetPromoForm(); await renderAdminPromos(); PROMOS = await DB.getPromotions(); renderPromos(); renderDestaque(); }
-  catch(err){ console.error(err); toast('Erro ao salvar promoção'); }
+  catch(err){ console.error(err); toast(err.message || 'Erro ao salvar promoção'); }
 });
 
 /* ---- cupons ---- */
@@ -1737,7 +2083,7 @@ document.getElementById('coupon-form').addEventListener('submit', async (e)=>{
     active: document.getElementById('c-active').value === 'true',
   };
   try{ await DB.saveCoupon(payload); toast('Cupom salvo'); resetCouponForm(); await renderAdminCoupons(); }
-  catch(err){ console.error(err); toast('Erro ao salvar cupom (o código já pode existir)'); }
+  catch(err){ console.error(err); toast(err.message || 'Erro ao salvar cupom (o código já pode existir)'); }
 });
 
 /* ---- configurações ---- */
@@ -1771,7 +2117,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e)=>{
     opening_hours: document.getElementById('s-hours').value.trim(),
   };
   try{ await DB.saveSettings(payload); toast('Configurações salvas'); SETTINGS = await DB.getSettings(); applySettingsToUI(); }
-  catch(err){ console.error(err); toast('Erro ao salvar configurações'); }
+  catch(err){ console.error(err); toast(err.message || 'Erro ao salvar configurações'); }
 });
 
 /* ---------------------- 17. START ---------------------- */
