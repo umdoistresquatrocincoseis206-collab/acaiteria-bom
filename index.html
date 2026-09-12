@@ -1258,6 +1258,10 @@
     }
 
     /* ---------- modals / drawers (generic) ---------- */
+    body.scroll-locked {
+      overflow: hidden;
+    }
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -3863,9 +3867,23 @@
     });
     document.getElementById('btn-clear-cart').addEventListener('click', () => { CART = []; ACTIVE_COUPON = null; persistCart(); renderCart(); toast('Carrinho limpo'); });
 
+    /* Trava o scroll do fundo da página enquanto qualquer modal/drawer estiver
+       aberto (carrinho, checkout ou confirmação), para não dar pra rolar ou
+       clicar no conteúdo por trás. Usa um contador porque um modal pode abrir
+       "por cima" de outro (ex: checkout fecha e confirmação abre em seguida). */
+    let OPEN_OVERLAYS = 0;
+    function lockBodyScroll() {
+      OPEN_OVERLAYS++;
+      document.body.classList.add('scroll-locked');
+    }
+    function unlockBodyScroll() {
+      OPEN_OVERLAYS = Math.max(0, OPEN_OVERLAYS - 1);
+      if (OPEN_OVERLAYS === 0) document.body.classList.remove('scroll-locked');
+    }
+
     /* open/close cart drawer */
-    function openCart() { renderCart(); document.getElementById('cart-overlay').classList.add('open'); }
-    function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); }
+    function openCart() { renderCart(); document.getElementById('cart-overlay').classList.add('open'); lockBodyScroll(); }
+    function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); unlockBodyScroll(); }
     document.getElementById('btn-open-cart').addEventListener('click', openCart);
     document.getElementById('fab-cart-mobile').addEventListener('click', openCart);
     document.getElementById('close-cart').addEventListener('click', closeCart);
@@ -3901,8 +3919,9 @@
       closeCart();
       updateCheckoutTotal();
       document.getElementById('checkout-overlay').classList.add('open');
+      lockBodyScroll();
     });
-    document.getElementById('close-checkout').addEventListener('click', () => document.getElementById('checkout-overlay').classList.remove('open'));
+    document.getElementById('close-checkout').addEventListener('click', () => { document.getElementById('checkout-overlay').classList.remove('open'); unlockBodyScroll(); });
 
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -3940,6 +3959,7 @@
         localStorage.setItem('acai_last_order_id', saved.id);
         await startOrderTracking(saved.id);
         document.getElementById('checkout-overlay').classList.remove('open');
+        unlockBodyScroll();
         showConfirmation(saved);
       } catch (err) {
         console.error(err);
@@ -3960,6 +3980,7 @@
       renderStatusTrack(order);
       document.getElementById('btn-order-whatsapp').onclick = () => sendOrderToWhatsapp(order);
       document.getElementById('confirm-overlay').classList.add('open');
+      lockBodyScroll();
     }
     function renderStatusTrack(order) {
       const steps = order.fulfillment_type === 'entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
@@ -3998,7 +4019,7 @@
       ].filter(Boolean).join('\n');
       window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(lines), '_blank');
     }
-    document.getElementById('btn-close-confirm').addEventListener('click', () => document.getElementById('confirm-overlay').classList.remove('open'));
+    document.getElementById('btn-close-confirm').addEventListener('click', () => { document.getElementById('confirm-overlay').classList.remove('open'); unlockBodyScroll(); });
 
     /* ---------------------- ACOMPANHAMENTO AUTOMÁTICO DO PEDIDO ----------------------
        Assim que o cliente faz um pedido, passamos a observar o status dele. Um
