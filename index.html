@@ -1258,7 +1258,15 @@
     }
 
     /* ---------- modals / drawers (generic) ---------- */
+    html.scroll-locked {
+      overflow: hidden;
+    }
+
     body.scroll-locked {
+      position: fixed;
+      left: 0;
+      right: 0;
+      width: 100%;
       overflow: hidden;
     }
 
@@ -1310,6 +1318,18 @@
       overflow-y: auto;
       padding: 32px;
       animation: pop .2s ease
+    }
+
+    @media (max-width:480px) {
+      .overlay.center {
+        padding: 12px;
+      }
+
+      .modal-box {
+        padding: 20px;
+        max-height: calc(100vh - 24px);
+        border-radius: var(--radius-md);
+      }
     }
 
     @keyframes pop {
@@ -1565,7 +1585,10 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      align-items: center
+      align-items: center;
+      width: calc(100% - 32px);
+      max-width: 420px;
+      pointer-events: none;
     }
 
     .toast {
@@ -1576,7 +1599,11 @@
       font-weight: 700;
       font-size: .9rem;
       box-shadow: var(--shadow-md);
-      animation: toastIn .2s ease
+      animation: toastIn .2s ease;
+      max-width: 100%;
+      text-align: center;
+      word-break: break-word;
+      pointer-events: auto;
     }
 
     @keyframes toastIn {
@@ -1678,6 +1705,13 @@
       padding: 28px 24px
     }
 
+    @media (min-width:1500px) {
+      .admin-main {
+        max-width: 1360px;
+        margin: 0 auto;
+      }
+    }
+
     .admin-panel {
       display: none
     }
@@ -1725,16 +1759,18 @@
       }
 
       .admin-stats {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
         gap: 10px;
       }
 
       .stat-card {
         padding: 14px 14px;
+        min-width: 0;
       }
 
       .stat-card .num {
-        font-size: 1.4rem;
+        font-size: 1.25rem;
+        word-break: break-word;
       }
 
       .stat-card .label {
@@ -1778,7 +1814,16 @@
       }
 
       .admin-stats {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 8px;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .stat-card .num {
+        font-size: 1.1rem;
       }
 
       .admin-tab {
@@ -1854,6 +1899,10 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px
+    }
+
+    .admin-form-grid>.field {
+      min-width: 0;
     }
 
     .crop-hint {
@@ -2335,6 +2384,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0;
       transition: transform .2s ease, box-shadow .2s ease
     }
 
@@ -3870,15 +3920,27 @@
     /* Trava o scroll do fundo da página enquanto qualquer modal/drawer estiver
        aberto (carrinho, checkout ou confirmação), para não dar pra rolar ou
        clicar no conteúdo por trás. Usa um contador porque um modal pode abrir
-       "por cima" de outro (ex: checkout fecha e confirmação abre em seguida). */
+       "por cima" de outro (ex: checkout fecha e confirmação abre em seguida).
+       Em vez de só usar overflow:hidden (que alguns navegadores mobile
+       ignoram), a página é "congelada" na posição atual com position:fixed
+       e depois devolvida exatamente onde estava ao fechar. */
     let OPEN_OVERLAYS = 0;
+    let SCROLL_LOCK_Y = 0;
     function lockBodyScroll() {
       OPEN_OVERLAYS++;
+      if (OPEN_OVERLAYS > 1) return;
+      SCROLL_LOCK_Y = window.scrollY || document.documentElement.scrollTop || 0;
+      document.documentElement.classList.add('scroll-locked');
       document.body.classList.add('scroll-locked');
+      document.body.style.top = `-${SCROLL_LOCK_Y}px`;
     }
     function unlockBodyScroll() {
       OPEN_OVERLAYS = Math.max(0, OPEN_OVERLAYS - 1);
-      if (OPEN_OVERLAYS === 0) document.body.classList.remove('scroll-locked');
+      if (OPEN_OVERLAYS > 0) return;
+      document.documentElement.classList.remove('scroll-locked');
+      document.body.classList.remove('scroll-locked');
+      document.body.style.top = '';
+      window.scrollTo(0, SCROLL_LOCK_Y);
     }
 
     /* open/close cart drawer */
