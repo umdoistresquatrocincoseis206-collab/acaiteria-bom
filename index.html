@@ -525,7 +525,7 @@
 
     .chip-a {
       top: 6%;
-      left: -6%
+      left: 4%
     }
 
     .chip-b {
@@ -2015,8 +2015,12 @@
       }
 
       .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px 16px;
+      }
+
+      .footer-grid>div:first-child {
+        grid-column: 1 / -1;
       }
 
     }
