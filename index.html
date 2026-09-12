@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Açaí do Sol — Peça seu açaí do seu jeito</title>
 <meta name="description" content="Monte seu açaí, escolha seus complementos e peça de forma rápida e fácil. Açaí do Sol — açaí fresquinho, promoções e clube de fidelidade.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKhkydfxa9M4N757pOhaDgkFSntrXAjUJj8RML4nbzR6WNO4EL2AJudM5a&s=10 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍇</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -37,6 +37,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+html,body{max-width:100%;overflow-x:hidden}
 body{
   margin:0;
   font-family:var(--font-body);
@@ -277,7 +278,7 @@ footer{background:var(--purple-950);color:rgba(255,255,255,.75);padding:56px 0 2
   background:var(--purple-950);color:#fff;padding:16px 0;
   position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(0,0,0,.18);
 }
-.admin-bar-inner{display:flex;justify-content:space-between;align-items:center;padding:0 28px}
+.admin-bar-inner{display:flex;justify-content:space-between;align-items:center;padding:0 28px;flex-wrap:wrap;gap:10px}
 .admin-bar-inner strong{
   font-family:var(--font-display);font-size:1.5rem;font-weight:700;letter-spacing:.01em;
 }
@@ -305,14 +306,29 @@ footer{background:var(--purple-950);color:rgba(255,255,255,.75);padding:56px 0 2
   .admin-tabs{flex-direction:row;flex-wrap:wrap}
   .admin-tab{width:auto}
 }
-.filter-chip{padding:9px 16px;border-radius:100px;background:var(--white);border:2px solid var(--line);font-weight:800;font-size:.85rem;color:var(--ink-soft)}
+@media (max-width:600px){
+  .admin-main{padding:20px 14px}
+  .admin-bar-inner{padding:0 16px}
+  .admin-stats{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-card{padding:14px 16px}
+  .stat-card .num{font-size:1.3rem}
+  table.admin-table th,table.admin-table td{padding:10px 10px;font-size:.8rem}
+  .status-select{max-width:120px;font-size:.76rem;padding:6px 8px}
+}
+.filter-chip{padding:8px 15px;border-radius:100px;background:var(--white);border:1px solid var(--line);font-weight:700;font-size:.82rem;color:var(--ink-soft);transition:border-color .15s ease, color .15s ease}
+.filter-chip:hover{border-color:var(--purple-500);color:var(--purple-600)}
 .filter-chip.active{background:var(--purple-950);color:#fff;border-color:var(--purple-950)}
 table.admin-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-sm)}
-table.admin-table th,table.admin-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.88rem}
-table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-weight:800}
+table.admin-table th,table.admin-table td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:.86rem}
+table.admin-table th{background:transparent;color:var(--ink-soft);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--line)}
+table.admin-table tbody tr{transition:background .15s ease}
+table.admin-table tbody tr:hover{background:rgba(155,77,184,.05)}
+table.admin-table tbody tr:last-child td{border-bottom:none}
+.btn-link-danger{background:transparent;color:#C0392B;font-weight:700;font-size:.82rem;padding:6px 10px;border-radius:8px;transition:background .15s ease}
+.btn-link-danger:hover{background:rgba(192,57,43,.1)}
 .admin-form-card{background:var(--white);border-radius:var(--radius-md);padding:22px;box-shadow:var(--shadow-sm);margin-bottom:22px}
 .admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.status-select{padding:7px 10px;border-radius:10px;border:2px solid var(--line);font-family:inherit;font-weight:700}
+.status-select{padding:7px 10px;border-radius:10px;border:1px solid var(--line);font-family:inherit;font-weight:700;font-size:.82rem;color:var(--ink);background:var(--white);max-width:150px}
 .login-box{max-width:380px;margin:80px auto;background:var(--white);border-radius:var(--radius-lg);padding:34px;box-shadow:var(--shadow-md)}
 .setup-banner{background:#FDEAC8;color:#7A4E00;padding:12px 0;font-size:.85rem;text-align:center;font-weight:700}
 .setup-banner a{text-decoration:underline}
@@ -393,10 +409,10 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 .admin-panel.active{animation:panelIn .35s cubic-bezier(.16,.8,.24,1)}
 @keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
-.stat-card{background:var(--white);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-sm);border-left:4px solid var(--purple-600);display:flex;flex-direction:column;gap:4px;transition:transform .2s ease, box-shadow .2s ease}
-.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.stat-card .label{font-size:.78rem;font-weight:800;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em}
-.stat-card .num{font-family:var(--font-display);font-size:1.7rem;color:var(--purple-950)}
+.stat-card{background:var(--white);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-sm);border-top:3px solid var(--purple-500);display:flex;flex-direction:column;gap:4px;transition:transform .2s ease, box-shadow .2s ease}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-card .label{font-size:.72rem;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+.stat-card .num{font-family:var(--font-display);font-size:1.6rem;color:var(--purple-950)}
 @media (prefers-reduced-motion: reduce){ .admin-panel.active{animation:none} }
 </style>
 </head>
@@ -410,13 +426,14 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
 
 <header class="site-header">
   <div class="container nav">
-    <a href="#home" class="logo"><span class="logo-mark"></span> Açaí do Sol</a>
+    <a href="#home" class="logo"><span class="logo-mark">🍇</span> Açaí do Sol</a>
     <nav class="nav-links">
       <a href="#cardapio">Cardápio</a>
       <a href="#montar">Monte o seu</a>
       <a href="#promocoes">Promoções</a>
       <a href="#clube">Clube do Açaí</a>
       <a href="#local">Onde estamos</a>
+      <a href="#" id="link-track-order">📦 Meu pedido</a>
     </nav>
     <div class="nav-actions">
       <button class="cart-btn" id="btn-open-cart" aria-label="Abrir carrinho">🛒<span class="cart-badge" id="cart-count">0</span></button>
@@ -438,7 +455,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
       </div>
     </div>
     <div class="hero-visual">
-      <div class="hero-bowl"><img src="https://http2.mlstatic.com/D_NQ_NP_995722-MLB76735016448_062024-O-luminoso-redondo-fachada-75x75cm-acai.webp" alt="Tigela de açaí com frutas" onerror="this.remove()">🍨</div>
+      <div class="hero-bowl"><img src="https://loremflickr.com/900/900/acai,bowl?lock=101" alt="Tigela de açaí com frutas" onerror="this.remove()">🍨</div>
       <div class="hero-stat-chip chip-a" id="hero-rating-chip">🍇 Feito na hora</div>
       <div class="hero-stat-chip chip-b">🚴 Entrega rápida</div>
     </div>
@@ -718,6 +735,38 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
       <button class="btn btn-green btn-block" id="btn-order-whatsapp">Enviar no WhatsApp</button>
       <button class="btn btn-ghost btn-block" id="btn-close-confirm">Fechar</button>
     </div>
+    <p style="text-align:center;font-size:.8rem;color:var(--ink-soft);margin-top:14px">Quer ver o status depois? Use "📦 Meu pedido" no menu do site.</p>
+  </div>
+</div>
+
+<!-- ===================== ÁREA DE ACOMPANHAMENTO DO PEDIDO ===================== -->
+<div class="overlay center" id="tracking-overlay">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h3>📦 Acompanhar meu pedido</h3>
+      <button class="close-x" id="close-tracking">✕</button>
+    </div>
+
+    <div id="tracking-search-view">
+      <p style="color:var(--ink-soft);font-size:.9rem;margin:6px 0 16px">Informe o número do pedido e o telefone usado na compra para ver o status.</p>
+      <form id="tracking-form">
+        <div class="field"><label>Número do pedido</label><input required type="text" inputmode="numeric" id="track-order-number" placeholder="Ex: 1032"></div>
+        <div class="field"><label>Telefone usado no pedido</label><input required type="tel" id="track-phone" placeholder="(00) 00000-0000"></div>
+        <button class="btn btn-primary btn-block" type="submit" id="tracking-submit-btn">Consultar status</button>
+      </form>
+      <p id="tracking-error" style="color:#C0392B;font-size:.85rem;margin-top:10px"></p>
+    </div>
+
+    <div id="tracking-result-view" style="display:none">
+      <div style="text-align:center;margin-bottom:6px">
+        <p style="color:var(--ink-soft);font-weight:700" id="tracking-order-number">Pedido #—</p>
+        <p style="font-size:.78rem;color:var(--ink-soft)" id="tracking-updated-at"></p>
+      </div>
+      <div class="status-track" id="tracking-status-track"></div>
+      <div id="tracking-items" style="margin:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0"></div>
+      <div class="cart-summary-line total"><span>Total</span><span id="tracking-total">R$ 0,00</span></div>
+      <button class="btn btn-ghost btn-block" style="margin-top:14px" id="tracking-search-again">Consultar outro pedido</button>
+    </div>
   </div>
 </div>
 
@@ -767,7 +816,7 @@ table.admin-table th{background:var(--purple-100);color:var(--purple-800);font-w
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
         <div style="overflow-x:auto">
           <table class="admin-table">
-            <thead><tr><th>#</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Tipo</th><th>Pagamento</th><th>Status</th><th>Data</th></tr></thead>
+            <thead><tr><th>#</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Tipo</th><th>Pagamento</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead>
             <tbody id="admin-orders-body"></tbody>
           </table>
         </div>
@@ -933,6 +982,7 @@ const CONFIG = {
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodWhieHJxaWxqYmNjcXZzbHRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NjgwMjUsImV4cCI6MjEwNDQ0NDAyNX0.3nd48f35tvnV5q2S9BVJJMNfSDPNUjkR9oJ5gz8Fajc",
   WHATSAPP_FALLBACK: "5569992283610" // usado só se as configurações da loja não carregarem
 };
+
 
 const HAS_SUPABASE = CONFIG.SUPABASE_URL.startsWith("http") && CONFIG.SUPABASE_ANON_KEY.length > 20;
 const sb = HAS_SUPABASE ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : null;
@@ -1147,6 +1197,38 @@ const DB = {
   async updateOrderStatus(id,status){
     if(HAS_SUPABASE){ const {error} = await sb.from('orders').update({status}).eq('id',id); if(error) throw error; return; }
     lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).map(o=>o.id===id?{...o,status}:o));
+  },
+  async deleteOrder(id){
+    if(HAS_SUPABASE){ const {error} = await sb.from('orders').delete().eq('id',id); if(error) throw error; return; }
+    lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).filter(o=>o.id!==id));
+  },
+
+  /* Consulta pública e segura do status de um pedido (usada na área de
+     acompanhamento do cliente). Não expõe a lista de pedidos: exige o
+     número do pedido + telefone (ou o id salvo no navegador de quem
+     acabou de fazer o pedido). No Supabase isso passa por uma função
+     RPC (ver reviews_setup.sql / orders_tracking_setup.sql), evitando
+     abrir uma policy de leitura pública na tabela inteira de pedidos. */
+  async getOrderStatusByNumberAndPhone(orderNumber, phone){
+    const num = parseInt(String(orderNumber).replace(/\D/g,''), 10);
+    const digits = String(phone||'').replace(/\D/g,'');
+    if(!num || !digits) return null;
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.rpc('get_order_status', {p_order_number:num, p_phone:digits});
+      if(error){ console.error(error); return null; }
+      return Array.isArray(data) ? (data[0]||null) : (data||null);
+    }
+    const found = lsGet(LS_KEYS.orders).find(o=>Number(o.order_number)===num && String(o.customer_phone||'').replace(/\D/g,'')===digits);
+    return found || null;
+  },
+  async getOrderStatusById(id){
+    if(!id) return null;
+    if(HAS_SUPABASE){
+      const {data,error} = await sb.rpc('get_order_by_id', {p_id:id});
+      if(error){ console.error(error); return null; }
+      return Array.isArray(data) ? (data[0]||null) : (data||null);
+    }
+    return lsGet(LS_KEYS.orders).find(o=>o.id===id) || null;
   },
 
   async getLoyaltyPoints(phone){
@@ -1669,6 +1751,8 @@ document.getElementById('checkout-form').addEventListener('submit', async (e)=>{
     LAST_ORDER = saved;
     CART = []; ACTIVE_COUPON = null; persistCart();
     localStorage.setItem('acai_last_order_id', saved.id);
+    localStorage.setItem('acai_last_order_number', saved.order_number);
+    localStorage.setItem('acai_last_order_phone', phone);
     document.getElementById('checkout-overlay').classList.remove('open');
     showConfirmation(saved);
   }catch(err){
@@ -1691,10 +1775,11 @@ function showConfirmation(order){
   document.getElementById('btn-order-whatsapp').onclick = ()=>sendOrderToWhatsapp(order);
   document.getElementById('confirm-overlay').classList.add('open');
 }
-function renderStatusTrack(order){
+function renderStatusTrack(order, targetId){
+  targetId = targetId || 'status-track';
   const steps = order.fulfillment_type==='entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
   const currentIdx = steps.findIndex(s=>s.key===order.status);
-  document.getElementById('status-track').innerHTML = steps.map((s,idx)=>{
+  document.getElementById(targetId).innerHTML = steps.map((s,idx)=>{
     let cls = '';
     if(order.status==='cancelado') cls='';
     else if(idx<currentIdx) cls='done';
@@ -1720,15 +1805,91 @@ function sendOrderToWhatsapp(order){
 }
 document.getElementById('btn-close-confirm').addEventListener('click', ()=>document.getElementById('confirm-overlay').classList.remove('open'));
 
-/* Reabrir acompanhamento se o cliente tiver um pedido recente salvo */
-async function restoreLastOrderTracking(){
-  const id = localStorage.getItem('acai_last_order_id');
-  if(!id) return;
-  const order = await DB.getOrderById(id);
-  if(order && order.status && order.status!=='entregue' && order.status!=='pronto'){
-    // apenas atualiza a "trilha" se o usuário reabrir a confirmação manualmente; não é intrusivo.
+/* ---------------------- 14b. ÁREA DE ACOMPANHAMENTO (consulta a qualquer momento) ---------------------- */
+let TRACKING_POLL_TIMER = null;
+let TRACKING_LOOKUP = null; // guarda como refazer a consulta (id ou número+telefone) para o auto-refresh
+
+function openTracking(){
+  document.getElementById('tracking-overlay').classList.add('open');
+  const savedId = localStorage.getItem('acai_last_order_id');
+  const savedNumber = localStorage.getItem('acai_last_order_number');
+  const savedPhone = localStorage.getItem('acai_last_order_phone');
+  if(savedId){
+    TRACKING_LOOKUP = {type:'id', id:savedId};
+    loadTracking();
+  } else if(savedNumber && savedPhone){
+    document.getElementById('track-order-number').value = savedNumber;
+    document.getElementById('track-phone').value = savedPhone;
+    TRACKING_LOOKUP = {type:'number', orderNumber:savedNumber, phone:savedPhone};
+    loadTracking();
+  } else {
+    showTrackingSearch();
   }
 }
+function closeTracking(){
+  document.getElementById('tracking-overlay').classList.remove('open');
+  stopTrackingPolling();
+}
+function showTrackingSearch(){
+  stopTrackingPolling();
+  document.getElementById('tracking-search-view').style.display = 'block';
+  document.getElementById('tracking-result-view').style.display = 'none';
+  document.getElementById('tracking-error').textContent = '';
+}
+function showTrackingResult(order){
+  document.getElementById('tracking-search-view').style.display = 'none';
+  document.getElementById('tracking-result-view').style.display = 'block';
+  document.getElementById('tracking-order-number').textContent = 'Pedido #' + (order.order_number ?? '—');
+  document.getElementById('tracking-updated-at').textContent = 'Atualizado agora • ' + new Date().toLocaleTimeString('pt-BR');
+  document.getElementById('tracking-items').innerHTML = (order.items||[]).map(i=>`
+    <div class="cart-summary-line"><span>${i.qty}x ${escapeHtml(i.name)}</span><span>${brl((i.unit_price||0)*i.qty)}</span></div>`).join('');
+  document.getElementById('tracking-total').textContent = brl(order.total);
+  renderStatusTrack(order, 'tracking-status-track');
+  startTrackingPolling();
+}
+async function loadTracking(){
+  document.getElementById('tracking-error').textContent = '';
+  let order = null;
+  try{
+    if(TRACKING_LOOKUP && TRACKING_LOOKUP.type==='id'){
+      order = await DB.getOrderStatusById(TRACKING_LOOKUP.id);
+    } else if(TRACKING_LOOKUP && TRACKING_LOOKUP.type==='number'){
+      order = await DB.getOrderStatusByNumberAndPhone(TRACKING_LOOKUP.orderNumber, TRACKING_LOOKUP.phone);
+    }
+  }catch(err){ console.error(err); }
+  if(!order){
+    stopTrackingPolling();
+    showTrackingSearch();
+    document.getElementById('tracking-error').textContent = 'Pedido não encontrado. Confira o número e o telefone e tente novamente.';
+    return;
+  }
+  showTrackingResult(order);
+}
+function startTrackingPolling(){
+  stopTrackingPolling();
+  TRACKING_POLL_TIMER = setInterval(loadTracking, 20000);
+}
+function stopTrackingPolling(){
+  if(TRACKING_POLL_TIMER){ clearInterval(TRACKING_POLL_TIMER); TRACKING_POLL_TIMER = null; }
+}
+document.getElementById('link-track-order').addEventListener('click', (e)=>{ e.preventDefault(); openTracking(); });
+document.getElementById('close-tracking').addEventListener('click', closeTracking);
+document.getElementById('tracking-overlay').addEventListener('click', e=>{ if(e.target.id==='tracking-overlay') closeTracking(); });
+document.getElementById('tracking-search-again').addEventListener('click', ()=>{
+  TRACKING_LOOKUP = null;
+  localStorage.removeItem('acai_last_order_id');
+  showTrackingSearch();
+});
+document.getElementById('tracking-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const orderNumber = document.getElementById('track-order-number').value.trim();
+  const phone = document.getElementById('track-phone').value.trim();
+  const btn = document.getElementById('tracking-submit-btn');
+  btn.disabled = true; btn.textContent = 'Consultando...';
+  TRACKING_LOOKUP = {type:'number', orderNumber, phone};
+  await loadTracking();
+  btn.disabled = false; btn.textContent = 'Consultar status';
+});
 
 /* ---------------------- 15. NAV MOBILE ---------------------- */
 document.getElementById('btn-nav-toggle').addEventListener('click', ()=>{
@@ -1832,10 +1993,16 @@ async function renderAdminOrders(){
         </select>
       </td>
       <td>${o.created_at ? new Date(o.created_at).toLocaleString('pt-BR') : ''}</td>
-    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+      <td>${(o.status==='recebido' || o.status==='cancelado') ? `<button class="btn-link-danger" data-del-order="${o.id}">Excluir</button>` : ''}</td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+  document.querySelectorAll('[data-del-order]').forEach(b=>b.addEventListener('click', async ()=>{
+    if(!confirm('Excluir este pedido? Essa ação não pode ser desfeita.')) return;
+    try{ await DB.deleteOrder(b.dataset.delOrder); toast('Pedido excluído'); await renderAdminOrders(); }
+    catch(err){ console.error(err); toast(err.message || 'Erro ao excluir pedido'); }
+  }));
   document.querySelectorAll('[data-order-id]').forEach(sel=>{
     sel.addEventListener('change', async ()=>{
-      try{ await DB.updateOrderStatus(sel.dataset.orderId, sel.value); toast('Status atualizado'); }
+      try{ await DB.updateOrderStatus(sel.dataset.orderId, sel.value); toast('Status atualizado'); await renderAdminOrders(); }
       catch(err){ console.error(err); toast(err.message || 'Erro ao atualizar status'); }
     });
   });
