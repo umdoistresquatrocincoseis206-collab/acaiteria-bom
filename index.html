@@ -1274,7 +1274,7 @@
       position: fixed;
       inset: 0;
       background: rgba(38, 16, 43, .55);
-      z-index: 100;
+      z-index: 9999;
       display: none;
       align-items: flex-end;
       justify-content: flex-end
@@ -1315,6 +1315,7 @@
       border-radius: var(--radius-lg);
       width: min(560px, 100%);
       max-height: 90vh;
+      max-height: 90dvh;
       overflow-y: auto;
       padding: 32px;
       animation: pop .2s ease
@@ -1328,6 +1329,7 @@
       .modal-box {
         padding: 20px;
         max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
         border-radius: var(--radius-md);
       }
     }
@@ -1581,7 +1583,7 @@
       top: 16px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 200;
+      z-index: 10000;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -1622,6 +1624,7 @@
     .admin-shell {
       display: none;
       min-height: 100vh;
+      min-height: 100dvh;
       background: var(--cream)
     }
 
@@ -1648,9 +1651,10 @@
 
     .admin-bar-inner strong {
       font-family: var(--font-display);
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 3.2vw, 1.5rem);
       font-weight: 700;
       letter-spacing: .01em;
+      line-height: 1.25;
     }
 
     .admin-layout {
@@ -1699,6 +1703,15 @@
       border-color: var(--yellow-400)
     }
 
+    .admin-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .admin-tabs::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .3);
+      border-radius: 10px;
+    }
+
     .admin-main {
       flex: 1;
       min-width: 0;
@@ -1734,13 +1747,24 @@
 
       .admin-tabs {
         flex-direction: row;
-        flex-wrap: wrap;
-        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        gap: 8px;
+        padding-bottom: 4px;
+        margin: 0 -12px;
+        padding-left: 12px;
+        padding-right: 12px;
+        scrollbar-width: thin;
       }
 
       .admin-tab {
         width: auto;
-        padding: 9px 12px;
+        flex-shrink: 0;
+        white-space: nowrap;
+        scroll-snap-align: start;
+        padding: 10px 14px;
         font-size: .82rem;
       }
 
@@ -1748,10 +1772,6 @@
         padding: 0 14px;
         flex-wrap: wrap;
         gap: 10px;
-      }
-
-      .admin-bar-inner strong {
-        font-size: 1.15rem;
       }
 
       .admin-main {
@@ -1808,11 +1828,6 @@
     }
 
     @media (max-width:480px) {
-      .admin-bar-inner strong {
-        font-size: 1rem;
-        line-height: 1.3;
-      }
-
       .admin-stats {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         gap: 8px;
@@ -1833,6 +1848,12 @@
 
       .admin-sidebar {
         padding: 10px 8px;
+      }
+
+      .admin-tabs {
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
       }
 
       .admin-main {
@@ -1862,6 +1883,12 @@
       background: var(--purple-950);
       color: #fff;
       border-color: var(--purple-950)
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table.admin-table {
@@ -2996,7 +3023,7 @@
               </div>
             </div>
             <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
-            <div style="overflow-x:auto">
+            <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
@@ -3075,7 +3102,7 @@
                   edição</button>
               </form>
             </div>
-            <div style="overflow-x:auto">
+            <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
@@ -3118,7 +3145,7 @@
                   edição</button>
               </form>
             </div>
-            <div style="overflow-x:auto">
+            <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
@@ -3153,7 +3180,7 @@
                   edição</button>
               </form>
             </div>
-            <div style="overflow-x:auto">
+            <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
@@ -3172,7 +3199,7 @@
             <p style="color:var(--ink-soft);font-size:.9rem;margin-bottom:16px">As avaliações são enviadas pelos
               próprios clientes no site. Aqui você só pode visualizar e remover avaliações inadequadas — não é possível
               criar avaliações por aqui.</p>
-            <div style="overflow-x:auto">
+            <div class="table-responsive">
               <table class="admin-table">
                 <thead>
                   <tr>
