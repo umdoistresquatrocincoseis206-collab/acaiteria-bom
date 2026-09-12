@@ -2353,6 +2353,116 @@
       color: var(--purple-950)
     }
 
+    /* gráfico de fluxo de pedidos */
+    .chart-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 20px 22px 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px
+    }
+
+    .chart-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px
+    }
+
+    .chart-card-head h4 {
+      font-family: var(--font-display);
+      color: var(--purple-950);
+      font-size: 1.05rem
+    }
+
+    .chart-toggle {
+      display: flex;
+      gap: 6px;
+      background: var(--purple-100);
+      padding: 4px;
+      border-radius: 100px
+    }
+
+    .chart-toggle-btn {
+      background: transparent;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-size: .78rem;
+      font-weight: 800;
+      color: var(--purple-600);
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease
+    }
+
+    .chart-toggle-btn.active {
+      background: var(--purple-600);
+      color: var(--white)
+    }
+
+    .chart-empty {
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: .85rem;
+      padding: 30px 0
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 6px
+    }
+
+    .chart-legend span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .8rem;
+      color: var(--ink-soft);
+      font-weight: 700
+    }
+
+    .chart-legend i {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block
+    }
+
+    .chart-bar-count {
+      fill: #7B2D8E;
+      transition: opacity .15s ease
+    }
+
+    .chart-bar-total {
+      fill: #FFC94D;
+      transition: opacity .15s ease
+    }
+
+    .chart-bar-count:hover,
+    .chart-bar-total:hover {
+      opacity: .78
+    }
+
+    .chart-axis-label {
+      fill: #5C4763;
+      font-family: var(--font-body);
+    }
+
+    @media (max-width:520px) {
+      .chart-card {
+        padding: 16px 14px 12px
+      }
+
+      .chart-toggle-btn {
+        padding: 6px 10px;
+        font-size: .72rem
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .admin-panel.active {
         animation: none
@@ -2817,6 +2927,20 @@
 
           <div class="admin-panel active" id="panel-pedidos">
             <div class="admin-stats" id="admin-stats"></div>
+            <div class="chart-card">
+              <div class="chart-card-head">
+                <h4>📊 Fluxo de pedidos</h4>
+                <div class="chart-toggle" id="chart-mode-toggle">
+                  <button type="button" class="chart-toggle-btn active" data-mode="dias">Últimos 14 dias</button>
+                  <button type="button" class="chart-toggle-btn" data-mode="meses">Últimos 6 meses</button>
+                </div>
+              </div>
+              <div id="orders-chart-svg-wrap"></div>
+              <div class="chart-legend">
+                <span><i style="background:var(--purple-600)"></i> Pedidos</span>
+                <span><i style="background:var(--yellow-400)"></i> Faturamento</span>
+              </div>
+            </div>
             <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
             <div style="overflow-x:auto">
               <table class="admin-table">
@@ -4042,9 +4166,91 @@
     <div class="stat-card"><span class="label">Em andamento</span><span class="num">${emAndamento}</span></div>
     <div class="stat-card"><span class="label">Total de pedidos</span><span class="num">${orders.length}</span></div>`;
     }
+    /* ---- gráfico de fluxo de pedidos ---- */
+    let CHART_MODE = 'dias';
+    let LAST_ORDERS = [];
+
+    function bucketOrders(orders, mode) {
+      const now = new Date();
+      const buckets = [];
+      if (mode === 'dias') {
+        for (let i = 13; i >= 0; i--) {
+          const from = new Date(now); from.setHours(0, 0, 0, 0); from.setDate(from.getDate() - i);
+          const to = new Date(from); to.setDate(from.getDate() + 1);
+          buckets.push({ label: from.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }), from, to });
+        }
+      } else {
+        for (let i = 5; i >= 0; i--) {
+          const from = new Date(now.getFullYear(), now.getMonth() - i, 1);
+          const to = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+          const label = from.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+          buckets.push({ label: label.charAt(0).toUpperCase() + label.slice(1), from, to });
+        }
+      }
+      return buckets.map(b => {
+        const inBucket = orders.filter(o => o.created_at && o.status !== 'cancelado' && new Date(o.created_at) >= b.from && new Date(o.created_at) < b.to);
+        return { label: b.label, count: inBucket.length, total: inBucket.reduce((s, o) => s + Number(o.total || 0), 0) };
+      });
+    }
+
+    function renderOrdersChart(orders) {
+      const wrap = document.getElementById('orders-chart-svg-wrap');
+      if (!wrap) return;
+      try {
+        const data = bucketOrders(orders, CHART_MODE);
+        if (!orders.length || data.every(d => d.count === 0)) {
+          wrap.innerHTML = '<p class="chart-empty">Ainda não há pedidos no período selecionado.</p>';
+          return;
+        }
+        const maxCount = Math.max(1, ...data.map(d => d.count));
+        const maxTotal = Math.max(1, ...data.map(d => d.total));
+        const W = 760, H = 220, padB = 30, padT = 12;
+        const chartH = H - padB - padT;
+        const groupW = W / data.length;
+        const barW = Math.max(6, Math.min(18, groupW / 3.4));
+        const showEveryLabel = data.length <= 14;
+        let bars = '';
+        data.forEach((d, i) => {
+          const gx = i * groupW + groupW / 2;
+          const hCount = maxCount ? (d.count / maxCount) * chartH : 0;
+          const hTotal = maxTotal ? (d.total / maxTotal) * chartH : 0;
+          const x1 = gx - barW - 3, x2 = gx + 3;
+          const showLabel = showEveryLabel || i % 2 === 0;
+          bars += `<g>
+      <rect class="chart-bar-count" x="${x1}" y="${(padT + chartH - hCount).toFixed(1)}" width="${barW}" height="${Math.max(hCount, 1.5).toFixed(1)}" rx="3"><title>${d.label} — ${d.count} pedido(s)</title></rect>
+      <rect class="chart-bar-total" x="${x2}" y="${(padT + chartH - hTotal).toFixed(1)}" width="${barW}" height="${Math.max(hTotal, 1.5).toFixed(1)}" rx="3"><title>${d.label} — ${brl(d.total)}</title></rect>
+      ${showLabel ? `<text class="chart-axis-label" x="${gx}" y="${H - 8}" text-anchor="middle" font-size="10">${d.label}</text>` : ''}
+    </g>`;
+        });
+        wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block">${bars}</svg>`;
+      } catch (err) {
+        console.error('Erro ao desenhar o gráfico de pedidos:', err);
+        wrap.innerHTML = '<p class="chart-empty">Não foi possível carregar o gráfico agora.</p>';
+      }
+    }
+
+    const chartToggleEl = document.getElementById('chart-mode-toggle');
+    if (chartToggleEl) {
+      chartToggleEl.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-mode]');
+        if (!btn) return;
+        CHART_MODE = btn.dataset.mode;
+        chartToggleEl.querySelectorAll('[data-mode]').forEach(b => b.classList.toggle('active', b === btn));
+        renderOrdersChart(LAST_ORDERS);
+      });
+    }
+
     async function renderAdminOrders() {
-      const orders = await DB.getAllOrdersAdmin();
+      let orders = [];
+      try {
+        orders = await DB.getAllOrdersAdmin();
+      } catch (err) {
+        console.error('Erro ao carregar pedidos:', err);
+        toast('Erro ao carregar pedidos');
+      }
+      orders = LAST_ORDERS = orders || [];
       renderOrderStats(orders);
+      renderOrdersChart(orders);
       const filters = ['todos', ...STATUS_OPTIONS];
       document.getElementById('order-status-filters').innerHTML = filters.map(f => `<button class="filter-chip ${f === ORDER_FILTER ? 'active' : ''}" data-filter="${f}">${f === 'todos' ? 'Todos' : STATUS_LABELS[f]}</button>`).join('');
       document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => { ORDER_FILTER = b.dataset.filter; renderAdminOrders(); }));
