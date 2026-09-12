@@ -1735,43 +1735,163 @@
 
     @media (max-width:800px) {
       .admin-layout {
-        flex-direction: column
+        display: block;
       }
 
+      /* sidebar vira uma gaveta (drawer) que desliza da esquerda, no
+         estilo do menu do SUAP mostrado como referência */
       .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: min(300px, 85vw);
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        padding: 0;
+        transform: translateX(-100%);
+        transition: transform .28s ease;
+        z-index: 9998;
+        box-shadow: var(--shadow-md);
+      }
+
+      .admin-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .admin-sidebar-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 20px 18px 14px;
+        flex-shrink: 0;
+      }
+
+      .admin-sidebar-head strong {
+        font-family: var(--font-display);
+        color: #fff;
+        font-size: 1.2rem;
+      }
+
+      .admin-sidebar-close {
+        background: transparent;
+        color: rgba(255, 255, 255, .8);
+        font-size: 1.2rem;
+        line-height: 1;
+        padding: 4px 8px;
+      }
+
+      .admin-sidebar-search {
+        display: block;
+        padding: 0 18px 14px;
+        flex-shrink: 0;
+      }
+
+      .admin-sidebar-search input {
         width: 100%;
-        position: static;
-        min-height: auto;
-        padding: 14px 12px;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, .25);
+        color: #fff;
+        padding: 8px 4px;
+        font-size: .92rem;
+      }
+
+      .admin-sidebar-search input::placeholder {
+        color: rgba(255, 255, 255, .5);
+      }
+
+      .admin-sidebar-search input:focus {
+        outline: none;
+        border-bottom-color: var(--yellow-400);
       }
 
       .admin-tabs {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x proximity;
-        gap: 8px;
-        padding-bottom: 4px;
-        margin: 0 -12px;
-        padding-left: 12px;
-        padding-right: 12px;
-        scrollbar-width: thin;
+        flex-direction: column;
+        flex: 1;
+        overflow-y: auto;
+        padding: 4px 12px 12px;
+        gap: 2px;
       }
 
       .admin-tab {
-        width: auto;
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border-radius: 10px;
+        padding: 12px 10px;
+      }
+
+      .admin-tab.active {
+        background: rgba(255, 255, 255, .08);
+        color: var(--yellow-400);
+        border-color: transparent;
+      }
+
+      .admin-sidebar-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 10px 12px 18px;
+        border-top: 1px solid rgba(255, 255, 255, .12);
         flex-shrink: 0;
-        white-space: nowrap;
-        scroll-snap-align: start;
-        padding: 10px 14px;
-        font-size: .82rem;
+      }
+
+      .admin-sidebar-footer a,
+      .admin-sidebar-footer button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        color: rgba(255, 255, 255, .85);
+        padding: 12px 10px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: .92rem;
+      }
+
+      .admin-sidebar-footer button.danger {
+        color: #FF8A80;
+      }
+
+      .admin-sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .5);
+        z-index: 9997;
+      }
+
+      .admin-sidebar-backdrop.open {
+        display: block;
+      }
+
+      .admin-hamburger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+
+      .admin-bar-actions {
+        display: none;
       }
 
       .admin-bar-inner {
         padding: 0 14px;
-        flex-wrap: wrap;
         gap: 10px;
+        justify-content: flex-start;
       }
 
       .admin-main {
@@ -1827,6 +1947,24 @@
       }
     }
 
+    /* no desktop, os elementos exclusivos da gaveta mobile ficam ocultos */
+    @media (min-width:801px) {
+
+      .admin-hamburger,
+      .admin-sidebar-head,
+      .admin-sidebar-search,
+      .admin-sidebar-footer,
+      .admin-sidebar-backdrop {
+        display: none;
+      }
+
+      .admin-bar-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+    }
+
     @media (max-width:480px) {
       .admin-stats {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -1844,16 +1982,6 @@
       .admin-tab {
         padding: 8px 10px;
         font-size: .78rem;
-      }
-
-      .admin-sidebar {
-        padding: 10px 8px;
-      }
-
-      .admin-tabs {
-        margin: 0 -8px;
-        padding-left: 8px;
-        padding-right: 8px;
       }
 
       .admin-main {
@@ -2986,15 +3114,24 @@
     <div id="admin-dashboard-view" style="display:none">
       <div class="admin-bar">
         <div class="admin-bar-inner">
+          <button class="admin-hamburger" id="admin-hamburger-btn" aria-label="Abrir menu">☰</button>
           <strong>🍇 Painel Administrativo</strong>
-          <div style="display:flex;gap:10px;align-items:center">
+          <div class="admin-bar-actions">
             <a href="#home" class="btn btn-ghost btn-sm" id="admin-view-site">Ver site</a>
             <button class="btn btn-ghost btn-sm" id="admin-logout">Sair</button>
           </div>
         </div>
       </div>
       <div class="admin-layout">
-        <nav class="admin-sidebar">
+        <div class="admin-sidebar-backdrop" id="admin-sidebar-backdrop"></div>
+        <nav class="admin-sidebar" id="admin-sidebar">
+          <div class="admin-sidebar-head">
+            <strong>🍇 Menu</strong>
+            <button class="admin-sidebar-close" id="admin-sidebar-close" aria-label="Fechar menu">✕</button>
+          </div>
+          <div class="admin-sidebar-search">
+            <input type="text" id="admin-tab-search" placeholder="Buscar menu" autocomplete="off">
+          </div>
           <div class="admin-tabs">
             <button class="admin-tab active" data-tab="pedidos">📥 Pedidos</button>
             <button class="admin-tab" data-tab="produtos">🍨 Produtos</button>
@@ -3002,6 +3139,10 @@
             <button class="admin-tab" data-tab="cupons">🎟️ Cupons</button>
             <button class="admin-tab" data-tab="avaliacoes">⭐ Avaliações</button>
             <button class="admin-tab" data-tab="config">⚙️ Configurações</button>
+          </div>
+          <div class="admin-sidebar-footer">
+            <a href="#home" id="admin-sidebar-view-site">🏠 Ver site</a>
+            <button class="danger" id="admin-sidebar-logout">🚪 Sair</button>
           </div>
         </nav>
         <div class="admin-main">
@@ -4246,6 +4387,29 @@
     });
     document.getElementById('admin-logout').addEventListener('click', async () => { await DB.adminLogout(); await refreshAdminSessionUI(); });
 
+    /* menu mobile (gaveta estilo SUAP) */
+    function openAdminDrawer() {
+      document.getElementById('admin-sidebar').classList.add('open');
+      document.getElementById('admin-sidebar-backdrop').classList.add('open');
+      lockBodyScroll();
+    }
+    function closeAdminDrawer() {
+      document.getElementById('admin-sidebar').classList.remove('open');
+      document.getElementById('admin-sidebar-backdrop').classList.remove('open');
+      unlockBodyScroll();
+    }
+    document.getElementById('admin-hamburger-btn').addEventListener('click', openAdminDrawer);
+    document.getElementById('admin-sidebar-close').addEventListener('click', closeAdminDrawer);
+    document.getElementById('admin-sidebar-backdrop').addEventListener('click', closeAdminDrawer);
+    document.getElementById('admin-sidebar-view-site').addEventListener('click', (e) => { e.preventDefault(); closeAdminDrawer(); closeAdmin(); });
+    document.getElementById('admin-sidebar-logout').addEventListener('click', async () => { closeAdminDrawer(); await DB.adminLogout(); await refreshAdminSessionUI(); });
+    document.getElementById('admin-tab-search').addEventListener('input', (e) => {
+      const term = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('#admin-sidebar .admin-tab').forEach(tab => {
+        tab.style.display = tab.textContent.toLowerCase().includes(term) ? '' : 'none';
+      });
+    });
+
     /* tabs */
     document.querySelectorAll('.admin-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -4253,6 +4417,7 @@
         document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        closeAdminDrawer();
       });
     });
 
