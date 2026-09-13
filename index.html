@@ -597,13 +597,22 @@
     }
 
     .promo-card {
-      padding: 24px;
+      padding: 0;
       position: relative;
-      overflow: hidden
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    .promo-card .pill {
-      margin-bottom: 12px
+    .promo-card .product-media .pill {
+      margin-bottom: 0;
+    }
+
+    .promo-body {
+      padding: 20px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
 
     .promo-card h3 {
@@ -2174,6 +2183,25 @@
       accent-color: var(--purple-600);
     }
 
+    .crop-quality {
+      font-size: .78rem;
+      font-weight: 700;
+      margin-top: 8px;
+      max-width: 260px;
+    }
+
+    .crop-quality.good {
+      color: var(--green-600, #1a7a3c);
+    }
+
+    .crop-quality.warn {
+      color: #b8860b;
+    }
+
+    .crop-quality.bad {
+      color: #c0392b;
+    }
+
     .status-select {
       padding: 7px 10px;
       border-radius: 10px;
@@ -3084,6 +3112,10 @@
             <button type="button" id="cart-seg-entrega" data-type="entrega">Entrega</button>
           </div>
         </div>
+        <div id="cart-address-field" style="display:none">
+          <div class="field"><label>Endereço completo</label><textarea id="cart-address" rows="2"
+              placeholder="Rua, número, bairro, complemento"></textarea></div>
+        </div>
         <div class="coupon-row">
           <input type="text" id="coupon-input" placeholder="Tem um cupom? Digite aqui">
           <button class="btn btn-ghost btn-sm" id="btn-apply-coupon">Aplicar</button>
@@ -3231,6 +3263,7 @@
             <button class="admin-tab" data-tab="promocoes">🔥 Promoções</button>
             <button class="admin-tab" data-tab="cupons">🎟️ Cupons</button>
             <button class="admin-tab" data-tab="avaliacoes">⭐ Avaliações</button>
+            <button class="admin-tab" data-tab="notificacoes">🔔 Notificações</button>
             <button class="admin-tab" data-tab="config">⚙️ Configurações</button>
           </div>
           <div class="admin-sidebar-footer">
@@ -3330,6 +3363,7 @@
                     <span>🔍</span>
                     <input type="range" id="crop-zoom" min="100" max="300" value="100">
                   </div>
+                  <p class="crop-quality" id="crop-quality"></p>
                 </div>
                 <input type="hidden" id="p-id">
                 <button class="btn btn-primary" type="submit" id="p-submit-btn">Adicionar produto</button>
@@ -3359,7 +3393,11 @@
               <h4 style="margin-bottom:14px">Nova promoção</h4>
               <form id="promo-form">
                 <div class="admin-form-grid">
-                  <div class="field"><label>Título</label><input required id="pr-title"></div>
+                  <div class="field"><label>Produto</label>
+                    <select required id="pr-product-select">
+                      <option value="">Selecione um produto...</option>
+                    </select>
+                  </div>
                   <div class="field"><label>Preço promocional (R$)</label><input required type="number" step="0.01"
                       id="pr-price"></div>
                   <div class="field"><label>Selo</label>
@@ -3374,7 +3412,32 @@
                     </select></div>
                 </div>
                 <div class="field"><label>Descrição</label><input id="pr-desc"></div>
+                <div class="admin-form-grid">
+                  <div class="field">
+                    <label>Imagem da promoção (URL)</label>
+                    <input id="pr-image-url" type="url" placeholder="https://...">
+                  </div>
+                  <div class="field">
+                    <label>...ou envie um arquivo da imagem</label>
+                    <input id="pr-image-file" type="file" accept="image/*">
+                  </div>
+                </div>
+                <p style="font-size:.82rem;color:var(--ink-soft);margin:-6px 0 12px">Se deixar em branco, a foto do
+                  produto selecionado é usada automaticamente.</p>
+                <div id="pr-image-preview-wrap" style="display:none;margin-bottom:14px">
+                  <p class="crop-hint">🔲 Ajuste como a foto vai aparecer — arraste para posicionar e use o zoom.
+                    É exatamente assim que ela vai enquadrar no site.</p>
+                  <div class="crop-stage" id="promo-crop-stage">
+                    <img id="pr-image-preview" src="" alt="Pré-visualização" draggable="false">
+                  </div>
+                  <div class="crop-zoom-row">
+                    <span>🔍</span>
+                    <input type="range" id="promo-crop-zoom" min="100" max="300" value="100">
+                  </div>
+                  <p class="crop-quality" id="promo-crop-quality"></p>
+                </div>
                 <input type="hidden" id="pr-id">
+                <input type="hidden" id="pr-product-id">
                 <button class="btn btn-primary" type="submit" id="pr-submit-btn">Adicionar promoção</button>
                 <button class="btn btn-ghost" type="button" id="pr-cancel-edit" style="display:none">Cancelar
                   edição</button>
@@ -3459,6 +3522,15 @@
                 <tbody id="admin-reviews-body"></tbody>
               </table>
             </div>
+          </div>
+
+          <div class="admin-panel" id="panel-notificacoes">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+              <p style="color:var(--ink-soft);font-size:.9rem;margin:0">Avisos automáticos de cupons de fidelidade
+                ganhos e usados pelos clientes.</p>
+              <button class="btn btn-ghost btn-sm" id="btn-clear-notifications">Limpar notificações</button>
+            </div>
+            <div id="notifications-list"></div>
           </div>
 
           <div class="admin-panel" id="panel-config">
@@ -3571,7 +3643,7 @@
     /* ---------------------- 3. CAMADA DE DADOS (DB) ---------------------- */
     /* Abstrai Supabase (produção) x localStorage (demonstração), para que
        o resto do app nunca precise saber qual dos dois está em uso. */
-    const LS_KEYS = { products: 'acai_products_v2', promos: 'acai_promos_v2', coupons: 'acai_coupons_v2', orders: 'acai_orders_v2', settings: 'acai_settings_v2', loyalty: 'acai_loyalty_v2', reviews: 'acai_reviews_v2' };
+    const LS_KEYS = { products: 'acai_products_v2', promos: 'acai_promos_v2', coupons: 'acai_coupons_v2', orders: 'acai_orders_v2', settings: 'acai_settings_v2', loyalty: 'acai_loyalty_v2', reviews: 'acai_reviews_v2', notifications: 'acai_notifications_v2' };
 
     /* Inicializa o armazenamento local vazio (modo demonstração/offline).
        Nenhum produto, pedido, promoção ou avaliação de exemplo é criado —
@@ -3764,6 +3836,41 @@
         map[phone] = (map[phone] || 0) + pts;
         lsSet(LS_KEYS.loyalty, map);
       },
+      /* deduz pontos ao usar um cupom de fidelidade, sem deixar o saldo negativo */
+      async deductLoyaltyPoints(phone, amount) {
+        const current = await this.getLoyaltyPoints(phone);
+        const delta = -Math.min(amount, current);
+        if (delta !== 0) await this.addLoyaltyPoints(phone, delta);
+      },
+
+      async logNotification(type, message) {
+        const entry = { type, message, created_at: new Date().toISOString() };
+        if (HAS_SUPABASE) {
+          const { error } = await sb.from('notifications').insert(entry);
+          if (error) console.error(error);
+          return;
+        }
+        const list = lsGet(LS_KEYS.notifications) || [];
+        entry.id = uid();
+        list.unshift(entry);
+        lsSet(LS_KEYS.notifications, list.slice(0, 200));
+      },
+      async getNotifications() {
+        if (HAS_SUPABASE) {
+          const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending: false }).limit(100);
+          if (error) { console.error(error); return []; }
+          return data;
+        }
+        return lsGet(LS_KEYS.notifications) || [];
+      },
+      async clearNotifications() {
+        if (HAS_SUPABASE) {
+          const { error } = await sb.from('notifications').delete().gte('created_at', '1900-01-01');
+          if (error) throw error;
+          return;
+        }
+        lsSet(LS_KEYS.notifications, []);
+      },
 
       async getReviews() {
         if (HAS_SUPABASE) {
@@ -3927,11 +4034,13 @@
       if (!PROMOS.length) { host.innerHTML = '<p class="empty-note">Nenhuma promoção ativa no momento.</p>'; return; }
       host.innerHTML = PROMOS.map(p => `
     <div class="card promo-card">
-      ${badgeHtml(p.badge)}
-      <h3>${escapeHtml(p.title)}</h3>
-      <p class="desc">${escapeHtml(p.description || '')}</p>
-      <div class="promo-price">${p.price ? brl(p.price) : (p.discount_label || '')}</div>
-      <button class="btn btn-primary btn-sm" data-quickadd='${JSON.stringify({ id: p.id, name: p.title, price: p.price || 0, emoji: '🍇' }).replace(/'/g, "&apos;")}'>Aproveitar promoção</button>
+      <div class="product-media">${mediaHtml(p, '🔥')} ${badgeHtml(p.badge)}</div>
+      <div class="promo-body">
+        <h3>${escapeHtml(p.title)}</h3>
+        <p class="desc">${escapeHtml(p.description || '')}</p>
+        <div class="promo-price">${p.price ? brl(p.price) : (p.discount_label || '')}</div>
+        <button class="btn btn-primary btn-sm" data-quickadd='${JSON.stringify({ id: p.id, name: p.title, price: p.price || 0, emoji: '🍇' }).replace(/'/g, "&apos;")}'>Aproveitar promoção</button>
+      </div>
     </div>`).join('');
       host.querySelectorAll('[data-quickadd]').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -4129,21 +4238,23 @@
     function generateLoyaltyCouponCode() {
       return 'FIDELIDADE' + Date.now().toString(36).toUpperCase().slice(-4) + Math.floor(Math.random() * 90 + 10);
     }
-    /* Verifica quantos "prêmios" de 100 pontos o cliente já alcançou e garante
-       que exista um cupom (de uso único, R$10) para cada um deles. Só gera o
-       que ainda não existe, então consultar de novo não duplica cupons. */
+    /* Gera um cupom de R$10 (uso único) quando o cliente tem 100+ pontos e ainda
+       não possui nenhum cupom de fidelidade pendente. Ao usar o cupom no
+       checkout, 100 pontos são descontados do saldo (ver seção 13). Assim, um
+       novo cupom só volta a ser gerado depois que os pontos forem "recarregados"
+       para 100 de novo. Se tiver menos de 100 pontos, nenhum cupom é gerado. */
     async function syncLoyaltyCoupons(phone, points) {
       const normalizedPhone = (phone || '').replace(/\D/g, '');
-      if (!normalizedPhone) return { list: [], created: 0 };
-      const milestones = Math.floor(points / 100);
-      const existing = (await DB.getCustomerCoupons(normalizedPhone)).filter(c => c.single_use);
-      const missing = milestones - existing.length;
+      if (!normalizedPhone) return { list: [], created: 0, error: null };
+      const existing = await DB.getCustomerCoupons(normalizedPhone);
+      const hasPendingReward = existing.some(c => c.single_use && c.active && !c.used);
       let created = 0;
-      let lastError = null;
-      for (let i = 0; i < missing; i++) {
+      let error = null;
+      if (!hasPendingReward && points >= 100) {
         try {
+          const code = generateLoyaltyCouponCode();
           await DB.saveCoupon({
-            code: generateLoyaltyCouponCode(),
+            code,
             discount_type: 'fixed',
             discount_percent: 0,
             discount_amount: 10,
@@ -4152,11 +4263,12 @@
             single_use: true,
             customer_phone: normalizedPhone,
           });
-          created++;
-        } catch (err) { console.error('Erro ao gerar cupom de fidelidade:', err); lastError = err; }
+          created = 1;
+          DB.logNotification('coupon_earned', `🎉 Cliente ${normalizedPhone} ganhou o cupom ${code} (R$10 OFF) por atingir 100 pontos.`).catch(err => console.error(err));
+        } catch (err) { console.error('Erro ao gerar cupom de fidelidade:', err); error = err; }
       }
       const list = await DB.getCustomerCoupons(normalizedPhone);
-      return { list, created, error: created === 0 && missing > 0 ? lastError : null };
+      return { list, created, error };
     }
     document.getElementById('btn-check-points').addEventListener('click', async () => {
       const phone = document.getElementById('club-phone-input').value;
@@ -4167,9 +4279,9 @@
       document.getElementById('club-progress').style.width = pct + '%';
       const { created, error } = await syncLoyaltyCoupons(phone, pts);
       document.getElementById('club-progress-label').textContent = pts >= 100
-        ? 'Você já ganhou cupom(ns) de R$10! Veja na área "Meus Cupons".'
+        ? 'Você já ganhou um cupom de R$10! Veja na área "Meus Cupons".'
         : `Faltam ${100 - pts} pontos para seu próximo cupom de R$10.`;
-      if (created > 0) toast(created === 1 ? 'Você ganhou um cupom de R$10! 🎉' : `Você ganhou ${created} cupons de R$10! 🎉`);
+      if (created > 0) toast('Você ganhou um cupom de R$10! 🎉');
       else if (error) toast('Você atingiu a pontuação, mas houve um erro ao gerar o cupom. Avise o administrador.');
     });
 
@@ -4355,16 +4467,43 @@
       document.getElementById('cart-seg-retirar').classList.toggle('active', type === 'retirada');
       document.getElementById('cart-seg-entrega').classList.toggle('active', type === 'entrega');
       document.getElementById('address-field').style.display = type === 'entrega' ? 'block' : 'none';
+      document.getElementById('cart-address-field').style.display = type === 'entrega' ? 'block' : 'none';
       updateCheckoutTotal();
       updateCartSummary();
     }
+    /* mantém o endereço digitado sincronizado entre o carrinho e o checkout */
+    document.getElementById('cart-address').addEventListener('input', e => { document.getElementById('ck-address').value = e.target.value; });
+    document.getElementById('ck-address').addEventListener('input', e => { document.getElementById('cart-address').value = e.target.value; });
     document.getElementById('ck-payment').addEventListener('change', e => {
       const pixBox = document.getElementById('pix-info');
       if (e.target.value === 'pix') {
         pixBox.style.display = 'block';
-        pixBox.innerHTML = `<strong>Chave Pix:</strong> ${escapeHtml(SETTINGS.pix_key || 'a definir')}<br><strong>Recebedor:</strong> ${escapeHtml(SETTINGS.pix_name || 'a definir')}`;
+        const pixKey = SETTINGS.pix_key || 'a definir';
+        pixBox.innerHTML = `<strong>Chave Pix:</strong> ${escapeHtml(pixKey)}<br><strong>Recebedor:</strong> ${escapeHtml(SETTINGS.pix_name || 'a definir')}
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-copy-pix" style="margin-top:10px">📋 Copiar chave Pix</button>`;
+        document.getElementById('btn-copy-pix').addEventListener('click', () => copyPixKey(pixKey));
       } else pixBox.style.display = 'none';
     });
+    function copyPixKey(key) {
+      const finish = (ok) => toast(ok ? 'Chave Pix copiada!' : 'Não foi possível copiar automaticamente. Chave: ' + key);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(key).then(() => finish(true)).catch(() => fallbackCopyText(key, finish));
+      } else fallbackCopyText(key, finish);
+    }
+    function fallbackCopyText(text, cb) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        cb(ok);
+      } catch (err) { cb(false); }
+    }
     function checkoutTotal() {
       const subtotal = cartSubtotal();
       const discount = couponDiscount(ACTIVE_COUPON, subtotal);
@@ -4413,7 +4552,10 @@
         const saved = await DB.createOrder(order);
         await DB.addLoyaltyPoints(phone, Math.floor(total));
         if (ACTIVE_COUPON && ACTIVE_COUPON.single_use) {
-          try { await DB.saveCoupon({ id: ACTIVE_COUPON.id, active: false, used: true }); } catch (err) { console.error('Erro ao marcar cupom como usado:', err); }
+          try {
+            await DB.saveCoupon({ id: ACTIVE_COUPON.id, active: false, used: true });
+            if (ACTIVE_COUPON.customer_phone) await DB.deductLoyaltyPoints(ACTIVE_COUPON.customer_phone, 100);
+          } catch (err) { console.error('Erro ao marcar cupom como usado:', err); }
         }
         LAST_ORDER = saved;
         CART = []; ACTIVE_COUPON = null; persistCart();
@@ -4872,121 +5014,136 @@
       showImagePreview('');
     }
 
-    /* ---- editor de recorte quadrado da imagem do produto ----
-       Mostra ao lojista, em uma mini área quadrada, exatamente como a foto vai
-       enquadrar no site (menu e destaque do dia usam imagens quadradas). O
-       lojista pode arrastar para reposicionar e usar o zoom; o recorte final é
-       gerado num canvas 800x800 e salvo como a imagem do produto. */
+    /* ---- editor de recorte quadrado de imagem (reutilizável) ----
+       Mostra, em uma mini área quadrada, exatamente como a foto vai enquadrar
+       no site. O lojista pode arrastar para reposicionar e usar o zoom; o
+       recorte final é gerado num canvas 800x800. Também mostra um aviso de
+       qualidade: quanto mais dá zoom, menor a resolução real aproveitada da
+       foto original — se ficar baixa demais, a imagem final pode sair borrada. */
     const CROP_STAGE_SIZE = 220;
-    const CROP = { img: null, natW: 0, natH: 0, baseScale: 1, zoom: 1, offX: 0, offY: 0, dragging: false, lastX: 0, lastY: 0 };
+    const CROP_OUT = 800;
+    function createCropController(ids) {
+      const state = { img: null, natW: 0, natH: 0, baseScale: 1, zoom: 1, offX: 0, offY: 0, dragging: false, lastX: 0, lastY: 0 };
+      const el = id => document.getElementById(id);
 
-    function showImagePreview(url) {
-      if (!url) {
-        document.getElementById('p-image-preview-wrap').style.display = 'none';
-        document.getElementById('p-image-preview').src = '';
-        delete document.getElementById('p-image-url').dataset.finalCrop;
-        CROP.img = null;
-        return;
+      function showPreview(url) {
+        if (!url) {
+          el(ids.wrap).style.display = 'none';
+          el(ids.img).src = '';
+          delete el(ids.urlField).dataset.finalCrop;
+          state.img = null;
+          return;
+        }
+        initImage(url);
       }
-      initCropImage(url);
-    }
-
-    function initCropImage(src) {
-      const testImg = new Image();
-      testImg.crossOrigin = 'anonymous';
-      testImg.onload = () => {
-        CROP.img = testImg;
-        CROP.natW = testImg.naturalWidth;
-        CROP.natH = testImg.naturalHeight;
-        CROP.baseScale = Math.max(CROP_STAGE_SIZE / CROP.natW, CROP_STAGE_SIZE / CROP.natH);
-        CROP.zoom = 1;
-        CROP.offX = 0;
-        CROP.offY = 0;
-        document.getElementById('crop-zoom').value = 100;
-        const previewImg = document.getElementById('p-image-preview');
-        previewImg.src = src;
-        document.getElementById('p-image-preview-wrap').style.display = 'block';
-        applyCropTransform();
-        updateCroppedOutput();
-      };
-      testImg.onerror = () => {
-        // provavelmente uma URL externa ainda sendo digitada; não mostra erro, só aguarda
-        document.getElementById('p-image-preview-wrap').style.display = 'none';
-        CROP.img = null;
-      };
-      testImg.src = src;
-    }
-
-    function applyCropTransform() {
-      const img = document.getElementById('p-image-preview');
-      const totalScale = CROP.baseScale * CROP.zoom;
-      img.style.width = (CROP.natW * totalScale) + 'px';
-      img.style.height = (CROP.natH * totalScale) + 'px';
-      img.style.transform = `translate(calc(-50% + ${CROP.offX}px), calc(-50% + ${CROP.offY}px))`;
-    }
-
-    function clampCropOffsets() {
-      const totalScale = CROP.baseScale * CROP.zoom;
-      const dispW = CROP.natW * totalScale, dispH = CROP.natH * totalScale;
-      const maxOffX = Math.max(0, (dispW - CROP_STAGE_SIZE) / 2);
-      const maxOffY = Math.max(0, (dispH - CROP_STAGE_SIZE) / 2);
-      CROP.offX = Math.min(maxOffX, Math.max(-maxOffX, CROP.offX));
-      CROP.offY = Math.min(maxOffY, Math.max(-maxOffY, CROP.offY));
-    }
-
-    function updateCroppedOutput() {
-      const urlField = document.getElementById('p-image-url');
-      if (!CROP.img) { delete urlField.dataset.finalCrop; return; }
-      const OUT = 800;
-      const totalScale = CROP.baseScale * CROP.zoom;
-      const half = CROP_STAGE_SIZE / 2;
-      const sSize = CROP_STAGE_SIZE / totalScale;
-      let sx = CROP.natW / 2 - (half + CROP.offX) / totalScale;
-      let sy = CROP.natH / 2 - (half + CROP.offY) / totalScale;
-      sx = Math.max(0, Math.min(sx, CROP.natW - sSize));
-      sy = Math.max(0, Math.min(sy, CROP.natH - sSize));
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = OUT; canvas.height = OUT;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(CROP.img, sx, sy, sSize, sSize, 0, 0, OUT, OUT);
-        urlField.dataset.finalCrop = canvas.toDataURL('image/jpeg', 0.85);
-      } catch (err) {
-        // canvas "contaminado" por imagem externa sem CORS liberado — usa a URL original sem recorte
-        delete urlField.dataset.finalCrop;
+      function initImage(src) {
+        const testImg = new Image();
+        testImg.crossOrigin = 'anonymous';
+        testImg.onload = () => {
+          state.img = testImg;
+          state.natW = testImg.naturalWidth;
+          state.natH = testImg.naturalHeight;
+          state.baseScale = Math.max(CROP_STAGE_SIZE / state.natW, CROP_STAGE_SIZE / state.natH);
+          state.zoom = 1; state.offX = 0; state.offY = 0;
+          el(ids.zoom).value = 100;
+          el(ids.img).src = src;
+          el(ids.wrap).style.display = 'block';
+          applyTransform();
+          updateOutput();
+        };
+        testImg.onerror = () => {
+          // provavelmente uma URL externa ainda sendo digitada; não mostra erro, só aguarda
+          el(ids.wrap).style.display = 'none';
+          state.img = null;
+        };
+        testImg.src = src;
       }
+      function applyTransform() {
+        const img = el(ids.img);
+        const totalScale = state.baseScale * state.zoom;
+        img.style.width = (state.natW * totalScale) + 'px';
+        img.style.height = (state.natH * totalScale) + 'px';
+        img.style.transform = `translate(calc(-50% + ${state.offX}px), calc(-50% + ${state.offY}px))`;
+        updateQualityLabel(totalScale);
+      }
+      function updateQualityLabel(totalScale) {
+        const label = ids.quality ? el(ids.quality) : null;
+        if (!label) return;
+        const sourcePx = Math.round(CROP_STAGE_SIZE / totalScale);
+        label.classList.remove('good', 'warn', 'bad');
+        if (sourcePx >= 500) { label.textContent = `✅ Ótimo enquadramento — aproveitando ${sourcePx}px da foto original.`; label.classList.add('good'); }
+        else if (sourcePx >= 300) { label.textContent = `⚠️ Enquadramento razoável (${sourcePx}px). Dê menos zoom para ficar mais nítido.`; label.classList.add('warn'); }
+        else { label.textContent = `❌ Zoom demais (${sourcePx}px) — a imagem vai sair borrada. Diminua o zoom.`; label.classList.add('bad'); }
+      }
+      function clampOffsets() {
+        const totalScale = state.baseScale * state.zoom;
+        const dispW = state.natW * totalScale, dispH = state.natH * totalScale;
+        const maxOffX = Math.max(0, (dispW - CROP_STAGE_SIZE) / 2);
+        const maxOffY = Math.max(0, (dispH - CROP_STAGE_SIZE) / 2);
+        state.offX = Math.min(maxOffX, Math.max(-maxOffX, state.offX));
+        state.offY = Math.min(maxOffY, Math.max(-maxOffY, state.offY));
+      }
+      function updateOutput() {
+        const urlField = el(ids.urlField);
+        if (!state.img) { delete urlField.dataset.finalCrop; return; }
+        const totalScale = state.baseScale * state.zoom;
+        const half = CROP_STAGE_SIZE / 2;
+        const sSize = CROP_STAGE_SIZE / totalScale;
+        let sx = state.natW / 2 - (half + state.offX) / totalScale;
+        let sy = state.natH / 2 - (half + state.offY) / totalScale;
+        sx = Math.max(0, Math.min(sx, state.natW - sSize));
+        sy = Math.max(0, Math.min(sy, state.natH - sSize));
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = CROP_OUT; canvas.height = CROP_OUT;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(state.img, sx, sy, sSize, sSize, 0, 0, CROP_OUT, CROP_OUT);
+          urlField.dataset.finalCrop = canvas.toDataURL('image/jpeg', 0.85);
+        } catch (err) {
+          // canvas "contaminado" por imagem externa sem CORS liberado — usa a URL original sem recorte
+          delete urlField.dataset.finalCrop;
+        }
+      }
+
+      const stage = el(ids.stage);
+      stage.addEventListener('pointerdown', (e) => {
+        if (!state.img) return;
+        state.dragging = true;
+        state.lastX = e.clientX; state.lastY = e.clientY;
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener('pointermove', (e) => {
+        if (!state.dragging) return;
+        state.offX += e.clientX - state.lastX;
+        state.offY += e.clientY - state.lastY;
+        state.lastX = e.clientX; state.lastY = e.clientY;
+        clampOffsets();
+        applyTransform();
+      });
+      function endDrag() {
+        if (!state.dragging) return;
+        state.dragging = false;
+        updateOutput();
+      }
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointerleave', endDrag);
+      el(ids.zoom).addEventListener('input', (e) => {
+        if (!state.img) return;
+        state.zoom = Math.max(1, parseInt(e.target.value, 10) / 100);
+        clampOffsets();
+        applyTransform();
+      });
+      el(ids.zoom).addEventListener('change', updateOutput);
+      el(ids.urlField).addEventListener('input', e => showPreview(e.target.value.trim()));
+
+      return { showPreview };
     }
 
-    const cropStage = document.getElementById('crop-stage');
-    cropStage.addEventListener('pointerdown', (e) => {
-      if (!CROP.img) return;
-      CROP.dragging = true;
-      CROP.lastX = e.clientX; CROP.lastY = e.clientY;
-      cropStage.setPointerCapture(e.pointerId);
+    const productCrop = createCropController({
+      stage: 'crop-stage', img: 'p-image-preview', zoom: 'crop-zoom',
+      quality: 'crop-quality', wrap: 'p-image-preview-wrap', urlField: 'p-image-url',
     });
-    cropStage.addEventListener('pointermove', (e) => {
-      if (!CROP.dragging) return;
-      CROP.offX += e.clientX - CROP.lastX;
-      CROP.offY += e.clientY - CROP.lastY;
-      CROP.lastX = e.clientX; CROP.lastY = e.clientY;
-      clampCropOffsets();
-      applyCropTransform();
-    });
-    function endCropDrag() {
-      if (!CROP.dragging) return;
-      CROP.dragging = false;
-      updateCroppedOutput();
-    }
-    cropStage.addEventListener('pointerup', endCropDrag);
-    cropStage.addEventListener('pointerleave', endCropDrag);
-    document.getElementById('crop-zoom').addEventListener('input', (e) => {
-      if (!CROP.img) return;
-      CROP.zoom = Math.max(1, parseInt(e.target.value, 10) / 100);
-      clampCropOffsets();
-      applyCropTransform();
-    });
-    document.getElementById('crop-zoom').addEventListener('change', updateCroppedOutput);
-    document.getElementById('p-image-url').addEventListener('input', e => showImagePreview(e.target.value.trim()));
+    function showImagePreview(url) { productCrop.showPreview(url); }
 
     /* Redimensiona/comprime a imagem no navegador antes de salvar, para evitar
        arquivos gigantes (fotos de celular) que estouram o limite de armazenamento
@@ -5050,11 +5207,53 @@
     });
 
     /* ---- promoções ---- */
+    const promoCrop = createCropController({
+      stage: 'promo-crop-stage', img: 'pr-image-preview', zoom: 'promo-crop-zoom',
+      quality: 'promo-crop-quality', wrap: 'pr-image-preview-wrap', urlField: 'pr-image-url',
+    });
+    async function populatePromoProductSelect(selectedId) {
+      const products = await DB.getAllProductsAdmin();
+      const sel = document.getElementById('pr-product-select');
+      sel.innerHTML = '<option value="">Selecione um produto...</option>' +
+        products.map(p => `<option value="${p.id}" ${p.id === selectedId ? 'selected' : ''}>${escapeHtml(p.emoji || '')} ${escapeHtml(p.name)}</option>`).join('');
+      return products;
+    }
+    document.getElementById('pr-product-select').addEventListener('change', async (e) => {
+      const products = await DB.getAllProductsAdmin();
+      const p = products.find(x => x.id === e.target.value);
+      document.getElementById('pr-product-id').value = p ? p.id : '';
+      // pré-preenche preço e imagem com os dados do produto (o lojista pode ajustar)
+      if (p) {
+        if (!document.getElementById('pr-price').value) document.getElementById('pr-price').value = p.price;
+        if (!document.getElementById('pr-image-url').value && p.image_url) {
+          document.getElementById('pr-image-url').value = p.image_url;
+          promoCrop.showPreview(p.image_url);
+        }
+      }
+    });
+    document.getElementById('pr-image-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const dataUrl = await compressImageFile(file);
+        document.getElementById('pr-image-url').value = '';
+        promoCrop.showPreview(dataUrl);
+      } catch (err) {
+        console.error(err);
+        toast(err.message || 'Não foi possível processar a imagem selecionada');
+        e.target.value = '';
+      }
+    });
     async function renderAdminPromos() {
-      const promos = await DB.getAllPromosAdmin();
+      const [promos] = await Promise.all([DB.getAllPromosAdmin(), populatePromoProductSelect()]);
       document.getElementById('admin-promos-body').innerHTML = promos.map(p => `
     <tr>
-      <td>${escapeHtml(p.title)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" alt="" style="width:38px;height:38px;object-fit:cover;border-radius:8px;flex-shrink:0" onerror="this.remove()">` : ''}
+          <span>${escapeHtml(p.title)}</span>
+        </div>
+      </td>
       <td>${brl(p.price)}</td>
       <td>${p.active ? 'Sim' : 'Não'}</td>
       <td>
@@ -5070,15 +5269,18 @@
         await renderAdminPromos();
       }));
     }
-    function editPromo(id, promos) {
+    async function editPromo(id, promos) {
       const p = promos.find(x => x.id === id);
       if (!p) return;
+      await populatePromoProductSelect(p.product_id || '');
       document.getElementById('pr-id').value = p.id;
-      document.getElementById('pr-title').value = p.title;
+      document.getElementById('pr-product-id').value = p.product_id || '';
       document.getElementById('pr-price').value = p.price;
       document.getElementById('pr-badge').value = p.badge || 'hot';
       document.getElementById('pr-active').value = String(!!p.active);
       document.getElementById('pr-desc').value = p.description || '';
+      document.getElementById('pr-image-url').value = p.image_url || '';
+      promoCrop.showPreview(p.image_url || '');
       document.getElementById('pr-submit-btn').textContent = 'Salvar alterações';
       document.getElementById('pr-cancel-edit').style.display = 'inline-flex';
     }
@@ -5086,19 +5288,27 @@
     function resetPromoForm() {
       document.getElementById('promo-form').reset();
       document.getElementById('pr-id').value = '';
+      document.getElementById('pr-product-id').value = '';
+      promoCrop.showPreview('');
       document.getElementById('pr-submit-btn').textContent = 'Adicionar promoção';
       document.getElementById('pr-cancel-edit').style.display = 'none';
     }
     document.getElementById('promo-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const productSelect = document.getElementById('pr-product-select');
+      const selectedOption = productSelect.options[productSelect.selectedIndex];
+      const imageUrlField = document.getElementById('pr-image-url');
       const payload = {
         id: document.getElementById('pr-id').value || undefined,
-        title: document.getElementById('pr-title').value.trim(),
+        product_id: productSelect.value || null,
+        title: selectedOption ? selectedOption.textContent.trim() : '',
         price: parseFloat(document.getElementById('pr-price').value),
         badge: document.getElementById('pr-badge').value,
         active: document.getElementById('pr-active').value === 'true',
         description: document.getElementById('pr-desc').value.trim(),
+        image_url: imageUrlField.dataset.finalCrop || imageUrlField.value.trim() || null,
       };
+      if (!payload.product_id) { toast('Selecione um produto'); return; }
       try { await DB.savePromo(payload); toast('Promoção salva'); resetPromoForm(); await renderAdminPromos(); PROMOS = await DB.getPromotions(); renderPromos(); renderDestaque(); }
       catch (err) { console.error(err); toast(err.message || 'Erro ao salvar promoção'); }
     });
