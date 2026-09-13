@@ -1004,6 +1004,68 @@
       font-family: inherit
     }
 
+    /* ---------- meus cupons ---------- */
+    .mycoupon-item {
+      background: var(--purple-100);
+      border: 1.5px dashed var(--purple-500);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px
+    }
+
+    .mycoupon-item.is-used {
+      opacity: .5
+    }
+
+    .mycoupon-code {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--purple-600);
+      letter-spacing: .02em
+    }
+
+    .mycoupon-value {
+      font-size: .85rem;
+      color: var(--ink-soft);
+      margin-top: 2px
+    }
+
+    .mycoupon-badge {
+      font-size: .72rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 100px;
+      white-space: nowrap
+    }
+
+    .mycoupon-badge.available {
+      background: var(--green-400);
+      color: #08331f
+    }
+
+    .mycoupon-badge.used {
+      background: var(--line);
+      color: var(--ink-soft)
+    }
+
+    .mycoupon-empty {
+      color: var(--ink-soft);
+      text-align: center;
+      padding: 10px 0
+    }
+
+    @media (max-width:480px) {
+      .mycoupon-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
     /* ---------- localização ---------- */
     .loc-grid {
       display: grid;
@@ -2704,6 +2766,7 @@
           <a href="#montar">Monte o seu</a>
           <a href="#promocoes">Promoções</a>
           <a href="#clube">Clube do Açaí</a>
+          <a href="#" id="link-mycoupons">Meus Cupons</a>
           <a href="#local">Onde estamos</a>
         </nav>
         <div class="nav-actions">
@@ -2888,6 +2951,8 @@
             </div>
             <p style="margin-top:10px;font-size:.85rem;color:rgba(255,255,255,.65)" id="club-progress-label">Faça um
               pedido para começar a pontuar.</p>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-open-coupons-club" style="margin-top:12px">🎟️
+              Ver meus cupons</button>
           </div>
         </div>
       </div>
@@ -2961,6 +3026,7 @@
             <a href="#montar">Monte o seu</a>
             <a href="#promocoes">Promoções</a>
             <a href="#clube">Clube do Açaí</a>
+            <a href="#" id="footer-link-mycoupons">Meus Cupons</a>
           </div>
           <div>
             <h5>Contato</h5>
@@ -3011,6 +3077,13 @@
         <div id="cart-items"></div>
       </div>
       <div class="drawer-foot" id="cart-foot" style="display:none">
+        <div class="field" style="margin-bottom:12px">
+          <label>Forma de recebimento</label>
+          <div class="seg">
+            <button type="button" class="active" id="cart-seg-retirar" data-type="retirada">Retirar no local</button>
+            <button type="button" id="cart-seg-entrega" data-type="entrega">Entrega</button>
+          </div>
+        </div>
         <div class="coupon-row">
           <input type="text" id="coupon-input" placeholder="Tem um cupom? Digite aqui">
           <button class="btn btn-ghost btn-sm" id="btn-apply-coupon">Aplicar</button>
@@ -3019,6 +3092,8 @@
         <div class="cart-summary-line"><span>Subtotal</span><span id="sum-subtotal">R$ 0,00</span></div>
         <div class="cart-summary-line" id="sum-discount-row" style="display:none"><span>Desconto</span><span
             id="sum-discount">- R$ 0,00</span></div>
+        <div class="cart-summary-line" id="sum-delivery-row" style="display:none"><span>Taxa de entrega</span><span
+            id="sum-delivery">R$ 0,00</span></div>
         <div class="cart-summary-line total"><span>Total</span><span id="sum-total">R$ 0,00</span></div>
         <button class="btn btn-primary btn-block" style="margin-top:14px" id="btn-checkout">Finalizar pedido</button>
         <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btn-clear-cart">Limpar carrinho</button>
@@ -3087,6 +3162,24 @@
         <button class="btn btn-green btn-block" id="btn-order-whatsapp">Enviar no WhatsApp</button>
         <button class="btn btn-ghost btn-block" id="btn-close-confirm">Fechar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ===================== MEUS CUPONS (mini modal) ===================== -->
+  <div class="overlay center" id="coupons-overlay">
+    <div class="modal-box" style="max-width:420px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3>🎟️ Meus Cupons</h3>
+        <button class="close-x" id="close-coupons">✕</button>
+      </div>
+      <p style="color:var(--ink-soft);font-size:.88rem;margin-bottom:16px">Digite seu telefone para ver os cupons de
+        fidelidade que você já ganhou.</p>
+      <div class="field" style="margin-bottom:8px">
+        <input type="tel" id="mycoupons-phone-input" placeholder="Seu telefone/WhatsApp">
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-check-coupons" style="margin-bottom:16px">Ver meus
+        cupons</button>
+      <div id="mycoupons-list"></div>
     </div>
   </div>
 
@@ -3309,14 +3402,24 @@
                 <div class="admin-form-grid">
                   <div class="field"><label>Código</label><input required id="c-code" placeholder="ACAI10"
                       style="text-transform:uppercase"></div>
-                  <div class="field"><label>Desconto (%)</label><input required type="number" step="1" id="c-percent">
+                  <div class="field"><label>Tipo de desconto</label>
+                    <select id="c-type">
+                      <option value="percent">Percentual (%)</option>
+                      <option value="fixed">Valor fixo (R$)</option>
+                    </select>
                   </div>
+                  <div class="field" id="c-percent-field"><label>Desconto (%)</label><input required type="number"
+                      step="1" id="c-percent"></div>
+                  <div class="field" id="c-amount-field" style="display:none"><label>Valor do desconto (R$)</label>
+                    <input type="number" step="0.01" id="c-amount"></div>
                   <div class="field"><label>Ativo</label><select id="c-active">
                       <option value="true">Sim</option>
                       <option value="false">Não</option>
                     </select></div>
                 </div>
                 <input type="hidden" id="c-id">
+                <input type="hidden" id="c-customer-phone">
+                <input type="hidden" id="c-single-use">
                 <button class="btn btn-primary" type="submit" id="c-submit-btn">Adicionar cupom</button>
                 <button class="btn btn-ghost" type="button" id="c-cancel-edit" style="display:none">Cancelar
                   edição</button>
@@ -3328,6 +3431,7 @@
                   <tr>
                     <th>Código</th>
                     <th>Desconto</th>
+                    <th>Cliente</th>
                     <th>Ativo</th>
                     <th>Ações</th>
                   </tr>
@@ -3566,7 +3670,7 @@
         return lsGet(LS_KEYS.coupons);
       },
       async saveCoupon(c) {
-        c.code = (c.code || '').trim().toUpperCase();
+        if (c.code !== undefined) c.code = (c.code || '').trim().toUpperCase();
         if (HAS_SUPABASE) {
           if (c.id) { const { error } = await sb.from('coupons').update(c).eq('id', c.id); if (error) throw error; }
           else { const { error } = await sb.from('coupons').insert(c); if (error) throw error; }
@@ -3580,6 +3684,16 @@
       async deleteCoupon(id) {
         if (HAS_SUPABASE) { const { error } = await sb.from('coupons').delete().eq('id', id); if (error) throw error; return; }
         lsSet(LS_KEYS.coupons, lsGet(LS_KEYS.coupons).filter(c => c.id !== id));
+      },
+      async getCustomerCoupons(phone) {
+        phone = (phone || '').replace(/\D/g, '');
+        if (!phone) return [];
+        if (HAS_SUPABASE) {
+          const { data, error } = await sb.from('coupons').select('*').eq('customer_phone', phone);
+          if (error) { console.error(error); return []; }
+          return data;
+        }
+        return lsGet(LS_KEYS.coupons).filter(c => c.customer_phone === phone);
       },
 
       async getSettings() {
@@ -4012,16 +4126,106 @@
     });
 
     /* ---------------------- 11. CLUBE DO AÇAÍ ---------------------- */
+    function generateLoyaltyCouponCode() {
+      return 'FIDELIDADE' + Date.now().toString(36).toUpperCase().slice(-4) + Math.floor(Math.random() * 90 + 10);
+    }
+    /* Verifica quantos "prêmios" de 100 pontos o cliente já alcançou e garante
+       que exista um cupom (de uso único, R$10) para cada um deles. Só gera o
+       que ainda não existe, então consultar de novo não duplica cupons. */
+    async function syncLoyaltyCoupons(phone, points) {
+      const normalizedPhone = (phone || '').replace(/\D/g, '');
+      if (!normalizedPhone) return { list: [], created: 0 };
+      const milestones = Math.floor(points / 100);
+      const existing = (await DB.getCustomerCoupons(normalizedPhone)).filter(c => c.single_use);
+      const missing = milestones - existing.length;
+      let created = 0;
+      let lastError = null;
+      for (let i = 0; i < missing; i++) {
+        try {
+          await DB.saveCoupon({
+            code: generateLoyaltyCouponCode(),
+            discount_type: 'fixed',
+            discount_percent: 0,
+            discount_amount: 10,
+            active: true,
+            used: false,
+            single_use: true,
+            customer_phone: normalizedPhone,
+          });
+          created++;
+        } catch (err) { console.error('Erro ao gerar cupom de fidelidade:', err); lastError = err; }
+      }
+      const list = await DB.getCustomerCoupons(normalizedPhone);
+      return { list, created, error: created === 0 && missing > 0 ? lastError : null };
+    }
     document.getElementById('btn-check-points').addEventListener('click', async () => {
       const phone = document.getElementById('club-phone-input').value;
       if (!phone.replace(/\D/g, '')) { toast('Digite um telefone válido'); return; }
       const pts = await DB.getLoyaltyPoints(phone);
       document.getElementById('club-points-display').textContent = pts + ' pontos 🍇';
-      const pct = Math.min(100, (pts / 100) * 100);
+      const pct = Math.min(100, ((pts % 100) / 100) * 100);
       document.getElementById('club-progress').style.width = pct + '%';
+      const { created, error } = await syncLoyaltyCoupons(phone, pts);
       document.getElementById('club-progress-label').textContent = pts >= 100
-        ? 'Você já pode resgatar R$10 de desconto! Fale com a loja.'
-        : `Faltam ${100 - pts} pontos para R$10 de desconto.`;
+        ? 'Você já ganhou cupom(ns) de R$10! Veja na área "Meus Cupons".'
+        : `Faltam ${100 - pts} pontos para seu próximo cupom de R$10.`;
+      if (created > 0) toast(created === 1 ? 'Você ganhou um cupom de R$10! 🎉' : `Você ganhou ${created} cupons de R$10! 🎉`);
+      else if (error) toast('Você atingiu a pontuação, mas houve um erro ao gerar o cupom. Avise o administrador.');
+    });
+
+    /* ---- meus cupons ---- */
+    function openCouponsModal() {
+      document.getElementById('coupons-overlay').classList.add('open');
+      lockBodyScroll();
+    }
+    function closeCouponsModal() {
+      document.getElementById('coupons-overlay').classList.remove('open');
+      unlockBodyScroll();
+    }
+    document.getElementById('link-mycoupons').addEventListener('click', (e) => { e.preventDefault(); openCouponsModal(); });
+    document.getElementById('footer-link-mycoupons').addEventListener('click', (e) => { e.preventDefault(); openCouponsModal(); });
+    document.getElementById('btn-open-coupons-club').addEventListener('click', () => {
+      openCouponsModal();
+      const clubPhone = document.getElementById('club-phone-input').value;
+      if (clubPhone.replace(/\D/g, '')) {
+        document.getElementById('mycoupons-phone-input').value = clubPhone;
+        document.getElementById('btn-check-coupons').click();
+      }
+    });
+    document.getElementById('close-coupons').addEventListener('click', closeCouponsModal);
+    document.getElementById('coupons-overlay').addEventListener('click', e => { if (e.target.id === 'coupons-overlay') closeCouponsModal(); });
+    function renderMyCoupons(list) {
+      const wrap = document.getElementById('mycoupons-list');
+      if (!list.length) { wrap.innerHTML = '<p class="mycoupon-empty">Nenhum cupom encontrado para esse telefone ainda.</p>'; return; }
+      wrap.innerHTML = list.map(c => {
+        const used = c.used || !c.active;
+        const value = c.discount_type === 'fixed' ? brl(c.discount_amount) + ' OFF' : `${c.discount_percent}% OFF`;
+        return `
+      <div class="mycoupon-item ${used ? 'is-used' : ''}">
+        <div>
+          <div class="mycoupon-code">${escapeHtml(c.code)}</div>
+          <div class="mycoupon-value">${value}</div>
+        </div>
+        ${used
+            ? '<span class="mycoupon-badge used">Usado</span>'
+            : `<button class="btn btn-yellow btn-sm" data-use-coupon="${escapeHtml(c.code)}">Usar no carrinho</button>`}
+      </div>`;
+      }).join('');
+      document.querySelectorAll('[data-use-coupon]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (CART.length === 0) { toast('Seu carrinho está vazio — adicione itens antes de usar o cupom'); return; }
+          document.getElementById('coupon-input').value = btn.dataset.useCoupon;
+          document.getElementById('btn-apply-coupon').click();
+          closeCouponsModal();
+          openCart();
+        });
+      });
+    }
+    document.getElementById('btn-check-coupons').addEventListener('click', async () => {
+      const phone = document.getElementById('mycoupons-phone-input').value;
+      if (!phone.replace(/\D/g, '')) { toast('Digite um telefone válido'); return; }
+      const list = await DB.getCustomerCoupons(phone);
+      renderMyCoupons(list);
     });
 
     /* ---------------------- 12. CARRINHO ---------------------- */
@@ -4070,14 +4274,23 @@
       persistCart(); renderCart();
     }
     function cartSubtotal() { return CART.reduce((s, i) => s + i.unitPrice * i.qty, 0); }
+    function couponDiscount(coupon, subtotal) {
+      if (!coupon) return 0;
+      if (coupon.discount_type === 'fixed') return Math.min(subtotal, Number(coupon.discount_amount || 0));
+      return subtotal * (Number(coupon.discount_percent || 0) / 100);
+    }
+    function cartDeliveryFee() { return CHECKOUT_TYPE === 'entrega' ? Number(SETTINGS.delivery_fee || 0) : 0; }
     function updateCartSummary() {
       const subtotal = cartSubtotal();
       let discount = 0;
-      if (ACTIVE_COUPON) discount = subtotal * (ACTIVE_COUPON.discount_percent / 100);
-      const total = Math.max(0, subtotal - discount);
+      if (ACTIVE_COUPON) discount = couponDiscount(ACTIVE_COUPON, subtotal);
+      const deliveryFee = cartDeliveryFee();
+      const total = Math.max(0, subtotal - discount) + deliveryFee;
       document.getElementById('sum-subtotal').textContent = brl(subtotal);
       document.getElementById('sum-discount-row').style.display = discount > 0 ? 'flex' : 'none';
       document.getElementById('sum-discount').textContent = '- ' + brl(discount);
+      document.getElementById('sum-delivery-row').style.display = deliveryFee > 0 ? 'flex' : 'none';
+      document.getElementById('sum-delivery').textContent = brl(deliveryFee);
       document.getElementById('sum-total').textContent = brl(total);
     }
     document.getElementById('btn-apply-coupon').addEventListener('click', async () => {
@@ -4085,7 +4298,12 @@
       const coupon = await DB.getCouponByCode(code);
       const fb = document.getElementById('coupon-feedback');
       if (!coupon) { fb.style.color = '#C0392B'; fb.textContent = 'Cupom inválido ou expirado.'; ACTIVE_COUPON = null; }
-      else { ACTIVE_COUPON = coupon; fb.style.color = 'var(--green-600)'; fb.textContent = `Cupom ${coupon.code} aplicado: ${coupon.discount_percent}% OFF`; }
+      else {
+        ACTIVE_COUPON = coupon;
+        fb.style.color = 'var(--green-600)';
+        const label = coupon.discount_type === 'fixed' ? `${brl(coupon.discount_amount)} OFF` : `${coupon.discount_percent}% OFF`;
+        fb.textContent = `Cupom ${coupon.code} aplicado: ${label}`;
+      }
       updateCartSummary();
     });
     document.getElementById('btn-clear-cart').addEventListener('click', () => { CART = []; ACTIVE_COUPON = null; persistCart(); renderCart(); toast('Carrinho limpo'); });
@@ -4128,12 +4346,17 @@
     let CHECKOUT_TYPE = 'retirada';
     document.getElementById('seg-retirar').addEventListener('click', () => setCheckoutType('retirada'));
     document.getElementById('seg-entrega').addEventListener('click', () => setCheckoutType('entrega'));
+    document.getElementById('cart-seg-retirar').addEventListener('click', () => setCheckoutType('retirada'));
+    document.getElementById('cart-seg-entrega').addEventListener('click', () => setCheckoutType('entrega'));
     function setCheckoutType(type) {
       CHECKOUT_TYPE = type;
       document.getElementById('seg-retirar').classList.toggle('active', type === 'retirada');
       document.getElementById('seg-entrega').classList.toggle('active', type === 'entrega');
+      document.getElementById('cart-seg-retirar').classList.toggle('active', type === 'retirada');
+      document.getElementById('cart-seg-entrega').classList.toggle('active', type === 'entrega');
       document.getElementById('address-field').style.display = type === 'entrega' ? 'block' : 'none';
       updateCheckoutTotal();
+      updateCartSummary();
     }
     document.getElementById('ck-payment').addEventListener('change', e => {
       const pixBox = document.getElementById('pix-info');
@@ -4144,7 +4367,7 @@
     });
     function checkoutTotal() {
       const subtotal = cartSubtotal();
-      const discount = ACTIVE_COUPON ? subtotal * (ACTIVE_COUPON.discount_percent / 100) : 0;
+      const discount = couponDiscount(ACTIVE_COUPON, subtotal);
       const deliveryFee = CHECKOUT_TYPE === 'entrega' ? Number(SETTINGS.delivery_fee || 0) : 0;
       return Math.max(0, subtotal - discount) + deliveryFee;
     }
@@ -4168,7 +4391,7 @@
       if (CHECKOUT_TYPE === 'entrega' && !address) { toast('Informe o endereço de entrega'); return; }
 
       const subtotal = cartSubtotal();
-      const discount = ACTIVE_COUPON ? subtotal * (ACTIVE_COUPON.discount_percent / 100) : 0;
+      const discount = couponDiscount(ACTIVE_COUPON, subtotal);
       const deliveryFee = CHECKOUT_TYPE === 'entrega' ? Number(SETTINGS.delivery_fee || 0) : 0;
       const total = Math.max(0, subtotal - discount) + deliveryFee;
 
@@ -4189,6 +4412,9 @@
       try {
         const saved = await DB.createOrder(order);
         await DB.addLoyaltyPoints(phone, Math.floor(total));
+        if (ACTIVE_COUPON && ACTIVE_COUPON.single_use) {
+          try { await DB.saveCoupon({ id: ACTIVE_COUPON.id, active: false, used: true }); } catch (err) { console.error('Erro ao marcar cupom como usado:', err); }
+        }
         LAST_ORDER = saved;
         CART = []; ACTIVE_COUPON = null; persistCart();
         localStorage.setItem('acai_last_order_id', saved.id);
@@ -4878,18 +5104,26 @@
     });
 
     /* ---- cupons ---- */
+    document.getElementById('c-type').addEventListener('change', (e) => {
+      const isFixed = e.target.value === 'fixed';
+      document.getElementById('c-percent-field').style.display = isFixed ? 'none' : 'block';
+      document.getElementById('c-amount-field').style.display = isFixed ? 'block' : 'none';
+      document.getElementById('c-percent').required = !isFixed;
+      document.getElementById('c-amount').required = isFixed;
+    });
     async function renderAdminCoupons() {
       const coupons = await DB.getAllCouponsAdmin();
       document.getElementById('admin-coupons-body').innerHTML = coupons.map(c => `
     <tr>
       <td>${escapeHtml(c.code)}</td>
-      <td>${c.discount_percent}%</td>
+      <td>${c.discount_type === 'fixed' ? brl(c.discount_amount) : (c.discount_percent + '%')}</td>
+      <td>${c.customer_phone ? escapeHtml(c.customer_phone) + (c.used ? ' (usado)' : '') : '<span style="color:var(--ink-soft)">Todos</span>'}</td>
       <td>${c.active ? 'Sim' : 'Não'}</td>
       <td>
         <button class="btn btn-ghost btn-sm" data-edit-coupon="${c.id}">Editar</button>
         <button class="btn btn-ghost btn-sm" data-del-coupon="${c.id}">Excluir</button>
       </td>
-    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--ink-soft)">Nenhum cupom cadastrado.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft)">Nenhum cupom cadastrado.</td></tr>';
       document.querySelectorAll('[data-edit-coupon]').forEach(b => b.addEventListener('click', () => editCoupon(b.dataset.editCoupon, coupons)));
       document.querySelectorAll('[data-del-coupon]').forEach(b => b.addEventListener('click', async () => {
         if (!confirm('Excluir este cupom?')) return;
@@ -4903,8 +5137,13 @@
       if (!c) return;
       document.getElementById('c-id').value = c.id;
       document.getElementById('c-code').value = c.code;
-      document.getElementById('c-percent').value = c.discount_percent;
+      document.getElementById('c-type').value = c.discount_type === 'fixed' ? 'fixed' : 'percent';
+      document.getElementById('c-percent').value = c.discount_percent || '';
+      document.getElementById('c-amount').value = c.discount_amount || '';
       document.getElementById('c-active').value = String(!!c.active);
+      document.getElementById('c-customer-phone').value = c.customer_phone || '';
+      document.getElementById('c-single-use').value = c.single_use ? '1' : '';
+      document.getElementById('c-type').dispatchEvent(new Event('change'));
       document.getElementById('c-submit-btn').textContent = 'Salvar alterações';
       document.getElementById('c-cancel-edit').style.display = 'inline-flex';
     }
@@ -4912,16 +5151,24 @@
     function resetCouponForm() {
       document.getElementById('coupon-form').reset();
       document.getElementById('c-id').value = '';
+      document.getElementById('c-customer-phone').value = '';
+      document.getElementById('c-single-use').value = '';
+      document.getElementById('c-type').dispatchEvent(new Event('change'));
       document.getElementById('c-submit-btn').textContent = 'Adicionar cupom';
       document.getElementById('c-cancel-edit').style.display = 'none';
     }
     document.getElementById('coupon-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const type = document.getElementById('c-type').value;
       const payload = {
         id: document.getElementById('c-id').value || undefined,
         code: document.getElementById('c-code').value.trim(),
-        discount_percent: parseFloat(document.getElementById('c-percent').value),
+        discount_type: type,
+        discount_percent: type === 'percent' ? parseFloat(document.getElementById('c-percent').value) || 0 : 0,
+        discount_amount: type === 'fixed' ? parseFloat(document.getElementById('c-amount').value) || 0 : 0,
         active: document.getElementById('c-active').value === 'true',
+        customer_phone: document.getElementById('c-customer-phone').value || null,
+        single_use: document.getElementById('c-single-use').value === '1',
       };
       try { await DB.saveCoupon(payload); toast('Cupom salvo'); resetCouponForm(); await renderAdminCoupons(); }
       catch (err) { console.error(err); toast(err.message || 'Erro ao salvar cupom (o código já pode existir)'); }
