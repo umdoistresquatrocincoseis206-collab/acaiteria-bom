@@ -1882,7 +1882,6 @@
         height: 40px;
         font-size: 1.1rem;
         flex-shrink: 0;
-        color: white;
       }
 
       .admin-bar-actions {
@@ -3177,6 +3176,7 @@
                     <th>Pagamento</th>
                     <th>Status</th>
                     <th>Data</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody id="admin-orders-body"></tbody>
@@ -3621,6 +3621,10 @@
       async updateOrderStatus(id, status) {
         if (HAS_SUPABASE) { const { error } = await sb.from('orders').update({ status }).eq('id', id); if (error) throw error; return; }
         lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).map(o => o.id === id ? { ...o, status } : o));
+      },
+      async deleteOrder(id) {
+        if (HAS_SUPABASE) { const { error } = await sb.from('orders').delete().eq('id', id); if (error) throw error; return; }
+        lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).filter(o => o.id !== id));
       },
 
       async getLoyaltyPoints(phone) {
@@ -4545,7 +4549,18 @@
         </select>
       </td>
       <td>${o.created_at ? new Date(o.created_at).toLocaleString('pt-BR') : ''}</td>
-    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+      <td><button class="btn btn-ghost btn-sm" data-delete-order="${o.id}">Excluir</button></td>
+    </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+      document.querySelectorAll('[data-delete-order]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Excluir este pedido? Essa ação não pode ser desfeita.')) return;
+          try {
+            await DB.deleteOrder(btn.dataset.deleteOrder);
+            toast('Pedido excluído');
+            renderAdminOrders();
+          } catch (err) { console.error(err); toast(err.message || 'Erro ao excluir pedido'); }
+        });
+      });
       document.querySelectorAll('[data-order-id]').forEach(sel => {
         sel.addEventListener('change', async () => {
           try {
