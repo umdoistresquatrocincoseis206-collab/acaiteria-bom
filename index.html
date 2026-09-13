@@ -3022,7 +3022,7 @@
         <div class="footer-grid">
           <div>
             <div class="logo" style="color:#fff;margin-bottom:10px"><span class="logo-mark">🍇</span> <span
-                id="footer-store-name">Açaí do Sol</span></div>
+                id="footer-store-name">Açaí na Garrafa</span></div>
             <p>Açaí fresquinho, feito na hora, com o carinho de sempre.</p>
             <div class="social-row">
               <a href="#" id="social-insta" target="_blank" aria-label="Instagram">
@@ -3067,7 +3067,7 @@
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© <span id="footer-year"></span> <span id="footer-store-name-bottom">Açaí do Sol</span> — todos os
+          <span>© <span id="footer-year"></span> <span id="footer-store-name-bottom">Açaí na Garrafa</span> — todos os
             direitos reservados</span>
         </div>
       </div>
@@ -3158,8 +3158,8 @@
         <div class="field">
           <label>Forma de pagamento</label>
           <select id="ck-payment">
-            <option value="pix">Pix</option>
             <option value="dinheiro">Dinheiro</option>
+            <option value="pix">Pix</option>
             <option value="cartao">Cartão (na entrega/retirada)</option>
           </select>
         </div>
@@ -4577,7 +4577,7 @@
       document.getElementById('confirm-items').innerHTML = (order.items || []).map(i => `
     <div class="cart-summary-line"><span>${i.qty}x ${escapeHtml(i.name)}</span><span>${brl(i.unit_price * i.qty)}</span></div>`).join('');
       document.getElementById('confirm-type').textContent = order.fulfillment_type === 'entrega' ? 'Entrega' : 'Retirar no local';
-      document.getElementById('confirm-payment').textContent = { pix: 'Pix', dinheiro: 'Dinheiro', cartao: 'Cartão' }[order.payment_method] || order.payment_method;
+      document.getElementById('confirm-payment').textContent = { dinheiro: 'Dinheiro', pix: 'Pix', cartao: 'Cartão' }[order.payment_method] || order.payment_method;
       document.getElementById('confirm-total').textContent = brl(order.total);
       renderStatusTrack(order);
       document.getElementById('btn-order-whatsapp').onclick = () => sendOrderToWhatsapp(order);
