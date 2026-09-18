@@ -2210,6 +2210,62 @@
       font-weight: 700
     }
 
+    /* ---------- status do pedido — botão de avanço sequencial (admin) ---------- */
+    .status-btn {
+      padding: 10px 16px;
+      border-radius: 100px;
+      font-weight: 800;
+      font-size: .78rem;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      filter: brightness(1.05);
+    }
+
+    .status-btn:active:not(:disabled) {
+      transform: translateY(0) scale(.97);
+    }
+
+    .status-btn:disabled {
+      opacity: .75;
+      cursor: default;
+      transform: none;
+    }
+
+    .status-btn.st-red {
+      background: #C0392B;
+    }
+
+    .status-btn.st-orange {
+      background: #E08A1E;
+    }
+
+    .status-btn.st-green {
+      background: var(--green-600);
+    }
+
+    .status-btn.st-gray {
+      background: var(--ink-soft);
+    }
+
+    .status-cancel-link {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: .74rem;
+      font-weight: 700;
+      color: #C0392B;
+      text-decoration: underline;
+    }
+
     /* ---------- entrega por distância ---------- */
     .range-row {
       display: flex;
@@ -2270,6 +2326,106 @@
       max-width: 320px;
       display: block;
       margin: 10px auto 0
+    }
+
+    /* ---------- pagamento pix ---------- */
+    .pix-amount {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--purple-600);
+      margin-bottom: 14px
+    }
+
+    .pix-qr {
+      width: 200px;
+      height: 200px;
+      max-width: 100%;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--line);
+      margin: 0 auto 6px;
+      display: block
+    }
+
+    .pix-copy-box {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 2px solid var(--line);
+      font-family: monospace;
+      font-size: .78rem;
+      resize: none;
+      background: var(--cream);
+      color: var(--ink-soft)
+    }
+
+    .pix-status-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--purple-100);
+      color: var(--purple-800);
+      border-radius: 100px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: .88rem;
+      margin-top: 16px
+    }
+
+    .pix-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--yellow-400);
+      flex-shrink: 0;
+      animation: pixPulse 1.4s ease-in-out infinite
+    }
+
+    @keyframes pixPulse {
+
+      0%,
+      100% {
+        opacity: .4;
+        transform: scale(.85)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1)
+      }
+    }
+
+    .pix-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-weight: 800;
+      font-size: .72rem;
+      white-space: nowrap
+    }
+
+    .pix-badge.aguardando {
+      background: #FDEAC8;
+      color: #9C6B0A
+    }
+
+    .pix-badge.pago {
+      background: #DDF4E8;
+      color: var(--green-600)
+    }
+
+    .pix-badge.expirado,
+    .pix-badge.cancelado {
+      background: #FCE4E1;
+      color: #C0392B
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pix-status-dot {
+        animation: none
+      }
     }
 
     .login-box {
@@ -3286,6 +3442,54 @@
     </div>
   </div>
 
+  <!-- ===================== PAGAMENTO PIX ===================== -->
+  <div class="overlay center" id="pix-payment-overlay">
+    <div class="modal-box" style="max-width:420px;text-align:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h3>💜 Pagamento via Pix</h3>
+        <button class="close-x" id="close-pix-payment">✕</button>
+      </div>
+      <p style="color:var(--ink-soft);font-size:.88rem;margin-bottom:4px" id="pix-order-label">Pedido #—</p>
+      <div class="pix-amount" id="pix-amount">R$ 0,00</div>
+
+      <div id="pix-waiting-block">
+        <img id="pix-qr-img" class="pix-qr" alt="QR Code Pix" onerror="this.style.display='none'; document.getElementById('pix-qr-fallback-note').style.display='block'">
+        <p id="pix-qr-fallback-note" style="display:none;font-size:.78rem;color:var(--ink-soft);margin-bottom:8px">Não
+          foi possível carregar a imagem do QR Code agora — use o código abaixo.</p>
+
+        <label style="display:block;font-weight:700;font-size:.85rem;margin:14px 0 6px;text-align:left">Pix Copia e
+          Cola</label>
+        <textarea id="pix-copy-paste" class="pix-copy-box" readonly rows="3"></textarea>
+        <button type="button" class="btn btn-yellow btn-block" id="btn-copy-pix-payload" style="margin-top:10px">📋
+          Copiar código Pix</button>
+
+        <div class="pix-status-box" id="pix-status-box">
+          <span class="pix-status-dot"></span>
+          <span>Aguardando pagamento... expira em <strong id="pix-countdown">30:00</strong></span>
+        </div>
+        <p style="font-size:.78rem;color:var(--ink-soft);margin-top:10px">Abra o app do seu banco, escolha "Pix
+          Copia e Cola" e cole o código acima. Assim que a loja confirmar o recebimento, esta tela atualiza
+          sozinha — não é preciso avisar por aqui.</p>
+      </div>
+
+      <div id="pix-expired-block" style="display:none">
+        <p style="font-weight:800;color:#C0392B;margin-bottom:14px">⚠️ Este Pix expirou.</p>
+        <button type="button" class="btn btn-primary btn-block" id="btn-regenerate-pix">Gerar novo Pix</button>
+      </div>
+
+      <div id="pix-paid-block" style="display:none">
+        <div style="font-size:2.6rem;margin-bottom:6px">✅</div>
+        <p style="font-weight:800;font-size:1.1rem;margin-bottom:4px">Pagamento confirmado!</p>
+        <p style="color:var(--ink-soft);font-size:.9rem;margin-bottom:16px">Seu pagamento foi recebido com sucesso.
+        </p>
+        <button type="button" class="btn btn-primary btn-block" id="btn-pix-track-order">Acompanhar pedido</button>
+      </div>
+
+      <button type="button" class="btn btn-ghost btn-block" id="btn-pix-close-later" style="margin-top:14px">Já
+        paguei / fechar e acompanhar depois</button>
+    </div>
+  </div>
+
   <!-- ===================== MEUS CUPONS (mini modal) ===================== -->
   <div class="overlay center" id="coupons-overlay">
     <div class="modal-box" style="max-width:420px">
@@ -3379,7 +3583,8 @@
                 <span><i style="background:var(--yellow-400)"></i> Faturamento</span>
               </div>
             </div>
-            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-status-filters"></div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap" id="order-status-filters"></div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap" id="order-payment-filters"></div>
             <div class="table-responsive">
               <table class="admin-table">
                 <thead>
@@ -3791,10 +3996,40 @@
     ];
     const STATUS_LABELS = { recebido: 'Pedido recebido', preparo: 'Em preparação', pronto: 'Pronto', saiu: 'Saiu para entrega', entregue: 'Entregue', cancelado: 'Cancelado' };
 
+    /* ---- botão de avanço sequencial de status (admin) ----
+       Em vez de uma lista/select onde o admin escolhe qualquer status, o
+       admin vê um único botão colorido com o status ATUAL do pedido. Cada
+       clique avança o pedido para o PRÓXIMO status da sequência (que muda
+       conforme o tipo de pedido: retirada tem 3 etapas, entrega tem 5).
+       Isso evita clique errado/pular etapa sem querer. */
+    const STATUS_BTN_META = {
+      recebido: { color: 'st-red', label: 'Pedido Recebido' },
+      preparo: { color: 'st-orange', label: 'Em preparação' },
+      pronto: { color: 'st-green', label: 'Pronto' },
+      saiu: { color: 'st-green', label: 'Saiu para Entrega' },
+      entregue: { color: 'st-green', label: 'Entregue' },
+    };
+    function statusStepsFor(order) {
+      return order.fulfillment_type === 'entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
+    }
+    function renderOrderStatusCell(o) {
+      if (o.status === 'cancelado') {
+        return `<span class="pix-badge cancelado">❌ Cancelado</span>`;
+      }
+      const steps = statusStepsFor(o);
+      const idx = steps.findIndex(s => s.key === o.status);
+      const current = idx >= 0 ? steps[idx] : steps[0];
+      const isLast = idx === steps.length - 1;
+      const meta = STATUS_BTN_META[current.key] || { color: 'st-gray', label: current.label };
+      const btn = `<button type="button" class="status-btn ${meta.color}" data-advance-status="${o.id}" ${isLast ? 'disabled' : ''}>${current.icon} ${meta.label}</button>`;
+      const cancelLink = isLast ? '' : `<br><button type="button" class="status-cancel-link" data-cancel-order="${o.id}">cancelar pedido</button>`;
+      return btn + cancelLink;
+    }
+
     /* ---------------------- 3. CAMADA DE DADOS (DB) ---------------------- */
     /* Abstrai Supabase (produção) x localStorage (demonstração), para que
        o resto do app nunca precise saber qual dos dois está em uso. */
-    const LS_KEYS = { products: 'acai_products_v2', promos: 'acai_promos_v2', coupons: 'acai_coupons_v2', orders: 'acai_orders_v2', settings: 'acai_settings_v2', loyalty: 'acai_loyalty_v2', reviews: 'acai_reviews_v2', notifications: 'acai_notifications_v2', deliveryConfig: 'acai_delivery_config_v1' };
+    const LS_KEYS = { products: 'acai_products_v2', promos: 'acai_promos_v2', coupons: 'acai_coupons_v2', orders: 'acai_orders_v2', settings: 'acai_settings_v2', loyalty: 'acai_loyalty_v2', reviews: 'acai_reviews_v2', notifications: 'acai_notifications_v2', deliveryConfig: 'acai_delivery_config_v1', pixData: 'acai_pix_data_v1' };
 
     /* Inicializa o armazenamento local vazio (modo demonstração/offline).
        Nenhum produto, pedido, promoção ou avaliação de exemplo é criado —
@@ -3911,6 +4146,87 @@
         return Number((match || ranges[ranges.length - 1]).fee || 0);
       }
       return Number(cfg.base_fee || 0) + distanceKm * Number(cfg.per_km || 0);
+    }
+
+    /* =====================================================================
+       PAGAMENTO PIX
+       =====================================================================
+       ⚠️ LEIA ANTES DE MEXER: este projeto NÃO tem integração com nenhum
+       gateway/PSP de pagamento (Mercado Pago, Efí, Asaas, PagBank etc.) —
+       ele fala direto com o Supabase pelo navegador, sem um backend próprio.
+       Por isso, o "Pix" implementado aqui é o modo PIX MANUAL, com o BR Code
+       (o padrão oficial do Banco Central pro "Pix Copia e Cola"/QR Code)
+       gerado localmente a partir da CHAVE PIX FIXA da loja — sem depender de
+       nenhuma API paga nem chave secreta. O código abaixo (buildPixPayload)
+       é só formatação + um checksum (CRC16), documentação pública do Bacen.
+
+       O QUE ISSO SIGNIFICA NA PRÁTICA:
+       - O cliente recebe um QR/código com o VALOR EXATO do pedido já
+         preenchido — melhor que só mandar a chave fixa "pelada".
+       - O dinheiro cai direto na conta do Pix cadastrado, como qualquer
+         Pix normal — não existe confirmação automática, porque não existe
+         PSP nenhum no meio pra avisar o sistema que o pagamento caiu.
+       - O status do pedido some para "🟡 Aguardando pagamento" e SÓ muda pra
+         "🟢 Pago" quando o ADMIN confirmar manualmente no painel — nunca
+         pelo clique do cliente em "copiar" ou "já paguei".
+
+       SE QUISER CONFIRMAÇÃO 100% AUTOMÁTICA (webhook de verdade), é preciso:
+       1. Criar conta num PSP com Pix via API (ex: Mercado Pago, Efí/Gerencianet,
+          Asaas). Eles fornecem client_id/client_secret ou um Access Token.
+       2. Nunca colocar esse token no frontend — ele precisa morar num backend
+          (ex: uma Supabase Edge Function, com o token salvo como "secret" do
+          projeto Supabase, não no código).
+       3. A Edge Function cria a cobrança Pix (chamando a API do PSP) e
+          devolve pro navegador só o QR Code/copia-e-cola — nunca o token.
+       4. Cadastrar no PSP a URL pública dessa mesma Edge Function como
+          "webhook" — o PSP chama essa URL quando o pagamento é confirmado.
+       5. A Edge Function valida a assinatura do webhook (o PSP fornece um
+          "secret" pra isso) e só então atualiza o pedido pra "pago" no banco.
+       Nenhuma dessas 5 peças existe neste projeto hoje — por isso o fluxo
+       abaixo é manual, e digo isso abertamente na tela do cliente e do admin.
+       ===================================================================== */
+    const PIX_EXPIRATION_MINUTES = 30;
+
+    /* CRC16/CCITT-FALSE — checksum exigido no fim do payload BR Code do Pix. */
+    function crc16ccitt(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= (str.charCodeAt(i) << 8);
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+    function pixTlv(id, value) { return id + String(value.length).padStart(2, '0') + value; }
+    function pixSanitize(s, max) {
+      return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\x20-\x7E]/g, '').trim().toUpperCase().slice(0, max) || undefined;
+    }
+    /* Monta o payload BR Code (Pix Copia e Cola) — mesmo formato que qualquer
+       banco/carteira digital sabe ler, com valor e identificador do pedido
+       (txid) já embutidos. */
+    function buildPixPayload({ key, amount, merchantName, merchantCity, txid }) {
+      const gui = pixTlv('00', 'br.gov.bcb.pix');
+      const keyField = pixTlv('01', String(key || '').trim());
+      const merchantAccount = pixTlv('26', gui + keyField);
+      const mcc = pixTlv('52', '0000');
+      const currency = pixTlv('53', '986');
+      const amountField = pixTlv('54', Number(amount || 0).toFixed(2));
+      const country = pixTlv('58', 'BR');
+      const name = pixTlv('59', pixSanitize(merchantName, 25) || 'LOJA');
+      const city = pixTlv('60', pixSanitize(merchantCity, 15) || 'BRASIL');
+      const ref = (txid || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 25) || '***';
+      const addData = pixTlv('62', pixTlv('05', ref));
+      const payloadFormat = pixTlv('00', '01');
+      const poi = pixTlv('01', '12');
+      const payload = payloadFormat + poi + merchantAccount + mcc + currency + amountField + country + name + city + addData + '6304';
+      return payload + crc16ccitt(payload);
+    }
+    function pixQrImageUrl(payload) {
+      // usa um serviço público e gratuito só para desenhar o QR a partir do
+      // texto do payload (que não é sigiloso — é o mesmo conteúdo do QR).
+      return 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(payload);
     }
 
     const DB = {
@@ -4050,6 +4366,40 @@
       async deleteOrder(id) {
         if (HAS_SUPABASE) { const { error } = await sb.from('orders').delete().eq('id', id); if (error) throw error; return; }
         lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).filter(o => o.id !== id));
+      },
+
+      /* Guarda os dados do Pix (payload, txid, status, datas) junto do
+         pedido. Tenta gravar direto nas colunas da tabela `orders` no
+         Supabase (payment_status, pix_payload, pix_txid, pix_created_at,
+         paid_at) — se essas colunas ainda não existirem no seu banco, a
+         gravação cai automaticamente para o localStorage deste navegador
+         (com um aviso no console), então o app não quebra, mas o status do
+         pagamento só fica visível neste dispositivo. Para deixar isso
+         funcionando de verdade entre dispositivos/administradores, rode no
+         SQL editor do Supabase:
+           alter table orders add column if not exists payment_status text default 'aguardando_pagamento';
+           alter table orders add column if not exists pix_payload text;
+           alter table orders add column if not exists pix_txid text;
+           alter table orders add column if not exists pix_created_at timestamptz;
+           alter table orders add column if not exists paid_at timestamptz; */
+      async savePixInfo(orderId, data) {
+        if (HAS_SUPABASE) {
+          const { error } = await sb.from('orders').update(data).eq('id', orderId);
+          if (!error) return { ok: true, persisted: 'supabase' };
+          console.warn('Não foi possível salvar dados do Pix no Supabase (provavelmente faltam colunas na tabela orders). Usando localStorage como reserva. Detalhe:', error.message);
+        }
+        const map = lsGet(LS_KEYS.pixData) || {};
+        map[orderId] = { ...(map[orderId] || {}), ...data };
+        lsSet(LS_KEYS.pixData, map);
+        return { ok: true, persisted: 'local' };
+      },
+      async getPixInfo(orderId) {
+        if (HAS_SUPABASE) {
+          const { data, error } = await sb.from('orders').select('payment_status,pix_payload,pix_txid,pix_created_at,paid_at').eq('id', orderId).maybeSingle();
+          if (!error && data && (data.payment_status || data.pix_txid)) return data;
+        }
+        const map = lsGet(LS_KEYS.pixData) || {};
+        return map[orderId] || null;
       },
 
       async getLoyaltyPoints(phone) {
@@ -4779,18 +5129,21 @@
       const pixBox = document.getElementById('pix-info');
       if (e.target.value === 'pix') {
         pixBox.style.display = 'block';
-        const pixKey = SETTINGS.pix_key || 'a definir';
-        pixBox.innerHTML = `<strong>Chave Pix:</strong> ${escapeHtml(pixKey)}<br><strong>Recebedor:</strong> ${escapeHtml(SETTINGS.pix_name || 'a definir')}
-          <button type="button" class="btn btn-ghost btn-sm" id="btn-copy-pix" style="margin-top:10px">📋 Copiar chave Pix</button>`;
-        document.getElementById('btn-copy-pix').addEventListener('click', () => copyPixKey(pixKey));
+        if (!SETTINGS.pix_key) {
+          pixBox.innerHTML = `⚠️ A loja ainda não configurou uma chave Pix. Escolha outra forma de pagamento ou entre em contato.`;
+        } else {
+          pixBox.innerHTML = `💜 Ao confirmar o pedido, vamos gerar o QR Code e o código Pix Copia e Cola com o
+            valor exato do pedido para você pagar.`;
+        }
       } else pixBox.style.display = 'none';
     });
-    function copyPixKey(key) {
-      const finish = (ok) => toast(ok ? 'Chave Pix copiada!' : 'Não foi possível copiar automaticamente. Chave: ' + key);
+    function copyText(text, label) {
+      const finish = (ok) => toast(ok ? (label || 'Copiado!') : 'Não foi possível copiar automaticamente.');
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(key).then(() => finish(true)).catch(() => fallbackCopyText(key, finish));
-      } else fallbackCopyText(key, finish);
+        navigator.clipboard.writeText(text).then(() => finish(true)).catch(() => fallbackCopyText(text, finish));
+      } else fallbackCopyText(text, finish);
     }
+    function copyPixKey(key) { copyText(key, 'Chave Pix copiada!'); }
     function fallbackCopyText(text, cb) {
       try {
         const ta = document.createElement('textarea');
@@ -4912,6 +5265,7 @@
       if (CHECKOUT_TYPE === 'entrega' && DELIVERY_CONFIG.active) {
         if (!DELIVERY_CALC || !DELIVERY_CALC.valid) { toast('Calcule a taxa de entrega antes de confirmar o pedido'); return; }
       }
+      if (payment === 'pix' && !SETTINGS.pix_key) { toast('A loja ainda não configurou uma chave Pix. Escolha outra forma de pagamento.'); return; }
 
       const subtotal = cartSubtotal();
       const discount = couponDiscount(ACTIVE_COUPON, subtotal);
@@ -4959,7 +5313,8 @@
         await startOrderTracking(saved.id);
         document.getElementById('checkout-overlay').classList.remove('open');
         unlockBodyScroll();
-        showConfirmation(saved);
+        if (payment === 'pix') await generateAndShowPix(saved);
+        else showConfirmation(saved);
       } catch (err) {
         console.error(err);
         toast(err.message || 'Não foi possível enviar o pedido. Tente novamente.');
@@ -4967,6 +5322,114 @@
         btn.disabled = false; btn.textContent = 'Confirmar pedido';
       }
     });
+
+    /* ---------------------- 13b. PAGAMENTO PIX (tela pós-pedido) ---------------------- */
+    let PIX_STATE = null; // { orderId, order_number, amount, payload, txid, createdAt, expiresAt }
+    let PIX_COUNTDOWN_TIMER = null;
+    let PIX_POLL_TIMER = null;
+
+    async function generateAndShowPix(order) {
+      const merchantCity = SETTINGS.city || 'BRASIL';
+      const txid = 'PEDIDO' + String(order.order_number || '') + Date.now().toString(36).toUpperCase().slice(-4);
+      const payload = buildPixPayload({
+        key: SETTINGS.pix_key,
+        amount: order.total,
+        merchantName: SETTINGS.pix_name || SETTINGS.store_name || 'LOJA',
+        merchantCity,
+        txid,
+      });
+      const createdAt = new Date();
+      const expiresAt = new Date(createdAt.getTime() + PIX_EXPIRATION_MINUTES * 60000);
+      PIX_STATE = { orderId: order.id, order_number: order.order_number, amount: order.total, payload, txid, createdAt, expiresAt };
+      try {
+        await DB.savePixInfo(order.id, {
+          payment_status: 'aguardando_pagamento',
+          pix_payload: payload,
+          pix_txid: txid,
+          pix_created_at: createdAt.toISOString(),
+          paid_at: null,
+        });
+      } catch (err) { console.error('Erro ao salvar dados do Pix:', err); }
+      renderPixOverlay();
+      document.getElementById('pix-payment-overlay').classList.add('open');
+      lockBodyScroll();
+      startPixCountdown();
+      startPixPolling();
+    }
+    function renderPixOverlay() {
+      document.getElementById('pix-order-label').textContent = 'Pedido #' + PIX_STATE.order_number;
+      document.getElementById('pix-amount').textContent = brl(PIX_STATE.amount);
+      const qrImg = document.getElementById('pix-qr-img');
+      qrImg.src = pixQrImageUrl(PIX_STATE.payload);
+      qrImg.style.display = 'block';
+      document.getElementById('pix-qr-fallback-note').style.display = 'none';
+      document.getElementById('pix-copy-paste').value = PIX_STATE.payload;
+      document.getElementById('pix-waiting-block').style.display = 'block';
+      document.getElementById('pix-expired-block').style.display = 'none';
+      document.getElementById('pix-paid-block').style.display = 'none';
+    }
+    function startPixCountdown() {
+      clearInterval(PIX_COUNTDOWN_TIMER);
+      function tick() {
+        if (!PIX_STATE) return;
+        const msLeft = PIX_STATE.expiresAt - Date.now();
+        if (msLeft <= 0) {
+          clearInterval(PIX_COUNTDOWN_TIMER);
+          document.getElementById('pix-waiting-block').style.display = 'none';
+          document.getElementById('pix-expired-block').style.display = 'block';
+          DB.savePixInfo(PIX_STATE.orderId, { payment_status: 'expirado' }).catch(err => console.error(err));
+          stopPixPolling();
+          return;
+        }
+        const totalSec = Math.floor(msLeft / 1000);
+        const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+        const ss = String(totalSec % 60).padStart(2, '0');
+        const el = document.getElementById('pix-countdown');
+        if (el) el.textContent = mm + ':' + ss;
+      }
+      tick();
+      PIX_COUNTDOWN_TIMER = setInterval(tick, 1000);
+    }
+    /* Fica checando periodicamente se o ADMIN já confirmou o pagamento
+       manualmente (não existe webhook de gateway neste projeto — ver o
+       comentário grande lá em cima, na seção "PAGAMENTO PIX"). */
+    function startPixPolling() {
+      stopPixPolling();
+      PIX_POLL_TIMER = setInterval(async () => {
+        if (!PIX_STATE) return;
+        const info = await DB.getPixInfo(PIX_STATE.orderId);
+        if (info && info.payment_status === 'pago') {
+          clearInterval(PIX_COUNTDOWN_TIMER);
+          stopPixPolling();
+          document.getElementById('pix-waiting-block').style.display = 'none';
+          document.getElementById('pix-expired-block').style.display = 'none';
+          document.getElementById('pix-paid-block').style.display = 'block';
+          toast('Pagamento confirmado! 🎉');
+        }
+      }, 6000);
+    }
+    function stopPixPolling() { if (PIX_POLL_TIMER) { clearInterval(PIX_POLL_TIMER); PIX_POLL_TIMER = null; } }
+    function closePixOverlay() {
+      document.getElementById('pix-payment-overlay').classList.remove('open');
+      unlockBodyScroll();
+      clearInterval(PIX_COUNTDOWN_TIMER);
+      stopPixPolling();
+    }
+    document.getElementById('btn-copy-pix-payload').addEventListener('click', () => {
+      if (PIX_STATE) copyText(PIX_STATE.payload, '✓ PIX copiado!');
+    });
+    document.getElementById('btn-regenerate-pix').addEventListener('click', async () => {
+      if (!PIX_STATE) return;
+      const order = await DB.getOrderById(PIX_STATE.orderId);
+      if (order) await generateAndShowPix(order);
+    });
+    document.getElementById('close-pix-payment').addEventListener('click', closePixOverlay);
+    document.getElementById('btn-pix-close-later').addEventListener('click', closePixOverlay);
+    document.getElementById('btn-pix-track-order').addEventListener('click', () => {
+      closePixOverlay();
+      if (LAST_ORDER) showConfirmation(LAST_ORDER);
+    });
+    document.getElementById('pix-payment-overlay').addEventListener('click', e => { if (e.target.id === 'pix-payment-overlay') closePixOverlay(); });
 
     /* ---------------------- 14. CONFIRMAÇÃO / ACOMPANHAMENTO ---------------------- */
     function showConfirmation(order) {
@@ -5039,11 +5502,30 @@
        recebido, em preparação, pronto, saiu para entrega, entregue ou cancelado),
        o cliente vê a mudança automaticamente — tanto no chip quanto, se estiver
        com a tela de acompanhamento aberta, na trilha de status em tempo real.
-       Funciona tanto com Supabase (checagem periódica no servidor) quanto no modo
-       de demonstração local (checagem periódica + evento instantâneo entre abas). */
+
+       COMO A ATUALIZAÇÃO CHEGA "NA HORA" PARA O CLIENTE:
+       1) Com Supabase configurado: assinamos o Supabase Realtime (WebSocket)
+          para escutar UPDATEs na linha exata do pedido (`subscribeOrderRealtime`).
+          Assim que o admin muda o status — mesmo em outro celular/computador —
+          o cliente recebe o novo status em tempo real, sem precisar dar F5 nem
+          esperar um intervalo. IMPORTANTE: isso exige que a Replication/Realtime
+          esteja ligada para a tabela `orders` no painel do Supabase (Database →
+          Replication → marque a tabela "orders"). Sem isso, o app cai
+          automaticamente no plano B abaixo.
+       2) Plano B / reforço: mantemos também uma checagem periódica
+          (`pollOrderStatus`) como rede de segurança, caso o Realtime não esteja
+          habilitado ou a conexão caia — assim o status nunca fica preso.
+       3) No modo demonstração (sem Supabase), o admin e o cliente normalmente
+          estão na MESMA aba do navegador (o "painel admin" é só uma outra vista
+          dentro da mesma página) — nesse caso a atualização já é local e
+          instantânea (ver os cliques de "avançar status" mais abaixo, que
+          chamam pollOrderStatus na hora). Se forem abas diferentes do mesmo
+          navegador, o evento nativo "storage" também dispara na hora. */
     let TRACKED_ORDER = null;
     let ORDER_POLL_TIMER = null;
+    let REALTIME_ORDER_CHANNEL = null;
     const ORDER_POLL_INTERVAL_MS = 8000;
+    const ORDER_POLL_FALLBACK_INTERVAL_MS = 20000; // mais espaçado: é só reforço, o Realtime já cobre o "na hora"
     const TERMINAL_STATUSES = ['entregue', 'cancelado'];
 
     function updateTrackerFab(order) {
@@ -5058,8 +5540,33 @@
       if (ORDER_POLL_TIMER) { clearInterval(ORDER_POLL_TIMER); ORDER_POLL_TIMER = null; }
     }
 
-    async function pollOrderStatus(orderId) {
-      const fresh = await DB.getOrderById(orderId);
+    /* Assina atualizações em tempo real (Supabase Realtime) da linha deste
+       pedido específico. Requer Realtime habilitado para a tabela `orders`
+       no Supabase — se não estiver habilitado, a assinatura simplesmente não
+       recebe eventos e o polling de reforço (mais lento) continua cobrindo. */
+    function subscribeOrderRealtime(orderId) {
+      if (!HAS_SUPABASE || !sb) return;
+      try {
+        REALTIME_ORDER_CHANNEL = sb
+          .channel('order-tracking-' + orderId)
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` }, (payload) => {
+            if (payload && payload.new) applyOrderUpdate(payload.new);
+          })
+          .subscribe();
+      } catch (err) {
+        console.error('Não foi possível assinar atualizações em tempo real do pedido (o polling de reforço continua ativo):', err);
+      }
+    }
+    function unsubscribeOrderRealtime() {
+      if (REALTIME_ORDER_CHANNEL && sb) {
+        try { sb.removeChannel(REALTIME_ORDER_CHANNEL); } catch (err) { console.error(err); }
+      }
+      REALTIME_ORDER_CHANNEL = null;
+    }
+
+    /* Ponto único que aplica um pedido "fresco" (vindo do Realtime ou do
+       polling) ao estado local e atualiza toda a UI de acompanhamento. */
+    function applyOrderUpdate(fresh) {
       if (!fresh) return;
       const changed = !TRACKED_ORDER || fresh.status !== TRACKED_ORDER.status;
       TRACKED_ORDER = fresh;
@@ -5072,8 +5579,17 @@
         if (document.getElementById('confirm-overlay').classList.contains('open')) {
           renderStatusTrack(fresh);
         }
-        if (TERMINAL_STATUSES.includes(fresh.status)) stopOrderPolling();
+        if (TERMINAL_STATUSES.includes(fresh.status)) {
+          stopOrderPolling();
+          unsubscribeOrderRealtime();
+        }
       }
+    }
+
+    async function pollOrderStatus(orderId) {
+      const fresh = await DB.getOrderById(orderId);
+      if (!fresh) return;
+      applyOrderUpdate(fresh);
     }
 
     async function startOrderTracking(orderId) {
@@ -5082,13 +5598,17 @@
       TRACKED_ORDER = order;
       updateTrackerFab(order);
       stopOrderPolling();
+      unsubscribeOrderRealtime();
       if (!TERMINAL_STATUSES.includes(order.status)) {
-        ORDER_POLL_TIMER = setInterval(() => pollOrderStatus(orderId), ORDER_POLL_INTERVAL_MS);
+        // tempo real via Supabase (quando disponível) + polling de reforço
+        subscribeOrderRealtime(orderId);
+        ORDER_POLL_TIMER = setInterval(() => pollOrderStatus(orderId), HAS_SUPABASE ? ORDER_POLL_FALLBACK_INTERVAL_MS : ORDER_POLL_INTERVAL_MS);
       }
     }
 
     function stopOrderTracking() {
       stopOrderPolling();
+      unsubscribeOrderRealtime();
       TRACKED_ORDER = null;
       localStorage.removeItem('acai_last_order_id');
       updateTrackerFab(null);
@@ -5297,6 +5817,20 @@
       });
     }
 
+    let PAYMENT_FILTER = 'todos';
+    const PAYMENT_STATUS_LABELS = { aguardando_pagamento: '🟡 Aguardando pagamento', pago: '🟢 Pago', expirado: '🔴 Expirado', cancelado: '🔴 Cancelado' };
+    function paymentBadgeHtml(o) {
+      if (o.payment_method !== 'pix') {
+        return `<span style="color:var(--ink-soft);font-size:.85rem">${{ dinheiro: 'Dinheiro', cartao: 'Cartão' }[o.payment_method] || o.payment_method}</span>`;
+      }
+      const status = o.payment_status || 'aguardando_pagamento';
+      const cls = status === 'pago' ? 'pago' : (status === 'expirado' || status === 'cancelado') ? status : 'aguardando';
+      const label = PAYMENT_STATUS_LABELS[status] || PAYMENT_STATUS_LABELS.aguardando_pagamento;
+      let extra = '';
+      if (status === 'pago' && o.paid_at) extra = `<br><small style="color:var(--ink-soft)">${new Date(o.paid_at).toLocaleString('pt-BR')}</small>`;
+      else if (status !== 'pago') extra = `<br><button class="btn btn-ghost btn-sm" data-mark-paid="${o.id}" style="margin-top:4px">Marcar como pago</button>`;
+      return `<span class="pix-badge ${cls}">${label}</span>${extra}`;
+    }
     async function renderAdminOrders() {
       let orders = [];
       try {
@@ -5305,13 +5839,28 @@
         console.error('Erro ao carregar pedidos:', err);
         toast('Erro ao carregar pedidos');
       }
-      orders = LAST_ORDERS = orders || [];
+      orders = orders || [];
+      // completa o status de pagamento do Pix quando ele só existe no
+      // localStorage (colunas payment_status/pix_txid/paid_at ainda não
+      // criadas no Supabase — ver comentário em DB.savePixInfo)
+      await Promise.all(orders.filter(o => o.payment_method === 'pix' && !o.payment_status).map(async o => {
+        const info = await DB.getPixInfo(o.id);
+        if (info) Object.assign(o, info);
+      }));
+      LAST_ORDERS = orders;
       renderOrderStats(orders);
       renderOrdersChart(orders);
       const filters = ['todos', ...STATUS_OPTIONS];
       document.getElementById('order-status-filters').innerHTML = filters.map(f => `<button class="filter-chip ${f === ORDER_FILTER ? 'active' : ''}" data-filter="${f}">${f === 'todos' ? 'Todos' : STATUS_LABELS[f]}</button>`).join('');
       document.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => { ORDER_FILTER = b.dataset.filter; renderAdminOrders(); }));
-      const filtered = ORDER_FILTER === 'todos' ? orders : orders.filter(o => o.status === ORDER_FILTER);
+      const paymentFilters = ['todos', 'aguardando_pagamento', 'pago', 'expirado', 'cancelado'];
+      const pfHost = document.getElementById('order-payment-filters');
+      if (pfHost) {
+        pfHost.innerHTML = paymentFilters.map(f => `<button class="filter-chip ${f === PAYMENT_FILTER ? 'active' : ''}" data-payment-filter="${f}">${f === 'todos' ? 'Pagamento: todos' : PAYMENT_STATUS_LABELS[f]}</button>`).join('');
+        pfHost.querySelectorAll('[data-payment-filter]').forEach(b => b.addEventListener('click', () => { PAYMENT_FILTER = b.dataset.paymentFilter; renderAdminOrders(); }));
+      }
+      let filtered = ORDER_FILTER === 'todos' ? orders : orders.filter(o => o.status === ORDER_FILTER);
+      if (PAYMENT_FILTER !== 'todos') filtered = filtered.filter(o => (o.payment_status || (o.payment_method === 'pix' ? 'aguardando_pagamento' : null)) === PAYMENT_FILTER);
       document.getElementById('admin-orders-body').innerHTML = filtered.map(o => `
     <tr>
       <td>#${o.order_number}</td>
@@ -5320,15 +5869,21 @@
       <td>${brl(o.total)}</td>
       <td>${o.fulfillment_type === 'entrega' ? 'Entrega' : 'Retirada'}${o.fulfillment_type === 'entrega' && o.address ? `<br><small style="color:var(--ink-soft)">${escapeHtml([o.address.street, o.address.number].filter(Boolean).join(', ') || o.address.full || '')}${o.address.neighborhood ? ' — ' + escapeHtml(o.address.neighborhood) : ''}</small>` : ''}</td>
       <td>${o.address && o.address.distance_km != null ? Number(o.address.distance_km).toFixed(1).replace('.', ',') + ' km' : '—'}</td>
-      <td>${o.payment_method}</td>
-      <td>
-        <select class="status-select" data-order-id="${o.id}">
-          ${STATUS_OPTIONS.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}
-        </select>
-      </td>
+      <td>${paymentBadgeHtml(o)}</td>
+      <td>${renderOrderStatusCell(o)}</td>
       <td>${o.created_at ? new Date(o.created_at).toLocaleString('pt-BR') : ''}</td>
       <td><button class="btn btn-ghost btn-sm" data-delete-order="${o.id}">Excluir</button></td>
     </tr>`).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--ink-soft)">Nenhum pedido ainda.</td></tr>';
+      document.querySelectorAll('[data-mark-paid]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Confirmar que o pagamento deste pedido foi recebido? Essa ação marca o pedido como PAGO.')) return;
+          try {
+            await DB.savePixInfo(btn.dataset.markPaid, { payment_status: 'pago', paid_at: new Date().toISOString() });
+            toast('Pagamento confirmado');
+            renderAdminOrders();
+          } catch (err) { console.error(err); toast(err.message || 'Erro ao confirmar pagamento'); }
+        });
+      });
       document.querySelectorAll('[data-delete-order]').forEach(btn => {
         btn.addEventListener('click', async () => {
           if (!confirm('Excluir este pedido? Essa ação não pode ser desfeita.')) return;
@@ -5339,14 +5894,44 @@
           } catch (err) { console.error(err); toast(err.message || 'Erro ao excluir pedido'); }
         });
       });
-      document.querySelectorAll('[data-order-id]').forEach(sel => {
-        sel.addEventListener('change', async () => {
+      /* Botão sequencial de status: cada clique avança o pedido para o
+         PRÓXIMO status da sequência (que muda conforme retirada/entrega —
+         ver statusStepsFor). Assim que o status é salvo, se este mesmo
+         pedido estiver sendo acompanhado pelo cliente (mesma sessão/aba,
+         no modo demonstração) a trilha dele já atualiza na hora; em produção
+         com Supabase, o Realtime cuida de levar essa mudança até o cliente
+         instantaneamente, em qualquer dispositivo. */
+      document.querySelectorAll('[data-advance-status]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const orderId = btn.dataset.advanceStatus;
+          const order = LAST_ORDERS.find(o => o.id === orderId);
+          if (!order) return;
+          const steps = statusStepsFor(order);
+          const idx = steps.findIndex(s => s.key === order.status);
+          if (idx === -1 || idx >= steps.length - 1) return;
+          const nextStatus = steps[idx + 1].key;
+          btn.disabled = true;
           try {
-            await DB.updateOrderStatus(sel.dataset.orderId, sel.value);
-            toast('Status atualizado');
-            if (TRACKED_ORDER && TRACKED_ORDER.id === sel.dataset.orderId) pollOrderStatus(sel.dataset.orderId);
+            await DB.updateOrderStatus(orderId, nextStatus);
+            toast('Status atualizado: ' + (STATUS_BTN_META[nextStatus]?.label || nextStatus));
+            if (TRACKED_ORDER && TRACKED_ORDER.id === orderId) pollOrderStatus(orderId);
+            await renderAdminOrders();
+          } catch (err) {
+            console.error(err);
+            toast(err.message || 'Erro ao atualizar status');
+            btn.disabled = false;
           }
-          catch (err) { console.error(err); toast(err.message || 'Erro ao atualizar status'); }
+        });
+      });
+      document.querySelectorAll('[data-cancel-order]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Cancelar este pedido? O cliente será avisado do cancelamento.')) return;
+          try {
+            await DB.updateOrderStatus(btn.dataset.cancelOrder, 'cancelado');
+            toast('Pedido cancelado');
+            if (TRACKED_ORDER && TRACKED_ORDER.id === btn.dataset.cancelOrder) pollOrderStatus(btn.dataset.cancelOrder);
+            await renderAdminOrders();
+          } catch (err) { console.error(err); toast(err.message || 'Erro ao cancelar pedido'); }
         });
       });
     }
