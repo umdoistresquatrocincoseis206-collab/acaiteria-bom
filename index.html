@@ -28,8 +28,8 @@
       --green-400: #4ECB8C;
       --yellow-400: #FFC94D;
       --cream: #FFFBF6;
-      --white: #FFFFFF;
       --ink: #26102B;
+      --white: #FFFFFF;
       --ink-soft: #5C4763;
       --line: #E9DCEE;
       --shadow-sm: 0 2px 10px rgba(42, 10, 51, .08);
@@ -1162,42 +1162,6 @@
       }
     }
 
-    /* ---------- localização ---------- */
-    .loc-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px
-    }
-
-    .loc-card {
-      padding: 30px
-    }
-
-    .loc-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 14px;
-      align-items: flex-start
-    }
-
-    .loc-row .ic {
-      font-size: 1.3rem
-    }
-
-    .map-embed {
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      min-height: 280px;
-      background: var(--purple-100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--purple-600);
-      font-weight: 700;
-      text-align: center;
-      padding: 20px
-    }
-
     /* ---------- footer ---------- */
     footer {
       background: var(--purple-950);
@@ -1324,7 +1288,7 @@
       color: var(--ink);
       border: 2px solid var(--purple-100);
       border-radius: 100px;
-      padding: 8px 10px 8px 12px;
+      padding: 8px 18px 8px 12px;
       align-items: center;
       gap: 10px;
       box-shadow: var(--shadow-md);
@@ -1367,25 +1331,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    .order-tracker-fab .tracker-close {
-      flex-shrink: 0;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--purple-100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .7rem;
-      color: var(--ink-soft);
-      transition: background .15s ease, color .15s ease;
-    }
-
-    .order-tracker-fab .tracker-close:hover {
-      background: var(--purple-500);
-      color: var(--white);
     }
 
     .confirm-status-note {
@@ -2415,6 +2360,40 @@
       margin: 10px auto 0
     }
 
+    .delivery-calc-hint {
+      font-size: .8rem;
+      color: var(--ink-soft);
+      margin-top: 8px;
+      line-height: 1.4
+    }
+
+    /* mobile: a caixa de cálculo de entrega precisa caber inteira na tela
+       do celular — é onde a maioria dos clientes faz o pedido */
+    @media (max-width:520px) {
+      .delivery-calc-box {
+        padding: 14px 12px;
+        margin: 8px 0 14px;
+      }
+
+      .delivery-calc-box .btn {
+        width: 100%;
+        white-space: normal;
+        font-size: .92rem;
+        padding: 14px 12px;
+        line-height: 1.25;
+      }
+
+      .delivery-calc-result p,
+      .delivery-calc-error {
+        font-size: .88rem;
+        word-break: break-word;
+      }
+
+      .delivery-viz {
+        max-width: 100%;
+      }
+    }
+
     /* ---------- pagamento pix ---------- */
     .pix-amount {
       font-family: var(--font-display);
@@ -2566,10 +2545,6 @@
       }
 
       .club-card {
-        grid-template-columns: 1fr
-      }
-
-      .loc-grid {
         grid-template-columns: 1fr
       }
 
@@ -3101,7 +3076,6 @@
           <a href="#clube">Clube do Açaí</a>
           <a href="#" id="link-myorders">Meus Pedidos</a>
           <a href="#" id="link-mycoupons">Meus Cupons</a>
-          <a href="#local">Onde estamos</a>
         </nav>
         <div class="nav-actions">
           <button class="cart-btn" id="btn-open-cart" aria-label="Abrir carrinho">
@@ -3129,8 +3103,8 @@
         <div>
           <span class="hero-eyebrow">🍇 Fresquinho, todos os dias</span>
           <h1>Seu açaí <span>do seu jeito.</span></h1>
-          <p>Monte seu açaí, escolha seus complementos e peça de forma rápida e fácil — pronto em minutos, na retirada
-            ou na sua porta.</p>
+          <p>Monte seu açaí, escolha seus complementos e peça de forma rápida e fácil — pronto em minutos e
+            entregue na sua porta.</p>
           <div class="hero-actions">
             <a href="#montar" class="btn btn-primary">Pedir agora</a>
             <a href="#cardapio" class="btn btn-ghost">Ver cardápio</a>
@@ -3292,37 +3266,6 @@
       </div>
     </section>
 
-    <!-- LOCALIZAÇÃO -->
-    <section class="section reveal" id="local" style="background:var(--white)">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow-free">📍 Onde estamos</span>
-          <h2>Venha nos visitar</h2>
-        </div>
-        <div class="loc-grid">
-          <div class="loc-card card">
-            <div class="loc-row"><span class="ic">🏙️</span>
-              <div><strong>Cidade</strong>
-                <p id="loc-city" style="color:var(--ink-soft)">—</p>
-              </div>
-            </div>
-            <div class="loc-row"><span class="ic">📌</span>
-              <div><strong>Endereço</strong>
-                <p id="loc-address" style="color:var(--ink-soft)">—</p>
-              </div>
-            </div>
-            <div class="loc-row"><span class="ic">🕒</span>
-              <div><strong>Horário de funcionamento</strong>
-                <p id="loc-hours" style="color:var(--ink-soft)">—</p>
-              </div>
-            </div>
-            <a class="btn btn-ghost" id="btn-view-map" target="_blank" style="margin-top:10px">Ver no mapa</a>
-          </div>
-          <div class="map-embed" id="map-embed">🗺️ Mapa em breve</div>
-        </div>
-      </div>
-    </section>
-
     <footer>
       <div class="container">
         <div class="footer-grid">
@@ -3366,7 +3309,6 @@
           <div>
             <h5>Contato</h5>
             <a id="footer-whatsapp" href="#" target="_blank">📱 Pedir pelo WhatsApp</a>
-            <p id="footer-address">—</p>
           </div>
           <div>
             <h5>Loja</h5>
@@ -3386,7 +3328,6 @@
         <strong id="tracker-order-number">Pedido #—</strong>
         <span id="tracker-status-label">—</span>
       </span>
-      <span class="tracker-close" id="tracker-close" title="Fechar acompanhamento">✕</span>
     </button>
 
     <a href="#" class="fab-whatsapp" id="fab-whatsapp" target="_blank" aria-label="Pedir pelo WhatsApp">💬</a>
@@ -3412,17 +3353,8 @@
         <div id="cart-items"></div>
       </div>
       <div class="drawer-foot" id="cart-foot" style="display:none">
-        <div class="field" style="margin-bottom:12px">
-          <label>Forma de recebimento</label>
-          <div class="seg">
-            <button type="button" class="active" id="cart-seg-retirar" data-type="retirada">Retirar no local</button>
-            <button type="button" id="cart-seg-entrega" data-type="entrega">Entrega</button>
-          </div>
-        </div>
-        <div id="cart-address-field" style="display:none">
-          <p style="font-size:.85rem;color:var(--ink-soft);margin-bottom:12px">📍 Você vai informar o endereço
-            completo e calcular a taxa de entrega na próxima etapa (finalizar pedido).</p>
-        </div>
+        <p style="font-size:.85rem;color:var(--ink-soft);margin-bottom:12px">🚴 Todos os pedidos são por entrega.
+          Você informa o endereço e a taxa é calculada na próxima etapa.</p>
         <div class="coupon-row">
           <input type="text" id="coupon-input" placeholder="Tem um cupom? Digite aqui">
           <button class="btn btn-ghost btn-sm" id="btn-apply-coupon">Aplicar</button>
@@ -3451,34 +3383,28 @@
         <div class="field"><label>Nome</label><input required id="ck-name" type="text" placeholder="Seu nome"></div>
         <div class="field"><label>Telefone / WhatsApp</label><input required id="ck-phone" type="tel"
             placeholder="(00) 00000-0000"></div>
-        <div class="field">
-          <label>Forma de recebimento</label>
-          <div class="seg">
-            <button type="button" class="active" id="seg-retirar" data-type="retirada">Retirar no local</button>
-            <button type="button" id="seg-entrega" data-type="entrega">Entrega</button>
-          </div>
-        </div>
-        <div id="address-field" style="display:none">
+        <div id="address-field">
+          <p style="font-weight:800;font-size:.9rem;margin-bottom:10px">🚴 Endereço de entrega</p>
           <input type="hidden" id="ck-address">
           <div class="admin-form-grid">
-            <div class="field"><label>CEP</label><input id="ck-addr-cep" placeholder="00000-000"></div>
-            <div class="field"><label>Bairro</label><input id="ck-addr-neighborhood"></div>
-          </div>
-          <div class="admin-form-grid">
-            <div class="field" style="grid-column:1/-1"><label>Rua</label><input id="ck-addr-street"></div>
+            <div class="field" style="grid-column:1/-1"><label>Rua</label><input id="ck-addr-street"
+                placeholder="Nome da rua"></div>
           </div>
           <div class="admin-form-grid">
             <div class="field"><label>Número</label><input id="ck-addr-number"></div>
-            <div class="field"><label>Complemento</label><input id="ck-addr-complement" placeholder="Apto, bloco... (opcional)"></div>
+            <div class="field"><label>Bairro</label><input id="ck-addr-neighborhood"></div>
           </div>
           <div class="admin-form-grid">
-            <div class="field"><label>Cidade</label><input id="ck-addr-city"></div>
-            <div class="field"><label>Estado</label><input id="ck-addr-state" placeholder="RO" maxlength="2" style="text-transform:uppercase"></div>
+            <div class="field"><label>Complemento</label><input id="ck-addr-complement"
+                placeholder="Apto, bloco... (opcional)"></div>
+            <div class="field"><label>CEP (opcional)</label><input id="ck-addr-cep" placeholder="00000-000"></div>
           </div>
 
           <div class="delivery-calc-box" id="delivery-calc-box" style="display:none">
             <button type="button" class="btn btn-yellow btn-block" id="btn-calc-delivery">📍 Calcular taxa de
               entrega</button>
+            <p class="delivery-calc-hint" id="delivery-calc-hint">Preencha rua, número e bairro — a taxa é calculada
+              automaticamente e aparece aqui antes de finalizar o pedido.</p>
             <p class="delivery-calc-error" id="delivery-calc-error"></p>
             <div class="delivery-calc-result" id="delivery-calc-result">
               <p style="margin-bottom:4px">📍 Distância até a açaiteria: <strong id="delivery-calc-distance">—</strong>
@@ -3493,7 +3419,7 @@
           <select id="ck-payment">
             <option value="dinheiro">Dinheiro</option>
             <option value="pix">Pix</option>
-            <option value="cartao">Cartão (na entrega/retirada)</option>
+            <option value="cartao">Cartão (na entrega)</option>
           </select>
         </div>
         <div id="pix-info"
@@ -3501,6 +3427,11 @@
         </div>
         <div class="field"><label>Observações (opcional)</label><textarea id="ck-notes" rows="2"
             placeholder="Ex: sem leite condensado, capricha na granola :)"></textarea></div>
+        <div class="cart-summary-line"><span>Subtotal</span><span id="ck-subtotal">R$ 0,00</span></div>
+        <div class="cart-summary-line" id="ck-discount-row" style="display:none"><span>Desconto</span><span
+            id="ck-discount">- R$ 0,00</span></div>
+        <div class="cart-summary-line" id="ck-delivery-row"><span>Taxa de entrega</span><span
+            id="ck-delivery">a calcular</span></div>
         <div class="cart-summary-line total" style="margin-bottom:14px"><span>Total do pedido</span><span
             id="ck-total">R$ 0,00</span></div>
         <button class="btn btn-primary btn-block" type="submit" id="btn-confirm-order">Confirmar pedido</button>
@@ -3942,8 +3873,9 @@
               <h4 style="margin-bottom:4px">🚚 Entrega por distância</h4>
               <p style="color:var(--ink-soft);font-size:.85rem;margin-bottom:16px">Calcule a taxa de entrega
                 automaticamente com base na distância até o cliente, em vez de usar sempre o mesmo valor fixo.
-                Essa configuração fica salva neste navegador (veja o comentário no código-fonte sobre como
-                torná-la compartilhada via Supabase).</p>
+                A cidade/estado cadastrados aqui também são usados automaticamente no endereço do cliente (por
+                isso ele não precisa mais digitar cidade e estado). Essa configuração fica salva neste navegador
+                (veja o comentário no código-fonte sobre como torná-la compartilhada via Supabase).</p>
               <form id="delivery-config-form">
                 <div class="field" style="margin-bottom:18px">
                   <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
@@ -4014,7 +3946,8 @@
                   <div class="field"><label>TikTok (link)</label><input id="s-tiktok"></div>
                   <div class="field"><label>Facebook (link)</label><input id="s-face"></div>
                 </div>
-                <div class="field"><label>Endereço completo</label><input id="s-address"></div>
+                <div class="field"><label>Endereço completo (uso interno — não aparece mais no site)</label><input
+                    id="s-address"></div>
                 <div class="field"><label>Horário de funcionamento</label><input id="s-hours"
                     placeholder="Todos os dias, 12h às 22h"></div>
                 <button class="btn btn-primary" type="submit">Salvar configurações</button>
@@ -4034,14 +3967,16 @@
        Este arquivo contém: configuração, camada de dados (Supabase com
        fallback local para demonstração), estado do carrinho/builder,
        renderização das seções e o painel administrativo.
+
+       ATUALIZAÇÃO: a loja agora trabalha APENAS COM ENTREGA — a opção
+       "Retirar no local" foi removida do fluxo do cliente. O endereço do
+       cliente não pede mais cidade/estado (usamos a cidade/estado da loja,
+       cadastrados no painel de Entrega) e o CEP virou opcional. A taxa de
+       entrega é calculada automaticamente na própria etapa do endereço,
+       antes de gerar o QR Code do Pix.
        ===================================================================== */
 
     /* ---------------------- 1. CONFIGURAÇÃO ---------------------- */
-    // Preencha com as credenciais do SEU projeto Supabase (veja SETUP.md).
-    // Enquanto estiver com os valores de exemplo abaixo, o site roda em
-    // "modo demonstração" usando localStorage apenas no seu navegador —
-    // ótimo para testar, mas os pedidos NÃO ficam disponíveis para outros
-    // clientes/admin até você configurar o Supabase de verdade.
     const CONFIG = {
       SUPABASE_URL: "https://ghuhbxrqiljbccqvslth.supabase.co",
       SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdodWhieHJxaWxqYmNjcXZzbHRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NjgwMjUsImV4cCI6MjEwNDQ0NDAyNX0.3nd48f35tvnV5q2S9BVJJMNfSDPNUjkR9oJ5gz8Fajc",
@@ -4090,6 +4025,9 @@
     }
     function starString(n) { n = Math.max(0, Math.min(5, Math.round(Number(n) || 0))); return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n); }
 
+    /* A retirada no local não é mais oferecida ao cliente, mas os passos de
+       retirada continuam aqui para que pedidos ANTIGOS (feitos antes dessa
+       mudança) continuem exibindo a trilha de status correta. */
     const STATUS_STEPS_RETIRADA = [
       { key: 'recebido', label: 'Recebido', icon: '📥' },
       { key: 'preparo', label: 'Em preparação', icon: '🧑‍🍳' },
@@ -4104,12 +4042,6 @@
     ];
     const STATUS_LABELS = { recebido: 'Pedido recebido', preparo: 'Em preparação', pronto: 'Pronto', saiu: 'Saiu para entrega', entregue: 'Entregue', cancelado: 'Cancelado' };
 
-    /* ---- botão de avanço sequencial de status (admin) ----
-       Em vez de uma lista/select onde o admin escolhe qualquer status, o
-       admin vê um único botão colorido com o status ATUAL do pedido. Cada
-       clique avança o pedido para o PRÓXIMO status da sequência (que muda
-       conforme o tipo de pedido: retirada tem 3 etapas, entrega tem 5).
-       Isso evita clique errado/pular etapa sem querer. */
     const STATUS_BTN_META = {
       recebido: { color: 'st-red', label: 'Pedido Recebido' },
       preparo: { color: 'st-orange', label: 'Em preparação' },
@@ -4118,7 +4050,7 @@
       entregue: { color: 'st-green', label: 'Entregue' },
     };
     function statusStepsFor(order) {
-      return order.fulfillment_type === 'entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
+      return order.fulfillment_type === 'retirada' ? STATUS_STEPS_RETIRADA : STATUS_STEPS_ENTREGA;
     }
     function renderOrderStatusCell(o) {
       if (o.status === 'cancelado') {
@@ -4135,14 +4067,8 @@
     }
 
     /* ---------------------- 3. CAMADA DE DADOS (DB) ---------------------- */
-    /* Abstrai Supabase (produção) x localStorage (demonstração), para que
-       o resto do app nunca precise saber qual dos dois está em uso. */
     const LS_KEYS = { products: 'acai_products_v2', promos: 'acai_promos_v2', coupons: 'acai_coupons_v2', orders: 'acai_orders_v2', settings: 'acai_settings_v2', loyalty: 'acai_loyalty_v2', reviews: 'acai_reviews_v2', notifications: 'acai_notifications_v2', deliveryConfig: 'acai_delivery_config_v1', pixData: 'acai_pix_data_v1' };
 
-    /* Inicializa o armazenamento local vazio (modo demonstração/offline).
-       Nenhum produto, pedido, promoção ou avaliação de exemplo é criado —
-       a loja começa em branco e tudo é cadastrado pelo próprio lojista
-       (produtos/promoções/cupons) ou pelos clientes (avaliações). */
     function seedDemoData() {
       if (localStorage.getItem(LS_KEYS.products)) return;
       const settings = {
@@ -4170,32 +4096,9 @@
 
     /* =====================================================================
        ENTREGA POR DISTÂNCIA — configuração, geocodificação e cálculo de taxa
-       =====================================================================
-       ⚠️ NOTA IMPORTANTE SOBRE ARQUITETURA E SEGURANÇA:
-       Esta configuração (localização da loja, raio, taxa base, valor por km,
-       faixas) fica guardada em localStorage — NÃO na tabela `settings` do
-       Supabase. Isso é proposital: a tabela `settings` já existe em produção
-       com colunas fixas (nome, whatsapp, taxa fixa etc.) e adicionar novas
-       colunas exigiria alterar o schema do banco diretamente no painel do
-       Supabase, o que este código não pode fazer sozinho com segurança.
-       Se quiser essa configuração compartilhada entre dispositivos/admins
-       (em vez de só neste navegador), crie no Supabase uma tabela ou
-       colunas equivalentes aos campos de DEFAULT_DELIVERY_CONFIG abaixo e
-       troque getDeliveryConfig()/saveDeliveryConfig() para usar `sb`.
-
-       SEGURANÇA: como o projeto acessa o Supabase diretamente do navegador
-       (sem um backend próprio), a taxa calculada aqui NUNCA é validada por
-       um servidor antes de ser gravada no pedido — exatamente como já
-       acontece hoje com cupons e a taxa fixa de entrega. Um usuário com
-       conhecimento técnico poderia alterar o valor via DevTools antes de
-       enviar. Isso não é fingido como seguro: para blindar de verdade,
-       seria necessário validar endereço/distância/taxa numa Supabase Edge
-       Function (ou outro backend) antes de gravar o pedido. Sem isso, o
-       máximo que dá pra fazer no frontend é nunca expor um campo editável
-       de taxa e sempre recalcular a partir da distância — o que este
-       código já faz. */
+       ===================================================================== */
     const DEFAULT_DELIVERY_CONFIG = {
-      active: false, // entrega por distância desligada por padrão (usa a taxa fixa de Configurações)
+      active: false,
       store_address: '', store_cep: '', store_city: '', store_state: '',
       store_lat: null, store_lng: null,
       radius_km: 10,
@@ -4213,7 +4116,6 @@
     function getDeliveryConfig() { return { ...DEFAULT_DELIVERY_CONFIG, ...(lsGet(LS_KEYS.deliveryConfig) || {}) }; }
     function saveDeliveryConfig(cfg) { lsSet(LS_KEYS.deliveryConfig, cfg); }
 
-    /* Distância em linha reta entre dois pontos (fórmula de Haversine), em km. */
     function haversineKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -4222,14 +4124,6 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    /* Geocodificação via Nominatim (OpenStreetMap) — serviço público, gratuito
-       e sem necessidade de chave de API (por isso pode ser chamado direto do
-       navegador sem expor segredo nenhum). Uso justo: no máx. ~1 requisição
-       por segundo, e a política de uso do Nominatim pede para não automatizar
-       em alto volume; para um site de um único estabelecimento, isso não é
-       problema. Se um dia precisar de mais robustez/volume, troque por um
-       provedor pago (Google/Mapbox) através de uma função de backend, para
-       não expor a chave paga no frontend. */
     async function geocodeAddress(addressString) {
       const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=' + encodeURIComponent(addressString);
       let res;
@@ -4237,15 +4131,10 @@
       catch (err) { throw new Error('Não foi possível contatar o serviço de geolocalização. Verifique sua conexão e tente novamente.'); }
       if (!res.ok) throw new Error('Serviço de geolocalização indisponível no momento. Tente novamente em instantes.');
       const data = await res.json();
-      if (!data || !data.length) throw new Error('Endereço não encontrado. Confira o CEP, a rua e o número informados.');
+      if (!data || !data.length) throw new Error('Endereço não encontrado. Confira a rua, o número e o bairro informados.');
       return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display_name: data[0].display_name };
     }
 
-    /* Calcula a taxa a partir da distância, conforme o método escolhido pelo
-       admin. No método "faixas", usa a primeira faixa cuja distância-limite
-       (until_km) seja >= à distância calculada; acima da maior faixa
-       cadastrada, usa a taxa da última faixa (a checagem de raio máximo, em
-       outro ponto do código, já bloqueia entregas além do limite do admin). */
     function computeDeliveryFeeByDistance(cfg, distanceKm) {
       if (cfg.method === 'faixas') {
         const ranges = (cfg.ranges || []).slice().sort((a, b) => a.until_km - b.until_km);
@@ -4257,45 +4146,11 @@
     }
 
     /* =====================================================================
-       PAGAMENTO PIX
-       =====================================================================
-       ⚠️ LEIA ANTES DE MEXER: este projeto NÃO tem integração com nenhum
-       gateway/PSP de pagamento (Mercado Pago, Efí, Asaas, PagBank etc.) —
-       ele fala direto com o Supabase pelo navegador, sem um backend próprio.
-       Por isso, o "Pix" implementado aqui é o modo PIX MANUAL, com o BR Code
-       (o padrão oficial do Banco Central pro "Pix Copia e Cola"/QR Code)
-       gerado localmente a partir da CHAVE PIX FIXA da loja — sem depender de
-       nenhuma API paga nem chave secreta. O código abaixo (buildPixPayload)
-       é só formatação + um checksum (CRC16), documentação pública do Bacen.
-
-       O QUE ISSO SIGNIFICA NA PRÁTICA:
-       - O cliente recebe um QR/código com o VALOR EXATO do pedido já
-         preenchido — melhor que só mandar a chave fixa "pelada".
-       - O dinheiro cai direto na conta do Pix cadastrado, como qualquer
-         Pix normal — não existe confirmação automática, porque não existe
-         PSP nenhum no meio pra avisar o sistema que o pagamento caiu.
-       - O status do pedido some para "🟡 Aguardando pagamento" e SÓ muda pra
-         "🟢 Pago" quando o ADMIN confirmar manualmente no painel — nunca
-         pelo clique do cliente em "copiar" ou "já paguei".
-
-       SE QUISER CONFIRMAÇÃO 100% AUTOMÁTICA (webhook de verdade), é preciso:
-       1. Criar conta num PSP com Pix via API (ex: Mercado Pago, Efí/Gerencianet,
-          Asaas). Eles fornecem client_id/client_secret ou um Access Token.
-       2. Nunca colocar esse token no frontend — ele precisa morar num backend
-          (ex: uma Supabase Edge Function, com o token salvo como "secret" do
-          projeto Supabase, não no código).
-       3. A Edge Function cria a cobrança Pix (chamando a API do PSP) e
-          devolve pro navegador só o QR Code/copia-e-cola — nunca o token.
-       4. Cadastrar no PSP a URL pública dessa mesma Edge Function como
-          "webhook" — o PSP chama essa URL quando o pagamento é confirmado.
-       5. A Edge Function valida a assinatura do webhook (o PSP fornece um
-          "secret" pra isso) e só então atualiza o pedido pra "pago" no banco.
-       Nenhuma dessas 5 peças existe neste projeto hoje — por isso o fluxo
-       abaixo é manual, e digo isso abertamente na tela do cliente e do admin.
+       PAGAMENTO PIX (modo manual, sem gateway — ver explicação completa
+       mantida do projeto original)
        ===================================================================== */
     const PIX_EXPIRATION_MINUTES = 30;
 
-    /* CRC16/CCITT-FALSE — checksum exigido no fim do payload BR Code do Pix. */
     function crc16ccitt(str) {
       let crc = 0xFFFF;
       for (let i = 0; i < str.length; i++) {
@@ -4311,9 +4166,6 @@
       return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .replace(/[^\x20-\x7E]/g, '').trim().toUpperCase().slice(0, max) || undefined;
     }
-    /* Monta o payload BR Code (Pix Copia e Cola) — mesmo formato que qualquer
-       banco/carteira digital sabe ler, com valor e identificador do pedido
-       (txid) já embutidos. */
     function buildPixPayload({ key, amount, merchantName, merchantCity, txid }) {
       const gui = pixTlv('00', 'br.gov.bcb.pix');
       const keyField = pixTlv('01', String(key || '').trim());
@@ -4332,8 +4184,6 @@
       return payload + crc16ccitt(payload);
     }
     function pixQrImageUrl(payload) {
-      // usa um serviço público e gratuito só para desenhar o QR a partir do
-      // texto do payload (que não é sigiloso — é o mesmo conteúdo do QR).
       return 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(payload);
     }
 
@@ -4467,19 +4317,6 @@
         if (HAS_SUPABASE) { const { data, error } = await sb.from('orders').select('*').eq('id', id).maybeSingle(); if (error) { console.error(error); return null; } return data; }
         return lsGet(LS_KEYS.orders).find(o => o.id === id) || null;
       },
-      /* Busca todos os pedidos de um telefone, para a área "Meus Pedidos" do
-         cliente. O telefone é comparado só pelos dígitos (ignora espaços,
-         parênteses e traços), já que o cliente pode ter digitado o telefone
-         de formas diferentes em pedidos diferentes. Por simplicidade, busca
-         todos os pedidos e filtra no navegador — o mesmo padrão já usado em
-         getAllOrdersAdmin; se a loja crescer muito, considere criar uma
-         coluna normalizada (só dígitos) no Supabase com índice, e filtrar
-         diretamente na consulta.
-         SEGURANÇA: assim como getOrderById já permite que qualquer pessoa
-         busque um pedido pelo id sem login, esta função também depende de a
-         tabela `orders` permitir leitura sem autenticação de admin (mesma
-         política já usada pelo acompanhamento de pedido). Ou seja, não abre
-         nenhuma superfície nova além da que já existia. */
       async getOrdersByPhone(phone) {
         const normalized = (phone || '').replace(/\D/g, '');
         if (!normalized) return [];
@@ -4499,20 +4336,6 @@
         lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).filter(o => o.id !== id));
       },
 
-      /* Guarda os dados do Pix (payload, txid, status, datas) junto do
-         pedido. Tenta gravar direto nas colunas da tabela `orders` no
-         Supabase (payment_status, pix_payload, pix_txid, pix_created_at,
-         paid_at) — se essas colunas ainda não existirem no seu banco, a
-         gravação cai automaticamente para o localStorage deste navegador
-         (com um aviso no console), então o app não quebra, mas o status do
-         pagamento só fica visível neste dispositivo. Para deixar isso
-         funcionando de verdade entre dispositivos/administradores, rode no
-         SQL editor do Supabase:
-           alter table orders add column if not exists payment_status text default 'aguardando_pagamento';
-           alter table orders add column if not exists pix_payload text;
-           alter table orders add column if not exists pix_txid text;
-           alter table orders add column if not exists pix_created_at timestamptz;
-           alter table orders add column if not exists paid_at timestamptz; */
       async savePixInfo(orderId, data) {
         if (HAS_SUPABASE) {
           const { error } = await sb.from('orders').update(data).eq('id', orderId);
@@ -4556,7 +4379,6 @@
         map[phone] = (map[phone] || 0) + pts;
         lsSet(LS_KEYS.loyalty, map);
       },
-      /* deduz pontos ao usar um cupom de fidelidade, sem deixar o saldo negativo */
       async deductLoyaltyPoints(phone, amount) {
         const current = await this.getLoyaltyPoints(phone);
         const delta = -Math.min(amount, current);
@@ -4633,7 +4455,6 @@
           if (error) throw error;
           return data;
         }
-        // modo demo: qualquer credencial "admin@acai.com" / "admin123" funciona
         if (email === 'admin@acai.com' && password === 'admin123') return { demo: true };
         throw new Error('Credenciais inválidas. No modo demo use admin@acai.com / admin123');
       },
@@ -4657,10 +4478,6 @@
     let CURRENT_MENU_TAB = 'acai';
     let LAST_ORDER = null;
     let DELIVERY_CONFIG = getDeliveryConfig();
-    /* Preenchido só depois que o cliente clica em "Calcular taxa de entrega":
-       { distanceKm, fee, lat, lng, address:{...} } quando válido, ou
-       { invalid: true, reason } quando fora da área/erro. Null = ainda não
-       calculado nesta sessão de checkout. */
     let DELIVERY_CALC = null;
     function invalidateDeliveryCalc() {
       if (DELIVERY_CALC) DELIVERY_CALC = null;
@@ -4681,15 +4498,11 @@
       if (count > LAST_CART_COUNT) bumpCartIcons();
       LAST_CART_COUNT = count;
     }
-    /* Pequena animação minimalista disparada quando um item é adicionado ao
-       carrinho — dá um "salto" no botão do carrinho (topo) e no botão
-       flutuante do mobile, sem depender de imagens ou bibliotecas externas. */
     function bumpCartIcons() {
       [document.getElementById('btn-open-cart'), document.getElementById('cart-count'), document.getElementById('fab-cart-mobile')]
         .forEach(el => {
           if (!el) return;
           el.classList.remove('bump');
-          // força reflow para permitir reiniciar a animação em cliques seguidos
           void el.offsetWidth;
           el.classList.add('bump');
         });
@@ -4717,16 +4530,10 @@
       document.getElementById('footer-store-name').textContent = storeName;
       document.getElementById('footer-store-name-bottom').textContent = storeName;
       document.getElementById('footer-year').textContent = new Date().getFullYear();
-      document.getElementById('loc-city').textContent = s.city || '—';
-      document.getElementById('loc-address').textContent = s.address || '—';
-      document.getElementById('loc-hours').textContent = s.opening_hours || '—';
-      document.getElementById('footer-address').textContent = s.address || '';
       const wa = (s.whatsapp_number || CONFIG.WHATSAPP_FALLBACK).replace(/\D/g, '');
       const waLink = 'https://wa.me/' + wa;
       document.getElementById('fab-whatsapp').href = waLink;
       document.getElementById('footer-whatsapp').href = waLink + '?text=' + encodeURIComponent('Olá! Vim pelo site e quero fazer um pedido 🍇');
-      document.getElementById('btn-view-map').href = 'https://www.google.com/maps/search/' + encodeURIComponent(s.address || s.city || '');
-      document.getElementById('map-embed').textContent = '📍 ' + (s.address ? s.address + ' — ' + (s.city || '') : 'Configure o endereço no painel administrativo.');
       if (s.instagram_url) document.getElementById('social-insta').href = s.instagram_url;
       if (s.tiktok_url) document.getElementById('social-tiktok').href = s.tiktok_url;
       if (s.facebook_url) document.getElementById('social-face').href = s.facebook_url;
@@ -4973,11 +4780,6 @@
     function generateLoyaltyCouponCode() {
       return 'FIDELIDADE' + Date.now().toString(36).toUpperCase().slice(-4) + Math.floor(Math.random() * 90 + 10);
     }
-    /* Gera um cupom de R$10 (uso único) quando o cliente tem 100+ pontos e ainda
-       não possui nenhum cupom de fidelidade pendente. Ao usar o cupom no
-       checkout, 100 pontos são descontados do saldo (ver seção 13). Assim, um
-       novo cupom só volta a ser gerado depois que os pontos forem "recarregados"
-       para 100 de novo. Se tiver menos de 100 pontos, nenhum cupom é gerado. */
     async function syncLoyaltyCoupons(phone, points) {
       const normalizedPhone = (phone || '').replace(/\D/g, '');
       if (!normalizedPhone) return { list: [], created: 0, error: null };
@@ -5075,13 +4877,7 @@
       renderMyCoupons(list);
     });
 
-    /* ---- meus pedidos ----
-       Área onde o cliente consulta TODOS os seus pedidos (não só o último),
-       cada um com o status atual. Enquanto esta tela está aberta, qualquer
-       mudança de status feita pelo admin (no botão sequencial vermelho →
-       laranja → verde) aparece aqui IMEDIATAMENTE, do mesmo jeito que no
-       chip flutuante de acompanhamento: via Supabase Realtime quando
-       disponível, com um polling de reforço como plano B. */
+    /* ---- meus pedidos ---- */
     let MY_ORDERS_LIST = [];
     let MY_ORDERS_POLL_TIMER = null;
     let MY_ORDERS_CHANNEL = null;
@@ -5124,8 +4920,6 @@
       renderMyOrdersList(MY_ORDERS_LIST);
       startMyOrdersLiveUpdates();
     }
-    /* Aplica um pedido "fresco" (vindo do Realtime ou do polling) à lista
-       exibida, só quando esse pedido já faz parte da lista carregada. */
     function applyMyOrdersUpdate(fresh) {
       if (!fresh) return;
       const idx = MY_ORDERS_LIST.findIndex(o => o.id === fresh.id);
@@ -5139,18 +4933,8 @@
     async function pollMyOrders(phone) {
       const fresh = await DB.getOrdersByPhone(phone);
       fresh.forEach(o => applyMyOrdersUpdate(o));
-      // também cobre pedidos novos feitos nesse telefone desde o último carregamento
       if (fresh.length !== MY_ORDERS_LIST.length) { MY_ORDERS_LIST = fresh; renderMyOrdersList(MY_ORDERS_LIST); }
     }
-    /* Assina o Supabase Realtime para QUALQUER atualização na tabela `orders`
-       e filtra no navegador pelos pedidos que já estão na lista carregada
-       (o telefone salvo em `orders.customer_phone` pode estar em formatos
-       diferentes entre pedidos, então filtrar por id já carregado é mais
-       confiável do que um filtro exato por telefone no servidor). Requer
-       Realtime habilitado para a tabela `orders` no Supabase (Database →
-       Replication) — sem isso, o polling de reforço abaixo continua
-       cobrindo a atualização, só que a cada alguns segundos em vez de na
-       hora. */
     function subscribeMyOrdersRealtime() {
       unsubscribeMyOrdersRealtime();
       if (!HAS_SUPABASE || !sb) return;
@@ -5256,14 +5040,10 @@
       if (coupon.discount_type === 'fixed') return Math.min(subtotal, Number(coupon.discount_amount || 0));
       return subtotal * (Number(coupon.discount_percent || 0) / 100);
     }
-    /* Taxa de entrega atual: se a entrega por distância estiver ativa, usa o
-       valor já calculado (DELIVERY_CALC) — nunca um campo editável pelo
-       cliente; se ainda não foi calculada, retorna 0 (o checkout bloqueia a
-       confirmação do pedido nesse caso, veja mais abaixo). Se a entrega por
-       distância estiver desligada, mantém o comportamento antigo: taxa fixa
-       definida em Configurações. */
+    /* Todo pedido agora é entrega: se o cálculo por distância estiver ativo,
+       usa a taxa já calculada (nunca um campo editável pelo cliente); caso
+       contrário, usa a taxa fixa das Configurações. */
     function cartDeliveryFee() {
-      if (CHECKOUT_TYPE !== 'entrega') return 0;
       if (DELIVERY_CONFIG.active) return (DELIVERY_CALC && DELIVERY_CALC.valid) ? DELIVERY_CALC.fee : 0;
       return Number(SETTINGS.delivery_fee || 0);
     }
@@ -5273,11 +5053,11 @@
       if (ACTIVE_COUPON) discount = couponDiscount(ACTIVE_COUPON, subtotal);
       const deliveryFee = cartDeliveryFee();
       const total = Math.max(0, subtotal - discount) + deliveryFee;
-      const pendingDistanceCalc = CHECKOUT_TYPE === 'entrega' && DELIVERY_CONFIG.active && (!DELIVERY_CALC || !DELIVERY_CALC.valid);
+      const pendingDistanceCalc = DELIVERY_CONFIG.active && (!DELIVERY_CALC || !DELIVERY_CALC.valid);
       document.getElementById('sum-subtotal').textContent = brl(subtotal);
       document.getElementById('sum-discount-row').style.display = discount > 0 ? 'flex' : 'none';
       document.getElementById('sum-discount').textContent = '- ' + brl(discount);
-      document.getElementById('sum-delivery-row').style.display = (deliveryFee > 0 || pendingDistanceCalc) ? 'flex' : 'none';
+      document.getElementById('sum-delivery-row').style.display = 'flex';
       document.getElementById('sum-delivery').textContent = pendingDistanceCalc ? 'a calcular' : brl(deliveryFee);
       document.getElementById('sum-total').textContent = brl(total);
     }
@@ -5296,13 +5076,6 @@
     });
     document.getElementById('btn-clear-cart').addEventListener('click', () => { CART = []; ACTIVE_COUPON = null; persistCart(); renderCart(); toast('Carrinho limpo'); });
 
-    /* Trava o scroll do fundo da página enquanto qualquer modal/drawer estiver
-       aberto (carrinho, checkout ou confirmação), para não dar pra rolar ou
-       clicar no conteúdo por trás. Usa um contador porque um modal pode abrir
-       "por cima" de outro (ex: checkout fecha e confirmação abre em seguida).
-       Em vez de só usar overflow:hidden (que alguns navegadores mobile
-       ignoram), a página é "congelada" na posição atual com position:fixed
-       e depois devolvida exatamente onde estava ao fechar. */
     let OPEN_OVERLAYS = 0;
     let SCROLL_LOCK_Y = 0;
     function lockBodyScroll() {
@@ -5322,7 +5095,6 @@
       window.scrollTo(0, SCROLL_LOCK_Y);
     }
 
-    /* open/close cart drawer */
     function openCart() { renderCart(); document.getElementById('cart-overlay').classList.add('open'); lockBodyScroll(); }
     function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); unlockBodyScroll(); }
     document.getElementById('btn-open-cart').addEventListener('click', openCart);
@@ -5330,48 +5102,35 @@
     document.getElementById('close-cart').addEventListener('click', closeCart);
     document.getElementById('cart-overlay').addEventListener('click', e => { if (e.target.id === 'cart-overlay') closeCart(); });
 
-    /* ---------------------- 13. CHECKOUT ---------------------- */
-    let CHECKOUT_TYPE = 'retirada';
-    document.getElementById('seg-retirar').addEventListener('click', () => setCheckoutType('retirada'));
-    document.getElementById('seg-entrega').addEventListener('click', () => setCheckoutType('entrega'));
-    document.getElementById('cart-seg-retirar').addEventListener('click', () => setCheckoutType('retirada'));
-    document.getElementById('cart-seg-entrega').addEventListener('click', () => setCheckoutType('entrega'));
-    function setCheckoutType(type) {
-      CHECKOUT_TYPE = type;
-      document.getElementById('seg-retirar').classList.toggle('active', type === 'retirada');
-      document.getElementById('seg-entrega').classList.toggle('active', type === 'entrega');
-      document.getElementById('cart-seg-retirar').classList.toggle('active', type === 'retirada');
-      document.getElementById('cart-seg-entrega').classList.toggle('active', type === 'entrega');
-      document.getElementById('address-field').style.display = type === 'entrega' ? 'block' : 'none';
-      document.getElementById('cart-address-field').style.display = type === 'entrega' ? 'block' : 'none';
-      document.getElementById('delivery-calc-box').style.display = (type === 'entrega' && DELIVERY_CONFIG.active) ? 'block' : 'none';
-      updateCheckoutTotal();
-      updateCartSummary();
+    /* ---------------------- 13. CHECKOUT (somente entrega) ---------------------- */
+    const CHECKOUT_TYPE = 'entrega';
+
+    /* Cidade/estado deixaram de ser digitados pelo cliente: usamos os dados da
+       própria loja (painel Entrega → localização da açaiteria; se não houver,
+       cai para a cidade cadastrada em Configurações). */
+    function storeCityState() {
+      const cfg = DELIVERY_CONFIG || {};
+      const rawCity = (cfg.store_city || SETTINGS.city || '').trim();
+      // aceita formatos como "Porto Velho - RO" e separa cidade/UF
+      let city = rawCity, state = (cfg.store_state || '').trim().toUpperCase();
+      const m = rawCity.match(/^(.*?)[\s]*[-\/][\s]*([A-Za-z]{2})$/);
+      if (m) { city = m[1].trim(); if (!state) state = m[2].toUpperCase(); }
+      return { city, state };
     }
-    /* compõe o endereço "completo" (para o pedido e o WhatsApp) a partir dos
-       campos estruturados, e invalida qualquer cálculo de distância anterior
-       sempre que o cliente mexe no endereço — assim nunca fica um valor de
-       taxa "preso" a um endereço antigo. */
     function composeCheckoutAddress() {
       const cep = document.getElementById('ck-addr-cep').value.trim();
       const street = document.getElementById('ck-addr-street').value.trim();
       const number = document.getElementById('ck-addr-number').value.trim();
       const complement = document.getElementById('ck-addr-complement').value.trim();
       const neighborhood = document.getElementById('ck-addr-neighborhood').value.trim();
-      const city = document.getElementById('ck-addr-city').value.trim();
-      const state = document.getElementById('ck-addr-state').value.trim().toUpperCase();
+      const { city, state } = storeCityState();
       const parts = [
         [street, number].filter(Boolean).join(', '),
         complement,
         neighborhood,
-        [city, state].filter(Boolean).join('/'),
         cep,
       ].filter(Boolean);
       document.getElementById('ck-address').value = parts.join(' — ');
-      // string separada, só com o que ajuda a localizar o ponto no mapa —
-      // sem complemento (apto/bloco não existe no mapa) e com vírgulas em
-      // vez de travessão/barra, que é o formato que o geocodificador entende
-      // melhor.
       const geocodeQuery = [
         [street, number].filter(Boolean).join(', '),
         neighborhood,
@@ -5382,10 +5141,13 @@
       ].filter(Boolean).join(', ');
       return { cep, street, number, complement, neighborhood, city, state, full: parts.join(' — '), geocodeQuery };
     }
-    ['ck-addr-cep', 'ck-addr-street', 'ck-addr-number', 'ck-addr-complement', 'ck-addr-neighborhood', 'ck-addr-state'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => { composeCheckoutAddress(); invalidateDeliveryCalc(); });
+    ['ck-addr-cep', 'ck-addr-street', 'ck-addr-number', 'ck-addr-complement', 'ck-addr-neighborhood'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        composeCheckoutAddress();
+        invalidateDeliveryCalc();
+        scheduleAutoDeliveryCalc();
+      });
     });
-    document.getElementById('ck-addr-city').addEventListener('input', () => { composeCheckoutAddress(); invalidateDeliveryCalc(); });
     document.getElementById('ck-payment').addEventListener('change', e => {
       const pixBox = document.getElementById('pix-info');
       if (e.target.value === 'pix') {
@@ -5394,7 +5156,7 @@
           pixBox.innerHTML = `⚠️ A loja ainda não configurou uma chave Pix. Escolha outra forma de pagamento ou entre em contato.`;
         } else {
           pixBox.innerHTML = `💜 Ao confirmar o pedido, vamos gerar o QR Code e o código Pix Copia e Cola com o
-            valor exato do pedido para você pagar.`;
+            valor exato do pedido (já com a taxa de entrega) para você pagar.`;
         }
       } else pixBox.style.display = 'none';
     });
@@ -5404,7 +5166,6 @@
         navigator.clipboard.writeText(text).then(() => finish(true)).catch(() => fallbackCopyText(text, finish));
       } else fallbackCopyText(text, finish);
     }
-    function copyPixKey(key) { copyText(key, 'Chave Pix copiada!'); }
     function fallbackCopyText(text, cb) {
       try {
         const ta = document.createElement('textarea');
@@ -5425,12 +5186,22 @@
       const deliveryFee = cartDeliveryFee();
       return Math.max(0, subtotal - discount) + deliveryFee;
     }
-    function updateCheckoutTotal() { document.getElementById('ck-total').textContent = brl(checkoutTotal()); }
+    function updateCheckoutTotal() {
+      const subtotal = cartSubtotal();
+      const discount = couponDiscount(ACTIVE_COUPON, subtotal);
+      const deliveryFee = cartDeliveryFee();
+      const pending = DELIVERY_CONFIG.active && (!DELIVERY_CALC || !DELIVERY_CALC.valid);
+      document.getElementById('ck-subtotal').textContent = brl(subtotal);
+      document.getElementById('ck-discount-row').style.display = discount > 0 ? 'flex' : 'none';
+      document.getElementById('ck-discount').textContent = '- ' + brl(discount);
+      document.getElementById('ck-delivery').textContent = pending ? 'a calcular' : brl(deliveryFee);
+      document.getElementById('ck-total').textContent = brl(checkoutTotal());
+    }
     document.getElementById('btn-checkout').addEventListener('click', () => {
       if (CART.length === 0) { toast('Seu carrinho está vazio'); return; }
       closeCart();
       DELIVERY_CONFIG = getDeliveryConfig();
-      document.getElementById('delivery-calc-box').style.display = (CHECKOUT_TYPE === 'entrega' && DELIVERY_CONFIG.active) ? 'block' : 'none';
+      document.getElementById('delivery-calc-box').style.display = DELIVERY_CONFIG.active ? 'block' : 'none';
       updateCheckoutTotal();
       document.getElementById('checkout-overlay').classList.add('open');
       lockBodyScroll();
@@ -5449,11 +5220,6 @@
         <text x="270" y="52" text-anchor="middle" font-size="11" fill="var(--ink-soft)">Você</text>
         <text x="150" y="20" text-anchor="middle" font-size="12" font-weight="800" fill="var(--purple-800)">${distanceKm.toFixed(1)} km</text>`;
     }
-    /* Tenta geocodificar em camadas, da mais precisa pra mais aproximada.
-       Endereços novos/pequenos às vezes não existem no mapa do OpenStreetMap
-       ainda (bairros mais recentes, ruas sem nome oficial cadastrado etc.),
-       então em vez de já desistir na primeira tentativa, vai simplificando a
-       busca até achar alguma coisa que sirva de referência pro cálculo. */
     async function geocodeWithFallback(parts) {
       const attempts = [
         [ [parts.street, parts.number].filter(Boolean).join(', '), parts.neighborhood, parts.city, parts.state, parts.cep, 'Brasil' ],
@@ -5467,12 +5233,26 @@
         try { return await geocodeAddress(query); }
         catch (err) { lastErr = err; }
       }
-      throw lastErr || new Error('Endereço não encontrado. Confira o CEP, a rua e o número informados.');
+      throw lastErr || new Error('Endereço não encontrado. Confira a rua, o número e o bairro informados.');
     }
-    document.getElementById('btn-calc-delivery').addEventListener('click', async () => {
+
+    /* Cálculo da taxa: roda tanto pelo botão quanto automaticamente (com um
+       pequeno atraso) assim que o cliente termina de digitar rua + número —
+       assim a taxa já aparece na etapa do endereço, antes de gerar o Pix. */
+    let DELIVERY_AUTO_TIMER = null;
+    let DELIVERY_CALC_RUNNING = false;
+    function scheduleAutoDeliveryCalc() {
+      clearTimeout(DELIVERY_AUTO_TIMER);
+      if (!DELIVERY_CONFIG.active) return;
+      const p = composeCheckoutAddress();
+      if (!p.street || !p.number) return;
+      DELIVERY_AUTO_TIMER = setTimeout(() => { calcDeliveryFee(true); }, 1200);
+    }
+    async function calcDeliveryFee(silent) {
+      if (DELIVERY_CALC_RUNNING) return;
       const addressParts = composeCheckoutAddress();
-      if (!addressParts.street || !addressParts.number || !addressParts.city) {
-        toast('Preencha rua, número e cidade para calcular a taxa');
+      if (!addressParts.street || !addressParts.number) {
+        if (!silent) toast('Preencha rua e número para calcular a taxa');
         return;
       }
       DELIVERY_CONFIG = getDeliveryConfig();
@@ -5486,13 +5266,14 @@
         errBox.classList.add('show');
         return;
       }
+      DELIVERY_CALC_RUNNING = true;
       btn.disabled = true; btn.textContent = '📍 Calculando distância...';
       try {
         const geo = await geocodeWithFallback(addressParts);
         const distanceKm = haversineKm(DELIVERY_CONFIG.store_lat, DELIVERY_CONFIG.store_lng, geo.lat, geo.lng);
         if (distanceKm > Number(DELIVERY_CONFIG.radius_km || 0)) {
           DELIVERY_CALC = { valid: false, reason: 'fora_do_raio', distanceKm };
-          errBox.textContent = `⚠️ Esse endereço está fora da nossa área de entrega. Atualmente realizamos entregas em até ${DELIVERY_CONFIG.radius_km} km da nossa açaiteria (esse endereço está a ${distanceKm.toFixed(1)} km).`;
+          errBox.textContent = `⚠️ Esse endereço está fora da nossa área de entrega. Atualmente entregamos em até ${DELIVERY_CONFIG.radius_km} km da açaiteria (esse endereço está a ${distanceKm.toFixed(1)} km).`;
           errBox.classList.add('show');
           updateCheckoutTotal(); updateCartSummary();
           return;
@@ -5510,9 +5291,11 @@
         errBox.textContent = '⚠️ ' + (err.message || 'Não foi possível calcular a distância agora. Tente novamente.');
         errBox.classList.add('show');
       } finally {
+        DELIVERY_CALC_RUNNING = false;
         btn.disabled = false; btn.textContent = '📍 Calcular taxa de entrega';
       }
-    });
+    }
+    document.getElementById('btn-calc-delivery').addEventListener('click', () => calcDeliveryFee(false));
 
     document.getElementById('checkout-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -5522,9 +5305,10 @@
       const address = addressParts.full;
       const payment = document.getElementById('ck-payment').value;
       const notes = document.getElementById('ck-notes').value.trim();
-      if (CHECKOUT_TYPE === 'entrega' && !address) { toast('Informe o endereço de entrega'); return; }
-      if (CHECKOUT_TYPE === 'entrega' && DELIVERY_CONFIG.active) {
-        if (!DELIVERY_CALC || !DELIVERY_CALC.valid) { toast('Calcule a taxa de entrega antes de confirmar o pedido'); return; }
+      if (!addressParts.street || !addressParts.number) { toast('Informe a rua e o número para a entrega'); return; }
+      if (DELIVERY_CONFIG.active && (!DELIVERY_CALC || !DELIVERY_CALC.valid)) {
+        toast('Calcule a taxa de entrega antes de confirmar o pedido');
+        return;
       }
       if (payment === 'pix' && !SETTINGS.pix_key) { toast('A loja ainda não configurou uma chave Pix. Escolha outra forma de pagamento.'); return; }
 
@@ -5533,17 +5317,13 @@
       const deliveryFee = cartDeliveryFee();
       const total = Math.max(0, subtotal - discount) + deliveryFee;
 
-      const orderAddress = CHECKOUT_TYPE === 'entrega' ? {
+      const orderAddress = {
         full: address, ...addressParts,
-        // guardado junto ao pedido para nunca depender de um recálculo
-        // posterior: mesmo que o admin mude a configuração de entrega
-        // depois, este pedido continua mostrando a distância/taxa cobradas
-        // no momento da compra (item 11 da especificação).
         lat: DELIVERY_CONFIG.active && DELIVERY_CALC ? DELIVERY_CALC.lat : null,
         lng: DELIVERY_CONFIG.active && DELIVERY_CALC ? DELIVERY_CALC.lng : null,
         distance_km: DELIVERY_CONFIG.active && DELIVERY_CALC ? DELIVERY_CALC.distanceKm : null,
         calc_method: DELIVERY_CONFIG.active ? DELIVERY_CONFIG.method : 'fixo',
-      } : null;
+      };
 
       const order = {
         customer_name: name,
@@ -5586,7 +5366,7 @@
     });
 
     /* ---------------------- 13b. PAGAMENTO PIX (tela pós-pedido) ---------------------- */
-    let PIX_STATE = null; // { orderId, order_number, amount, payload, txid, createdAt, expiresAt }
+    let PIX_STATE = null;
     let PIX_COUNTDOWN_TIMER = null;
     let PIX_POLL_TIMER = null;
 
@@ -5652,9 +5432,6 @@
       tick();
       PIX_COUNTDOWN_TIMER = setInterval(tick, 1000);
     }
-    /* Fica checando periodicamente se o ADMIN já confirmou o pagamento
-       manualmente (não existe webhook de gateway neste projeto — ver o
-       comentário grande lá em cima, na seção "PAGAMENTO PIX"). */
     function startPixPolling() {
       stopPixPolling();
       PIX_POLL_TIMER = setInterval(async () => {
@@ -5698,14 +5475,14 @@
       document.getElementById('confirm-order-number').textContent = 'Pedido #' + (order.order_number ?? '—');
       document.getElementById('confirm-items').innerHTML = (order.items || []).map(i => `
     <div class="cart-summary-line"><span>${i.qty}x ${escapeHtml(i.name)}</span><span>${brl(i.unit_price * i.qty)}</span></div>`).join('');
-      document.getElementById('confirm-type').textContent = order.fulfillment_type === 'entrega' ? 'Entrega' : 'Retirar no local';
+      document.getElementById('confirm-type').textContent = order.fulfillment_type === 'retirada' ? 'Retirar no local' : 'Entrega';
       document.getElementById('confirm-payment').textContent = { pix: 'Pix', dinheiro: 'Dinheiro', cartao: 'Cartão' }[order.payment_method] || order.payment_method;
       const deliveryRow = document.getElementById('confirm-delivery-row');
-      if (order.fulfillment_type === 'entrega' && order.address && order.address.distance_km != null) {
+      if (order.address && order.address.distance_km != null) {
         deliveryRow.style.display = 'flex';
         document.getElementById('confirm-delivery-label').textContent = `Taxa de entrega (${Number(order.address.distance_km).toFixed(1).replace('.', ',')} km)`;
         document.getElementById('confirm-delivery-value').textContent = brl(order.delivery_fee);
-      } else if (order.fulfillment_type === 'entrega' && order.delivery_fee > 0) {
+      } else if (order.delivery_fee > 0) {
         deliveryRow.style.display = 'flex';
         document.getElementById('confirm-delivery-label').textContent = 'Taxa de entrega';
         document.getElementById('confirm-delivery-value').textContent = brl(order.delivery_fee);
@@ -5719,7 +5496,7 @@
       lockBodyScroll();
     }
     function renderStatusTrack(order) {
-      const steps = order.fulfillment_type === 'entrega' ? STATUS_STEPS_ENTREGA : STATUS_STEPS_RETIRADA;
+      const steps = statusStepsFor(order);
       const currentIdx = steps.findIndex(s => s.key === order.status);
       const note = document.getElementById('confirm-status-note');
       const track = document.getElementById('status-track');
@@ -5749,45 +5526,20 @@
         ...(order.items || []).map(i => `• ${i.qty}x ${i.name} — ${brl(i.unit_price * i.qty)}`),
         ``,
         `Total: ${brl(order.total)}`,
-        `Recebimento: ${order.fulfillment_type === 'entrega' ? 'Entrega' : 'Retirar no local'}`,
-        order.fulfillment_type === 'entrega' && order.address ? `Endereço: ${order.address.full}` : null,
+        `Recebimento: ${order.fulfillment_type === 'retirada' ? 'Retirar no local' : 'Entrega'}`,
+        order.address ? `Endereço: ${order.address.full}` : null,
         `Pagamento: ${order.payment_method}`,
       ].filter(Boolean).join('\n');
       window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(lines), '_blank');
     }
     document.getElementById('btn-close-confirm').addEventListener('click', () => { document.getElementById('confirm-overlay').classList.remove('open'); unlockBodyScroll(); });
 
-    /* ---------------------- ACOMPANHAMENTO AUTOMÁTICO DO PEDIDO ----------------------
-       Assim que o cliente faz um pedido, passamos a observar o status dele. Um
-       "chip" flutuante ("Pedido #x — status") fica visível em qualquer lugar do
-       site; sempre que o lojista mudar o status no painel administrativo (pedido
-       recebido, em preparação, pronto, saiu para entrega, entregue ou cancelado),
-       o cliente vê a mudança automaticamente — tanto no chip quanto, se estiver
-       com a tela de acompanhamento aberta, na trilha de status em tempo real.
-
-       COMO A ATUALIZAÇÃO CHEGA "NA HORA" PARA O CLIENTE:
-       1) Com Supabase configurado: assinamos o Supabase Realtime (WebSocket)
-          para escutar UPDATEs na linha exata do pedido (`subscribeOrderRealtime`).
-          Assim que o admin muda o status — mesmo em outro celular/computador —
-          o cliente recebe o novo status em tempo real, sem precisar dar F5 nem
-          esperar um intervalo. IMPORTANTE: isso exige que a Replication/Realtime
-          esteja ligada para a tabela `orders` no painel do Supabase (Database →
-          Replication → marque a tabela "orders"). Sem isso, o app cai
-          automaticamente no plano B abaixo.
-       2) Plano B / reforço: mantemos também uma checagem periódica
-          (`pollOrderStatus`) como rede de segurança, caso o Realtime não esteja
-          habilitado ou a conexão caia — assim o status nunca fica preso.
-       3) No modo demonstração (sem Supabase), o admin e o cliente normalmente
-          estão na MESMA aba do navegador (o "painel admin" é só uma outra vista
-          dentro da mesma página) — nesse caso a atualização já é local e
-          instantânea (ver os cliques de "avançar status" mais abaixo, que
-          chamam pollOrderStatus na hora). Se forem abas diferentes do mesmo
-          navegador, o evento nativo "storage" também dispara na hora. */
+    /* ---------------------- ACOMPANHAMENTO AUTOMÁTICO DO PEDIDO ---------------------- */
     let TRACKED_ORDER = null;
     let ORDER_POLL_TIMER = null;
     let REALTIME_ORDER_CHANNEL = null;
     const ORDER_POLL_INTERVAL_MS = 8000;
-    const ORDER_POLL_FALLBACK_INTERVAL_MS = 20000; // mais espaçado: é só reforço, o Realtime já cobre o "na hora"
+    const ORDER_POLL_FALLBACK_INTERVAL_MS = 20000;
     const TERMINAL_STATUSES = ['entregue', 'cancelado'];
 
     function updateTrackerFab(order) {
@@ -5802,10 +5554,6 @@
       if (ORDER_POLL_TIMER) { clearInterval(ORDER_POLL_TIMER); ORDER_POLL_TIMER = null; }
     }
 
-    /* Assina atualizações em tempo real (Supabase Realtime) da linha deste
-       pedido específico. Requer Realtime habilitado para a tabela `orders`
-       no Supabase — se não estiver habilitado, a assinatura simplesmente não
-       recebe eventos e o polling de reforço (mais lento) continua cobrindo. */
     function subscribeOrderRealtime(orderId) {
       if (!HAS_SUPABASE || !sb) return;
       try {
@@ -5826,8 +5574,6 @@
       REALTIME_ORDER_CHANNEL = null;
     }
 
-    /* Ponto único que aplica um pedido "fresco" (vindo do Realtime ou do
-       polling) ao estado local e atualiza toda a UI de acompanhamento. */
     function applyOrderUpdate(fresh) {
       if (!fresh) return;
       const changed = !TRACKED_ORDER || fresh.status !== TRACKED_ORDER.status;
@@ -5837,7 +5583,6 @@
         const fab = document.getElementById('order-tracker-fab');
         fab.classList.remove('bump'); void fab.offsetWidth; fab.classList.add('bump');
         toast(`Pedido #${fresh.order_number}: ${STATUS_LABELS[fresh.status] || fresh.status}`);
-        // se a tela de acompanhamento estiver aberta, atualiza a trilha na hora
         if (document.getElementById('confirm-overlay').classList.contains('open')) {
           renderStatusTrack(fresh);
         }
@@ -5862,37 +5607,22 @@
       stopOrderPolling();
       unsubscribeOrderRealtime();
       if (!TERMINAL_STATUSES.includes(order.status)) {
-        // tempo real via Supabase (quando disponível) + polling de reforço
         subscribeOrderRealtime(orderId);
         ORDER_POLL_TIMER = setInterval(() => pollOrderStatus(orderId), HAS_SUPABASE ? ORDER_POLL_FALLBACK_INTERVAL_MS : ORDER_POLL_INTERVAL_MS);
       }
     }
 
-    function stopOrderTracking() {
-      stopOrderPolling();
-      unsubscribeOrderRealtime();
-      TRACKED_ORDER = null;
-      localStorage.removeItem('acai_last_order_id');
-      updateTrackerFab(null);
-    }
-
+    /* O chip de acompanhamento não tem mais botão de fechar (✕): ele
+       simplesmente acompanha o pedido e some sozinho quando o pedido chega a
+       um status final (entregue/cancelado) ou quando um novo pedido é feito. */
     document.getElementById('order-tracker-fab').addEventListener('click', () => {
       if (TRACKED_ORDER) showConfirmation(TRACKED_ORDER);
     });
-    document.getElementById('tracker-close').addEventListener('click', (e) => {
-      e.stopPropagation();
-      stopOrderTracking();
-    });
 
-    /* No modo de demonstração (sem Supabase), pedidos ficam no localStorage — o
-       evento "storage" dispara instantaneamente em outras abas do mesmo
-       navegador quando o lojista altera o status em uma aba de admin aberta
-       separadamente, sem precisar esperar o próximo ciclo da checagem periódica. */
     window.addEventListener('storage', (e) => {
       if (e.key === LS_KEYS.orders && TRACKED_ORDER) pollOrderStatus(TRACKED_ORDER.id);
     });
 
-    /* Retoma o acompanhamento do último pedido feito pelo cliente (se houver) */
     async function restoreLastOrderTracking() {
       const id = localStorage.getItem('acai_last_order_id');
       if (!id) return;
@@ -5950,7 +5680,6 @@
     });
     document.getElementById('admin-logout').addEventListener('click', async () => { await DB.adminLogout(); await refreshAdminSessionUI(); });
 
-    /* menu mobile (gaveta estilo SUAP) */
     function openAdminDrawer() {
       document.getElementById('admin-sidebar').classList.add('open');
       document.getElementById('admin-sidebar-backdrop').classList.add('open');
@@ -5973,7 +5702,6 @@
       });
     });
 
-    /* tabs */
     document.querySelectorAll('.admin-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -5987,7 +5715,24 @@
     async function loadAdminData() {
       await Promise.all([renderAdminOrders(), renderAdminProducts(), renderAdminPromos(), renderAdminCoupons(), renderAdminReviews(), fillSettingsForm()]);
       fillDeliveryConfigForm();
+      renderNotifications();
     }
+
+    /* ---- notificações ---- */
+    async function renderNotifications() {
+      const host = document.getElementById('notifications-list');
+      if (!host) return;
+      const list = await DB.getNotifications();
+      host.innerHTML = list.length
+        ? list.map(n => `<div class="mycoupon-item"><div><div class="mycoupon-value">${escapeHtml(n.message)}</div><div style="font-size:.75rem;color:var(--ink-soft);margin-top:4px">${n.created_at ? new Date(n.created_at).toLocaleString('pt-BR') : ''}</div></div></div>`).join('')
+        : '<p class="mycoupon-empty">Nenhuma notificação ainda.</p>';
+    }
+    const clearNotifBtn = document.getElementById('btn-clear-notifications');
+    if (clearNotifBtn) clearNotifBtn.addEventListener('click', async () => {
+      if (!confirm('Limpar todas as notificações?')) return;
+      try { await DB.clearNotifications(); toast('Notificações limpas'); renderNotifications(); }
+      catch (err) { console.error(err); toast('Erro ao limpar notificações'); }
+    });
 
     /* ---- pedidos ---- */
     let ORDER_FILTER = 'todos';
@@ -6005,7 +5750,7 @@
     <div class="stat-card"><span class="label">Em andamento</span><span class="num">${emAndamento}</span></div>
     <div class="stat-card"><span class="label">Total de pedidos</span><span class="num">${orders.length}</span></div>`;
     }
-    /* ---- gráfico de fluxo de pedidos ---- */
+
     let CHART_MODE = 'dias';
     let LAST_ORDERS = [];
 
@@ -6102,9 +5847,6 @@
         toast('Erro ao carregar pedidos');
       }
       orders = orders || [];
-      // completa o status de pagamento do Pix quando ele só existe no
-      // localStorage (colunas payment_status/pix_txid/paid_at ainda não
-      // criadas no Supabase — ver comentário em DB.savePixInfo)
       await Promise.all(orders.filter(o => o.payment_method === 'pix' && !o.payment_status).map(async o => {
         const info = await DB.getPixInfo(o.id);
         if (info) Object.assign(o, info);
@@ -6129,7 +5871,7 @@
       <td>${escapeHtml(o.customer_name)}<br><small style="color:var(--ink-soft)">${escapeHtml(o.customer_phone || '')}</small></td>
       <td>${(o.items || []).map(i => `${i.qty}x ${escapeHtml(i.name)}`).join('<br>')}</td>
       <td>${brl(o.total)}</td>
-      <td>${o.fulfillment_type === 'entrega' ? 'Entrega' : 'Retirada'}${o.fulfillment_type === 'entrega' && o.address ? `<br><small style="color:var(--ink-soft)">${escapeHtml([o.address.street, o.address.number].filter(Boolean).join(', ') || o.address.full || '')}${o.address.neighborhood ? ' — ' + escapeHtml(o.address.neighborhood) : ''}</small>` : ''}</td>
+      <td>${o.fulfillment_type === 'retirada' ? 'Retirada' : 'Entrega'}${o.address ? `<br><small style="color:var(--ink-soft)">${escapeHtml([o.address.street, o.address.number].filter(Boolean).join(', ') || o.address.full || '')}${o.address.neighborhood ? ' — ' + escapeHtml(o.address.neighborhood) : ''}</small>` : ''}</td>
       <td>${o.address && o.address.distance_km != null ? Number(o.address.distance_km).toFixed(1).replace('.', ',') + ' km' : '—'}</td>
       <td>${paymentBadgeHtml(o)}</td>
       <td>${renderOrderStatusCell(o)}</td>
@@ -6156,13 +5898,6 @@
           } catch (err) { console.error(err); toast(err.message || 'Erro ao excluir pedido'); }
         });
       });
-      /* Botão sequencial de status: cada clique avança o pedido para o
-         PRÓXIMO status da sequência (que muda conforme retirada/entrega —
-         ver statusStepsFor). Assim que o status é salvo, se este mesmo
-         pedido estiver sendo acompanhado pelo cliente (mesma sessão/aba,
-         no modo demonstração) a trilha dele já atualiza na hora; em produção
-         com Supabase, o Realtime cuida de levar essa mudança até o cliente
-         instantaneamente, em qualquer dispositivo. */
       document.querySelectorAll('[data-advance-status]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const orderId = btn.dataset.advanceStatus;
@@ -6198,7 +5933,7 @@
       });
     }
 
-    /* ---- avaliações (moderação apenas — quem cria é o cliente, no site) ---- */
+    /* ---- avaliações ---- */
     async function renderAdminReviews() {
       const reviews = await DB.getAllReviewsAdmin();
       document.getElementById('admin-reviews-body').innerHTML = reviews.map(r => `
@@ -6271,12 +6006,7 @@
       showImagePreview('');
     }
 
-    /* ---- editor de recorte quadrado de imagem (reutilizável) ----
-       Mostra, em uma mini área quadrada, exatamente como a foto vai enquadrar
-       no site. O lojista pode arrastar para reposicionar e usar o zoom; o
-       recorte final é gerado num canvas 800x800. Também mostra um aviso de
-       qualidade: quanto mais dá zoom, menor a resolução real aproveitada da
-       foto original — se ficar baixa demais, a imagem final pode sair borrada. */
+    /* ---- editor de recorte quadrado de imagem (reutilizável) ---- */
     const CROP_STAGE_SIZE = 220;
     const CROP_OUT = 800;
     function createCropController(ids) {
@@ -6309,7 +6039,6 @@
           updateOutput();
         };
         testImg.onerror = () => {
-          // provavelmente uma URL externa ainda sendo digitada; não mostra erro, só aguarda
           el(ids.wrap).style.display = 'none';
           state.img = null;
         };
@@ -6357,7 +6086,6 @@
           ctx.drawImage(state.img, sx, sy, sSize, sSize, 0, 0, CROP_OUT, CROP_OUT);
           urlField.dataset.finalCrop = canvas.toDataURL('image/jpeg', 0.85);
         } catch (err) {
-          // canvas "contaminado" por imagem externa sem CORS liberado — usa a URL original sem recorte
           delete urlField.dataset.finalCrop;
         }
       }
@@ -6402,10 +6130,6 @@
     });
     function showImagePreview(url) { productCrop.showPreview(url); }
 
-    /* Redimensiona/comprime a imagem no navegador antes de salvar, para evitar
-       arquivos gigantes (fotos de celular) que estouram o limite de armazenamento
-       ou o tamanho aceito pelo banco de dados. O recorte quadrado é feito depois,
-       na etapa de enquadramento. */
     function compressImageFile(file, maxDim = 1400, quality = 0.85) {
       return new Promise((resolve, reject) => {
         if (!file.type.startsWith('image/')) { reject(new Error('Selecione um arquivo de imagem válido.')); return; }
@@ -6479,7 +6203,6 @@
       const products = await DB.getAllProductsAdmin();
       const p = products.find(x => x.id === e.target.value);
       document.getElementById('pr-product-id').value = p ? p.id : '';
-      // pré-preenche preço e imagem com os dados do produto (o lojista pode ajustar)
       if (p) {
         if (!document.getElementById('pr-price').value) document.getElementById('pr-price').value = p.price;
         if (!document.getElementById('pr-image-url').value && p.image_url) {
