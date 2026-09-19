@@ -1068,6 +1068,93 @@
       padding: 10px 0
     }
 
+    /* ---------- meus pedidos (cliente) ---------- */
+    .myorder-item {
+      background: var(--white);
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+
+    .myorder-item:hover {
+      border-color: var(--purple-500);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .myorder-item.just-updated {
+      animation: myOrderPulse 1.1s ease;
+    }
+
+    @keyframes myOrderPulse {
+      0% {
+        border-color: var(--purple-500);
+        box-shadow: 0 0 0 4px var(--purple-100)
+      }
+
+      100% {
+        border-color: var(--line);
+        box-shadow: none
+      }
+    }
+
+    .myorder-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px
+    }
+
+    .myorder-number {
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: var(--purple-800);
+      font-size: 1.02rem
+    }
+
+    .myorder-date {
+      font-size: .72rem;
+      color: var(--ink-soft);
+      white-space: nowrap
+    }
+
+    .myorder-items {
+      font-size: .82rem;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+      line-height: 1.4
+    }
+
+    .myorder-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .myorder-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-weight: 800;
+      font-size: .74rem;
+      color: #fff;
+      white-space: nowrap
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .myorder-item.just-updated {
+        animation: none
+      }
+    }
+
     @media (max-width:480px) {
       .mycoupon-item {
         flex-direction: column;
@@ -3012,6 +3099,7 @@
           <a href="#montar">Monte o seu</a>
           <a href="#promocoes">Promoções</a>
           <a href="#clube">Clube do Açaí</a>
+          <a href="#" id="link-myorders">Meus Pedidos</a>
           <a href="#" id="link-mycoupons">Meus Cupons</a>
           <a href="#local">Onde estamos</a>
         </nav>
@@ -3272,6 +3360,7 @@
             <a href="#montar">Monte o seu</a>
             <a href="#promocoes">Promoções</a>
             <a href="#clube">Clube do Açaí</a>
+            <a href="#" id="footer-link-myorders">Meus Pedidos</a>
             <a href="#" id="footer-link-mycoupons">Meus Cupons</a>
           </div>
           <div>
@@ -3487,6 +3576,25 @@
 
       <button type="button" class="btn btn-ghost btn-block" id="btn-pix-close-later" style="margin-top:14px">Já
         paguei / fechar e acompanhar depois</button>
+    </div>
+  </div>
+
+  <!-- ===================== MEUS PEDIDOS (mini modal) ===================== -->
+  <div class="overlay center" id="myorders-overlay">
+    <div class="modal-box" style="max-width:460px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3>📦 Meus Pedidos</h3>
+        <button class="close-x" id="close-myorders">✕</button>
+      </div>
+      <p style="color:var(--ink-soft);font-size:.88rem;margin-bottom:16px">Digite seu telefone para ver seus pedidos.
+        Assim que a loja atualizar o status de algum deles, esta tela atualiza sozinha — não precisa ficar
+        atualizando a página.</p>
+      <div class="field" style="margin-bottom:8px">
+        <input type="tel" id="myorders-phone-input" placeholder="Seu telefone/WhatsApp">
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-check-myorders" style="margin-bottom:16px">Ver meus
+        pedidos</button>
+      <div id="myorders-list"></div>
     </div>
   </div>
 
@@ -4359,6 +4467,29 @@
         if (HAS_SUPABASE) { const { data, error } = await sb.from('orders').select('*').eq('id', id).maybeSingle(); if (error) { console.error(error); return null; } return data; }
         return lsGet(LS_KEYS.orders).find(o => o.id === id) || null;
       },
+      /* Busca todos os pedidos de um telefone, para a área "Meus Pedidos" do
+         cliente. O telefone é comparado só pelos dígitos (ignora espaços,
+         parênteses e traços), já que o cliente pode ter digitado o telefone
+         de formas diferentes em pedidos diferentes. Por simplicidade, busca
+         todos os pedidos e filtra no navegador — o mesmo padrão já usado em
+         getAllOrdersAdmin; se a loja crescer muito, considere criar uma
+         coluna normalizada (só dígitos) no Supabase com índice, e filtrar
+         diretamente na consulta.
+         SEGURANÇA: assim como getOrderById já permite que qualquer pessoa
+         busque um pedido pelo id sem login, esta função também depende de a
+         tabela `orders` permitir leitura sem autenticação de admin (mesma
+         política já usada pelo acompanhamento de pedido). Ou seja, não abre
+         nenhuma superfície nova além da que já existia. */
+      async getOrdersByPhone(phone) {
+        const normalized = (phone || '').replace(/\D/g, '');
+        if (!normalized) return [];
+        if (HAS_SUPABASE) {
+          const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
+          if (error) { console.error(error); return []; }
+          return (data || []).filter(o => (o.customer_phone || '').replace(/\D/g, '') === normalized);
+        }
+        return lsGet(LS_KEYS.orders).slice().reverse().filter(o => (o.customer_phone || '').replace(/\D/g, '') === normalized);
+      },
       async updateOrderStatus(id, status) {
         if (HAS_SUPABASE) { const { error } = await sb.from('orders').update({ status }).eq('id', id); if (error) throw error; return; }
         lsSet(LS_KEYS.orders, lsGet(LS_KEYS.orders).map(o => o.id === id ? { ...o, status } : o));
@@ -4944,6 +5075,136 @@
       renderMyCoupons(list);
     });
 
+    /* ---- meus pedidos ----
+       Área onde o cliente consulta TODOS os seus pedidos (não só o último),
+       cada um com o status atual. Enquanto esta tela está aberta, qualquer
+       mudança de status feita pelo admin (no botão sequencial vermelho →
+       laranja → verde) aparece aqui IMEDIATAMENTE, do mesmo jeito que no
+       chip flutuante de acompanhamento: via Supabase Realtime quando
+       disponível, com um polling de reforço como plano B. */
+    let MY_ORDERS_LIST = [];
+    let MY_ORDERS_POLL_TIMER = null;
+    let MY_ORDERS_CHANNEL = null;
+    const MY_ORDERS_POLL_INTERVAL_MS = 8000;
+    const MY_ORDERS_POLL_FALLBACK_INTERVAL_MS = 20000;
+
+    function myOrderStatusPillHtml(o) {
+      if (o.status === 'cancelado') return `<span class="myorder-status-pill" style="background:#C0392B">❌ Cancelado</span>`;
+      const steps = statusStepsFor(o);
+      const idx = steps.findIndex(s => s.key === o.status);
+      const current = idx >= 0 ? steps[idx] : steps[0];
+      const meta = STATUS_BTN_META[current.key] || { color: 'st-gray' };
+      const bgMap = { 'st-red': '#C0392B', 'st-orange': '#E08A1E', 'st-green': 'var(--green-600)', 'st-gray': 'var(--ink-soft)' };
+      return `<span class="myorder-status-pill" style="background:${bgMap[meta.color]}">${current.icon} ${STATUS_LABELS[current.key] || current.label}</span>`;
+    }
+    function renderMyOrdersList(orders, updatedId) {
+      const wrap = document.getElementById('myorders-list');
+      if (!orders.length) { wrap.innerHTML = '<p class="mycoupon-empty">Nenhum pedido encontrado para esse telefone ainda.</p>'; return; }
+      wrap.innerHTML = orders.map(o => `
+    <div class="myorder-item ${o.id === updatedId ? 'just-updated' : ''}" data-view-order="${o.id}">
+      <div class="myorder-head">
+        <span class="myorder-number">Pedido #${o.order_number}</span>
+        <span class="myorder-date">${o.created_at ? new Date(o.created_at).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : ''}</span>
+      </div>
+      <div class="myorder-items">${(o.items || []).map(i => `${i.qty}x ${escapeHtml(i.name)}`).join(', ')}</div>
+      <div class="myorder-foot">
+        ${myOrderStatusPillHtml(o)}
+        <strong>${brl(o.total)}</strong>
+      </div>
+    </div>`).join('');
+      wrap.querySelectorAll('[data-view-order]').forEach(el => {
+        el.addEventListener('click', () => {
+          const order = MY_ORDERS_LIST.find(o => o.id === el.dataset.viewOrder);
+          if (order) { closeMyOrdersModal(); showConfirmation(order); }
+        });
+      });
+    }
+    async function loadMyOrders(phone) {
+      MY_ORDERS_LIST = await DB.getOrdersByPhone(phone);
+      renderMyOrdersList(MY_ORDERS_LIST);
+      startMyOrdersLiveUpdates();
+    }
+    /* Aplica um pedido "fresco" (vindo do Realtime ou do polling) à lista
+       exibida, só quando esse pedido já faz parte da lista carregada. */
+    function applyMyOrdersUpdate(fresh) {
+      if (!fresh) return;
+      const idx = MY_ORDERS_LIST.findIndex(o => o.id === fresh.id);
+      if (idx === -1) return;
+      const changed = MY_ORDERS_LIST[idx].status !== fresh.status;
+      MY_ORDERS_LIST[idx] = fresh;
+      if (!document.getElementById('myorders-overlay').classList.contains('open')) return;
+      renderMyOrdersList(MY_ORDERS_LIST, changed ? fresh.id : null);
+      if (changed) toast(`Pedido #${fresh.order_number}: ${STATUS_LABELS[fresh.status] || fresh.status}`);
+    }
+    async function pollMyOrders(phone) {
+      const fresh = await DB.getOrdersByPhone(phone);
+      fresh.forEach(o => applyMyOrdersUpdate(o));
+      // também cobre pedidos novos feitos nesse telefone desde o último carregamento
+      if (fresh.length !== MY_ORDERS_LIST.length) { MY_ORDERS_LIST = fresh; renderMyOrdersList(MY_ORDERS_LIST); }
+    }
+    /* Assina o Supabase Realtime para QUALQUER atualização na tabela `orders`
+       e filtra no navegador pelos pedidos que já estão na lista carregada
+       (o telefone salvo em `orders.customer_phone` pode estar em formatos
+       diferentes entre pedidos, então filtrar por id já carregado é mais
+       confiável do que um filtro exato por telefone no servidor). Requer
+       Realtime habilitado para a tabela `orders` no Supabase (Database →
+       Replication) — sem isso, o polling de reforço abaixo continua
+       cobrindo a atualização, só que a cada alguns segundos em vez de na
+       hora. */
+    function subscribeMyOrdersRealtime() {
+      unsubscribeMyOrdersRealtime();
+      if (!HAS_SUPABASE || !sb) return;
+      try {
+        MY_ORDERS_CHANNEL = sb
+          .channel('my-orders-list')
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
+            if (payload && payload.new) applyMyOrdersUpdate(payload.new);
+          })
+          .subscribe();
+      } catch (err) {
+        console.error('Não foi possível assinar atualizações em tempo real de Meus Pedidos (o polling de reforço continua ativo):', err);
+      }
+    }
+    function unsubscribeMyOrdersRealtime() {
+      if (MY_ORDERS_CHANNEL && sb) { try { sb.removeChannel(MY_ORDERS_CHANNEL); } catch (err) { console.error(err); } }
+      MY_ORDERS_CHANNEL = null;
+    }
+    function startMyOrdersLiveUpdates() {
+      stopMyOrdersLiveUpdates();
+      const phone = document.getElementById('myorders-phone-input').value;
+      if (!phone.replace(/\D/g, '')) return;
+      subscribeMyOrdersRealtime();
+      MY_ORDERS_POLL_TIMER = setInterval(() => pollMyOrders(phone), HAS_SUPABASE ? MY_ORDERS_POLL_FALLBACK_INTERVAL_MS : MY_ORDERS_POLL_INTERVAL_MS);
+    }
+    function stopMyOrdersLiveUpdates() {
+      if (MY_ORDERS_POLL_TIMER) { clearInterval(MY_ORDERS_POLL_TIMER); MY_ORDERS_POLL_TIMER = null; }
+      unsubscribeMyOrdersRealtime();
+    }
+    function openMyOrdersModal() {
+      document.getElementById('myorders-overlay').classList.add('open');
+      lockBodyScroll();
+      const savedPhone = localStorage.getItem('acai_myorders_phone');
+      if (savedPhone) {
+        document.getElementById('myorders-phone-input').value = savedPhone;
+        loadMyOrders(savedPhone);
+      }
+    }
+    function closeMyOrdersModal() {
+      document.getElementById('myorders-overlay').classList.remove('open');
+      unlockBodyScroll();
+      stopMyOrdersLiveUpdates();
+    }
+    document.getElementById('link-myorders').addEventListener('click', (e) => { e.preventDefault(); openMyOrdersModal(); });
+    document.getElementById('footer-link-myorders').addEventListener('click', (e) => { e.preventDefault(); openMyOrdersModal(); });
+    document.getElementById('close-myorders').addEventListener('click', closeMyOrdersModal);
+    document.getElementById('myorders-overlay').addEventListener('click', e => { if (e.target.id === 'myorders-overlay') closeMyOrdersModal(); });
+    document.getElementById('btn-check-myorders').addEventListener('click', async () => {
+      const phone = document.getElementById('myorders-phone-input').value;
+      if (!phone.replace(/\D/g, '')) { toast('Digite um telefone válido'); return; }
+      localStorage.setItem('acai_myorders_phone', phone);
+      await loadMyOrders(phone);
+    });
+
     /* ---------------------- 12. CARRINHO ---------------------- */
     function itemMeta(item) {
       if (item.kind === 'custom') {
@@ -5310,6 +5571,7 @@
         LAST_ORDER = saved;
         CART = []; ACTIVE_COUPON = null; DELIVERY_CALC = null; persistCart();
         localStorage.setItem('acai_last_order_id', saved.id);
+        localStorage.setItem('acai_myorders_phone', phone);
         await startOrderTracking(saved.id);
         document.getElementById('checkout-overlay').classList.remove('open');
         unlockBodyScroll();
